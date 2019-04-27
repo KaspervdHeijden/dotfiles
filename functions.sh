@@ -79,7 +79,7 @@ function gitt()
 
     if [[ "${1}" == '-f' ]]; then
         commit_message="${2}";
-        check_fork="1";
+        check_fork="0";
     fi
 
     if [[ "${#commit_message}" -lt 3 ]]; then
