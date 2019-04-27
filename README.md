@@ -1,8 +1,8 @@
-### Dotfiles
+## Dotfiles
 
 This repository allows for quickly setup the environment how I like it :)
 
-## Installation
+### Installation
 
 From the home directory, add the following line to the `.bashrc` file:
 ```sh
