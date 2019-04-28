@@ -1,4 +1,4 @@
-export SHELL=$(which $(ps -p $$ --no-headers -o 'comm='));
+export SHELL=$(which $(ps -p $$ -o 'comm='));
 export GIT_PAGER=more;
 
 if [[ ! -z "${BASH_SOURCE}" ]]; then

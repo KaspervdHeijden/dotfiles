@@ -3,7 +3,7 @@ function repo-search()
 {
     echo -n 'Searching for repositories, please hold...';
     find / -type d -name ".git" -and -not -wholename "*/vendor/*" -print0 2> /dev/null | xargs -r0n1 dirname > '/tmp/repolist-new' 2> /dev/null;
-    cp '/tmp/repolist-new' "${DOTFILES_DIR}/.repos";
+    grep -v 'grep -v /opt/httpd/' '/tmp/repolist-new' > "${DOTFILES_DIR}/.repos";
     echo ' Done';
 }
 
