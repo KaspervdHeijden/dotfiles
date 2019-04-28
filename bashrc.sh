@@ -10,35 +10,16 @@ shopt -s checkwinsize;
 # Make less more friendly for non-text input files, see lesspipe(1)
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)";
 
-function custom-git-prompt()
-{
-    local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
-    if [[ -z "${branch_name}" ]]; then
-        return 0;
-    fi
-
-    local cyellow="\033[33m";
-    local cgreen="\033[1;32m";
-    local cclear="\033[0;00m";
-
-    local changes=$(git status --porcelain 2>/dev/null | wc -l);
-    local output="\033[1;32m${branch_name}${cclear}";
-    if [[ "${changes}" -gt 0 ]]; then
-        output+="[\033[33m${changes}${cclear}]";
-    fi
-
-    echo -ne " (${output})";
-}
-
 function display-exitcode()
 {
-    local lastExitCode=$?;
+    local lastExitCode="${?}";
     [[ "${lastExitCode}" == '0' ]] && return 0;
-    echo -ne " [!\033[31m${lastExitCode}\033[00m]";
+    echo -ne "\033[1;31m${lastExitCode}\033[0;00m ";
 }
 
 if [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null; then
-    PS1="\e[1;37m\u\e[0;37m@\e[32m\h \e[36m\w\e[0m\$(display-exitcode) [\$(date +'%H:%M')]\$(custom-git-prompt)\n% ";
+    PS1="[\$(display-exitcode)\e[1;37m\u\e[0;37m@\e[32m\h \e[36m\w\e[0m \$(date +'%H:%M')\e[32m\$(__git_ps1)\e[0m]\n% ";
+#    GIT_PS1_SHOWDIRTYSTATE=1;
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ ';
 fi

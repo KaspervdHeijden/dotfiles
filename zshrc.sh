@@ -1,38 +1,23 @@
-export ZSH="$(echo ~)/.oh-my-zsh";
 
-plugins=(sudo zsh-autosuggestions);
-COMPLETION_WAITING_DOTS="true";
-ZSH_THEME="gianu";
-
-function custom_zsh_git_prompt_info()
+function custom-git-prompt()
 {
-    if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" == "1" ]]; then
-        return;
-    fi
+    [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" == "1" ]] && return 0;
 
     local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
-    if [[ -z "${branch_name}" ]]; then
-        return 0;
-    fi
+    [[ -z "${branch_name}" ]] && return 0;
 
-    local changes=$(git status --porcelain 2>/dev/null | wc -l);
-    local output=' [';
-
-    if [[ "${changes}" -gt 0 ]]; then
-        output+='* ';
-    fi
-
-    output+="%{$fg_bold[green]${branch_name}%{$reset_color%}";
-    if [[ "${changes}" -gt 0 ]]; then
-        output+="(%{$fg[yellow]%}${changes}%{$reset_color%})";
-    fi
-
-    echo -n "${output}]";
+    local output="%{$fg_bold[green]${branch_name}%{$reset_color%}";
+#    [[ ! -z $(git status --porcelain 2>/dev/null) ]] && output+=' *';
+    echo -ne " (${output})";
 }
 
+plugins=(sudo zsh-autosuggestions);
+COMPLETION_WAITING_DOTS=true;
+ZSH_THEME='gianu';
 
-source "${ZSH}/oh-my-zsh.sh";
-PROMPT='%{$fg_bold[white]%}%n%{$reset_color%}@%{$fg_bold[red]%}%m%{$reset_color%} %{$fg[cyan]%}%~%{$reset_color%}%(?.. [!%B%{$fg[red]%}%?%{$reset_color%}%b]) [%{$fg[fg-grey]%}%T%{$reset_color%}]$(custom_zsh_git_prompt_info)
- %# ';
+[[ -r "${ZSH}/oh-my-zsh.sh" ]] && source "${ZSH}/oh-my-zsh.sh";
+
+PROMPT='[%(?..%B%{$fg[red]%}%?%{$reset_color%}%b )%{$fg_bold[white]%}%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%} %{$fg[cyan]%}%~%{$reset_color%} %{$fg[fg-grey]%}%T%{$reset_color%}$(custom-git-prompt)]
+%# ';
 
 source "$(dirname $0)/dotfiles.sh";
