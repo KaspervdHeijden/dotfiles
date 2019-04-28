@@ -21,7 +21,7 @@ fi
 
 [[ -r "${ZSH}/oh-my-zsh.sh" ]] && source "${ZSH}/oh-my-zsh.sh";
 
-PROMPT='[%(?..%B%{$fg[red]%}%?%{$reset_color%}%b )%{$fg_bold[white]%}%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%} %{$fg[cyan]%}%~%{$reset_color%} %{$fg[fg-grey]%}%T%{$reset_color%}$(custom-git-prompt)]
+PROMPT='[%(?..%B%{$fg[red]%}%?%{$reset_color%}%b )%{$fg_bold[white]%}%n%{$reset_color%}@%{$fg_bold[green]%}%U%m%u%{$reset_color%} %{$fg[cyan]%}%~%{$reset_color%} %{$fg[fg-grey]%}%T%{$reset_color%}$(custom-git-prompt)]
 %# ';
 
 source "$(dirname $0)/dotfiles.sh";
