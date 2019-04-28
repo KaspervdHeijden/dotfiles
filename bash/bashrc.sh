@@ -30,21 +30,5 @@ if ! shopt -oq posix; then
     fi
 fi
 
-
-function __prompt_last_exitcode_info()
-{
-    local latest_exitcode="${?}";
-    [[ "${latest_exitcode}" == '0' ]] && return 0;
-    echo -ne "\033[1;31m${latest_exitcode}\033[0;00m ";
-}
-
-function __prompt_git_info()
-{
-    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
-    [[ -z "${branch_name}" ]] && return 0;
-    echo -ne " ${branch_name}";
-}
-
-PS1="[\$(__prompt_last_exitcode_info)\e[1;37m\u\e[0;37m@\e[1;4;32m\h\e[0;36m \w\e[0m \$(date +'%H:%M')\e[1;32m\$(__prompt_git_info)\e[0;0m]\n% ";
-
-source $(dirname "${BASH_SOURCE}")/dotfiles.sh;
+source $(dirname "${BASH_SOURCE}")/prompt.sh;
+source $(dirname "${BASH_SOURCE}")/../dotfiles.sh;
