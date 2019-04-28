@@ -8,7 +8,7 @@ function custom-git-prompt()
 
     local output="%{$fg_bold[green]${branch_name}%{$reset_color%}";
 #    [[ ! -z $(git status --porcelain 2>/dev/null) ]] && output+=' *';
-    echo -ne " (${output})";
+    echo -ne " ${output}";
 }
 
 # COMPLETION_WAITING_DOTS=true;
