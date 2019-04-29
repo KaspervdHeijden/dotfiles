@@ -10,3 +10,5 @@ fi
 
 source "${DOTFILES_DIR}/functions.sh";
 source "${DOTFILES_DIR}/aliases.sh";
+
+[[ -d "${DOTFILES_DEFAULT_STARTDIR}" ]] && cd "${DOTFILES_DEFAULT_STARTDIR}" || cd;

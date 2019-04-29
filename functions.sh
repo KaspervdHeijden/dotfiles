@@ -153,5 +153,28 @@ function gith()
         return 2;
     fi
 
-    git push $FORCE_FLAG "${remote_name}" "${branch_name}";
+    git push $force_flag "${remote_name}" "${branch_name}";
+}
+
+function phpu()
+{
+    if [[ ! -n $(git remote 2>/dev/null) ]]; then
+        echo 'Not in a git repository' >&2;
+        return 1;
+    fi
+
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    if [[ ! -x "${repo_root}/vendor/phpunit/phpunit/phpunit" ]]; then
+        echo 'Cannot locate phpunit' >&2;
+        return 2;
+    fi
+
+    local cur_dir=$(pwd);
+    [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${repo_root}";
+
+    "./vendor/phpunit/phpunit/phpunit";
+    local ret_val="${?}";
+
+    [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${cur_dir}";
+    return "${ret_val}";
 }
