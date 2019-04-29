@@ -11,5 +11,7 @@ function custom-git-prompt()
     echo -ne " ${output}";
 }
 
-PROMPT='[%{$fg[magenta]%}zsh%{$reset_color%} %(?..%B%{$fg[red]%}%?%{$reset_color%}%b )%{$fg_bold[white]%}%n%{$reset_color%}@%{$fg_bold[green]%}%U%m%u%{$reset_color%} %{$fg[cyan]%}%~%{$reset_color%} %{$fg[fg-grey]%}%T%{$reset_color%}$(custom-git-prompt)]
-%# ';
+[[ -z "${DOTFILES_HOST_PROMPT_COLOR}" ]] && DOTFILES_HOST_PROMPT_COLOR='$fg_bold[green]';
+
+PROMPT="[%{\$fg[magenta]%}zsh%{\$reset_color%} %(?..%B%{\$fg[red]%}%?%{\$reset_color%}%b )%{\$fg_bold[white]%}%n%{\$reset_color%}@%{$DOTFILES_HOST_PROMPT_COLOR%}%U%m%u%{\$reset_color%} %{\$fg[cyan]%}%~%{\$reset_color%} %{\$fg[fg-grey]%}%T%{\$reset_color%}$(custom-git-prompt)]
+%# ";

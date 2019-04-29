@@ -14,5 +14,7 @@ function __prompt_git_info()
     echo -ne " ${output}";
 }
 
-PS1="[\e[35mbash\e[0m \$(__prompt_last_exitcode_info)\e[1;37m\u\e[0;37m@\e[1;4;32m\h\e[0;36m \w\e[0m \$(date +'%H:%M')\e[1;32m\$(__prompt_git_info)\e[0;0m]\n% ";
+[[ -z "${DOTFILES_HOST_PROMPT_COLOR}" ]] && DOTFILES_HOST_PROMPT_COLOR='1;4;32';
+
+PS1="[\e[35mbash\e[0m \$(__prompt_last_exitcode_info)\e[1;37m\u\e[0;37m@\e[${DOTFILES_HOST_PROMPT_COLOR}m\h\e[0;36m \w\e[0m \$(date +'%H:%M')\e[1;32m\$(__prompt_git_info)\e[0;0m]\n% ";
 
