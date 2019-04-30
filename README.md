@@ -20,3 +20,6 @@ If you use zsh, add the following to the `.zshrc` file:
 ```sh
 source <dotfiles-dir>/zsh/zshrc.sh;
 ```
+
+To start using the `cds` function, please run `repo-search` once first.
+

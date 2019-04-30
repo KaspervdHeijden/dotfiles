@@ -1,4 +1,4 @@
-[[ -x "$(which psysh)" && ! -x $(which pe) ]] && alias pe='psysh';
+[[ -x "$(which psysh)" && ! -x "$(which pe)" ]] && alias pe='psysh';
 [[ -x "$(which docker-comper)" ]] && alias dc='docker-compose';
 
 alias tm="tmux attach -f ${DOTFILES_DIR}/tmux.conf 2> /dev/null || tmux -f ${DOTFILES_DIR}/tmux.conf new > /dev/null 2> /dev/null";
