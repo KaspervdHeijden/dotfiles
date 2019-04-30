@@ -6,12 +6,15 @@ function custom-git-prompt()
     local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
     [[ -z "${branch_name}" ]] && return 0;
 
-    local output="%{$fg_bold[green]${branch_name}%{$reset_color%}";
+    local output="%F{green}%B${branch_name}%b%f";
     [[ "${GIT_PROMPT_SHOW_DIRTY}" && ! -z $(git status --porcelain 2>/dev/null) ]] && output+='*';
     echo -ne " ${output}";
 }
 
-[[ -z "${DOTFILES_HOST_PROMPT_COLOR}" ]] && DOTFILES_HOST_PROMPT_COLOR='$fg_bold[green]';
+[[ -z "${DOTFILES_HOST_PROMPT_COLOR}" ]] && DOTFILES_HOST_PROMPT_COLOR='%F{green}';
+autoload -U colors && colors;
+setopt prompt_subst;
 
-PROMPT="[%{\$fg[magenta]%}zsh%{\$reset_color%} %(?..%B%{\$fg[red]%}%?%{\$reset_color%}%b )%{\$fg_bold[white]%}%n%{\$reset_color%}@%{$DOTFILES_HOST_PROMPT_COLOR%}%U%m%u%{\$reset_color%} %{\$fg[cyan]%}%~%{\$reset_color%} %{\$fg[fg-grey]%}%T%{\$reset_color%}$(custom-git-prompt)]
-%# ";
+PS1='[%F{magenta}zsh%f %(?..%B%F{red}%?%f%b )%B%F{white}%n%f%b@%f${DOTFILES_HOST_PROMPT_COLOR}%U%m%u%f %F{cyan}%~%f %T$(custom-git-prompt)]
+%# ';
+
