@@ -10,6 +10,7 @@ alias gs='git status';
 alias gr='git rebase';
 alias gm='git merge';
 alias gd='git diff';
+alias gp='git push';
 alias ga='git add';
 alias g='git';
 
