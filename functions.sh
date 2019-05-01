@@ -3,14 +3,17 @@ function repo-search()
 {
     echo -n 'Searching for repositories, please hold...';
     find / -type d -name ".git" -and -not -wholename "*/vendor/*" -print0 2> /dev/null | xargs -r0n1 dirname > '/tmp/repolist-new' 2> /dev/null;
+
     grep -v '/opt/httpd/' '/tmp/repolist-new' > "${DOTFILES_DIR}/.repos";
+    rm '/tmp/repolist-new' 2> /dev/null;
+
     echo ' Done';
 }
 
 function cds()
 {
     if [[ ! -f "${DOTFILES_DIR}/.repos" ]]; then
-        echo 'No repository list found; please run repo-search and try again';
+        echo 'No repository list found; please run repo-search and try again' >&2;
         return 1;
     fi
 
@@ -20,12 +23,12 @@ function cds()
     fi
 
     local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/.repos");
-    if [[ -z "{$match}" ]]; then
-        echo 'No match found';
+    if [[ -z "${match}" ]]; then
+        echo 'No match found' >&2;
         return 2;
     fi
 
-    if [[ $(echo "${match}" | wc -l) -eq 1 ]]; then
+    if [[ -d "${match}" ]]; then
         cd "${match}";
         return 0;
     fi
@@ -36,7 +39,7 @@ function cds()
         return 0;
     fi
 
-    echo "More than 1 match was found. Please be more specific:\n${match}";
+    echo -e "More than 1 match was found. Please be more specific:\n${match}" >&2;
     return 3;
 }
 

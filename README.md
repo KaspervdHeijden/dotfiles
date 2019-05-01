@@ -4,8 +4,8 @@ This repository allows for quickly setup the environment how I like it :)
 
 ### Installation
 
-From the home directory, add the following line to the `.bashrc` file
-(or `~/.bash_profile` if you use FreeDSB):
+Checkout this repository.
+From the home directory, add the following line to the `.bashrc` file (or `~/.bash_profile` if you use FreeDSB):
 ```sh
 source <dotfiles-dir>/bash/bashrc.sh;
 ```
@@ -22,4 +22,3 @@ source <dotfiles-dir>/zsh/zshrc.sh;
 ```
 
 To start using the `cds` function, please run `repo-search` once first.
-
