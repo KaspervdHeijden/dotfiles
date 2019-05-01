@@ -9,5 +9,10 @@ if [[ -d "${ZSH}" ]]; then
     [[ -r "${ZSH}/oh-my-zsh.sh" ]] && source "${ZSH}/oh-my-zsh.sh";
 fi
 
+autoload -Uz compinit;
+compinit;
+
+zstyle ':completion:*' menu select;
+
 source "$(dirname $0)/prompt.sh";
 source "$(dirname $0)/../dotfiles.sh";

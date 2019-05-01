@@ -15,6 +15,6 @@ function custom-git-prompt()
 autoload -U colors && colors;
 setopt prompt_subst;
 
-PS1='[%F{magenta}zsh%f %(?..%B%F{red}%?%f%b )%B%F{white}%n%f%b@%f${DOTFILES_HOST_PROMPT_COLOR}%U%m%u%f %F{cyan}%~%f %T$(custom-git-prompt)]
+PS1='[%(?..%B%F{red}%?%f%b )%B%F{white}%n%f%b@%f${DOTFILES_HOST_PROMPT_COLOR}%U%m%u%f %F{cyan}%~%f %T$(custom-git-prompt)]
 %# ';
 
