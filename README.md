@@ -1,11 +1,11 @@
 ## Dotfiles
 
-This repository allows for quickly setup the environment how I like it :)
+With this repository I can quickly setup a shell environment to my liking:)
 
 ### Installation
 
 Checkout this repository.
-From the home directory, add the following line to the `.bashrc` file (or `~/.bash_profile` if you use FreeDSB):
+From the home directory, add the following line to the `.bashrc`, or `~/.bash_profile` file:
 ```sh
 source <dotfiles-dir>/bash/bashrc.sh;
 ```
@@ -21,4 +21,4 @@ If you use zsh, add the following to the `.zshrc` file:
 source <dotfiles-dir>/zsh/zshrc.sh;
 ```
 
-To start using the `cds` function, please run `repo-search` once first.
+Before you can use the `cds` function, you must first run the `repo-search` command.
