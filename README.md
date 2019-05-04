@@ -4,11 +4,14 @@ With this repository I can quickly setup a shell environment to my liking:)
 
 ### Installation
 
-Checkout this repository.
+Clone this repository.
 From the home directory, add the following line to the `.bashrc`, or `~/.bash_profile` file:
 ```sh
 source <dotfiles-dir>/bash/bashrc.sh;
 ```
+
+After cloning the repository, call <path-to-dotfiles>install.sh to add the required lines
+to the rc files located in your homedir.
 
 In addition, to make bash autocomplete case insensitive, do:
 ```sh

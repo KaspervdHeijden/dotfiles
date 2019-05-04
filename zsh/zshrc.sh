@@ -8,12 +8,12 @@ if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
     source "${ZSH}/oh-my-zsh.sh";
 fi
 
-export UPDATE_ZSH_DAYS=13;
+export UPDATE_ZSH_DAYS=7;
 
 autoload -Uz compinit;
 compinit;
 
 zstyle ':completion:*' menu select;
 
-source "$(dirname $0)/prompt.sh";
-source "$(dirname $0)/../dotfiles.sh";
+source "${DOTFILES_DIR}/zsh/prompt.sh";
+source "${DOTFILES_DIR}/dotfiles.sh";

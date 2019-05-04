@@ -67,7 +67,7 @@ function repo-root()
         return 1;
     fi
 
-    [[ "${1}" == '-c' ]] && cd "${repo_root}" || echo "${repo_root}";
+    [[ "${1}" == '-o' ]] && echo "${repo_root}" || cd "${repo_root}";
 }
 
 function gitt()
@@ -80,10 +80,13 @@ function gitt()
     local commit_message="${1}";
     local check_fork="1";
 
-    if [[ "${1}" == '-f' ]]; then
-        commit_message="${2}";
-        check_fork="0";
-    fi
+    for arg in "$@"; do
+        if [[ "${arg}" == '-f' ]]; then
+            check_fork="0";
+        else
+            commit_message="${arg}";
+        fi
+    done
 
     if [[ "${#commit_message}" -lt 3 ]]; then
         echo 'A commit message requires at least 3 characters' >&2;
@@ -118,14 +121,20 @@ function gitl()
     fi
 
     local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local remotes=$(git remote);
     local remote_name='';
 
     if [[ ! -z "${1}" ]]; then
         remote_name="${1}";
-    elif [[ $(git remote | grep upstream) ]]; then
+    elif [[ $(echo "${remotes}" | grep 'upstream') ]]; then
         remote_name='upstream';
     else
         remote_name='origin';
+    fi
+
+    if [[ ! $(echo "${remotes}" | grep "${remote_name}") ]]; then
+        echo "Unknown remote ${remote}" >&2;
+        return 2;
     fi
 
     echo "Pulling ${remote_name} ${branch_name}";
@@ -134,7 +143,8 @@ function gitl()
 
 function gith()
 {
-    if [[ ! $(git remote 2>/dev/null) ]]; then
+    local remotes=$(git remote 2> /dev/null);
+    if [[ -z "${remotes}" ]]; then
         echo "Not in a git repository" >&2;
         return 1;
     fi
@@ -151,7 +161,7 @@ function gith()
         fi
     done
 
-    if [[ ! $(git remote | grep "${remote_name}") ]]; then
+    if [[ ! $(echo "${remotes}" | grep "${remote_name}") ]]; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
