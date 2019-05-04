@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash --
 
 cur_dir=$(realpath $(dirname "${0}"));
 echo "Including dotfiles from ${cur_dir}";
@@ -18,4 +18,4 @@ for file in ~/.bashrc ~/.bash_profile ~/.zshrc; do
     fi
 done;
 
-echo 'Done. Please restart your shell!';
+echo 'Done. Please restart your shell, and call repo-search';
