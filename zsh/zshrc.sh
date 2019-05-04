@@ -1,13 +1,14 @@
-if [[ -d "${ZSH}" ]]; then
-    ZSH_THEME='gianu';
-    if [[ -d "${ZSH}/custom/plugins/zsh-autosuggestions" ]]; then
+if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
+    if [[ -d "${ZSH_CUSTOM}/plugins/zsh-autosuggestions" ]]; then
         plugins=(sudo zsh-autosuggestions);
     else
         plugins=(sudo);
     fi
 
-    [[ -r "${ZSH}/oh-my-zsh.sh" ]] && source "${ZSH}/oh-my-zsh.sh";
+    source "${ZSH}/oh-my-zsh.sh";
 fi
+
+export UPDATE_ZSH_DAYS=13;
 
 autoload -Uz compinit;
 compinit;
