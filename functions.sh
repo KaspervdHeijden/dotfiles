@@ -113,7 +113,8 @@ function gitt()
 
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z $(git status --porcelain | grep '??') ]]; then
-        echo "There are untracked files:\n${untracked_files}\n";
+        echo -e "There are untracked files:\n${untracked_files}\n";
+        sleep 2;
     fi
 
     git commit -m "${commit_message}";
