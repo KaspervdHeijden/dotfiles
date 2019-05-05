@@ -1,5 +1,5 @@
 if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
-    if [[ -d "${ZSH_CUSTOM}/plugins/zsh-autosuggestions" ]]; then
+    if [[ -d "${ZSH}/custom/plugins/zsh-autosuggestions" ]]; then
         plugins=(sudo zsh-autosuggestions);
     else
         plugins=(sudo);
