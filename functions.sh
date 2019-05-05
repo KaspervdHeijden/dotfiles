@@ -110,8 +110,10 @@ function gitt()
     fi
 
     [[ $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F ':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
+
+    local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z $(git status --porcelain | grep '??') ]]; then
-        echo 'There are untracked files';
+        echo "There are untracked files:\n${untracked_files}\n";
     fi
 
     git commit -m "${commit_message}";
