@@ -25,3 +25,4 @@ source <dotfiles-dir>/zsh/zshrc.sh;
 ```
 
 Before you can use the `cds` function, you must first run the `repo-search` command.
+

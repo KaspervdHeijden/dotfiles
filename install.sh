@@ -16,3 +16,4 @@ for shell_name in bash zsh; do
 done;
 
 echo 'Done. Please restart your shell, and call repo-search';
+

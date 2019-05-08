@@ -1,4 +1,3 @@
-
 export SHELL=$(which $(ps -p $$ -o 'comm='));
 export LESS="-F -X ${LESS}";
 export GIT_PAGER=less;
@@ -12,3 +11,4 @@ source "${DOTFILES_DIR}/aliases.sh";
 
 # Clear any non zero exit codes
 true;
+

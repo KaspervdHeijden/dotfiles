@@ -1,8 +1,8 @@
-
 zstyle ':completion:*' menu select;
 autoload -Uz compinit;
 compinit;
 
+setopt appendhistory;
 if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
     if [[ ! -z "${ZSH_CUSTOM}" && -d "${ZSH_CUSTOM}/plugins/zsh-autosuggestions" ]]; then
         plugins=(sudo zsh-autosuggestions);
@@ -18,3 +18,4 @@ fi
 
 source "${DOTFILES_DIR}/zsh/prompt.sh";
 source "${DOTFILES_DIR}/dotfiles.sh";
+

@@ -1,7 +1,6 @@
-
 function custom-git-prompt()
 {
-    [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" == "1" ]] && return 0;
+    [[ "$(git config --get oh-my-zsh.hide-status 1>/dev/null)" == "1" ]] && return 0;
 
     local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
     [[ -z "${branch_name}" ]] && return 0;

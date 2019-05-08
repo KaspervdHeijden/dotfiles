@@ -3,7 +3,7 @@
 
 alias  nn="$(which nano) --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const";
 alias  tm="tmux attach -f ${DOTFILES_DIR}/tmux.conf 2> /dev/null || tmux -f ${DOTFILES_DIR}/tmux.conf new > /dev/null 2> /dev/null";
-alias shq="ps waux | grep ssh | grep -v grep | awk '{print $2}' | uniq | xargs -r kill";
+alias vim="vim -u ${DOTFILES_DIR}/vimrc.conf";
 
 alias gc='git checkout';
 alias gs='git status';
@@ -19,3 +19,4 @@ alias   rr='repo-root';
 alias  lsa='ls -lAFh';
 alias gitc='gitt';
 alias  cls='clear';
+

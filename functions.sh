@@ -1,4 +1,3 @@
-
 function repo-search()
 {
     echo -n 'Searching for repositories, please hold...';
@@ -34,7 +33,7 @@ function cds()
     fi
 
     local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/.repos");
-    if [[ ! -z "${end_match}" ]]; then
+    if [[ -d "${end_match}" ]]; then
         cd "${end_match}";
         return 0;
     fi
@@ -57,6 +56,15 @@ function sha()
             echo "SSH agent already running under pid ${SSH_AGENT_PID}";
             ;;
     esac
+}
+
+function shq()
+{
+    local pid_list=$(ps waux | grep 'ssh-agent -s' | grep -v grep | awk '{print $2}' | uniq);
+    [[ -z "${pid_list}" ]] && return 0;
+
+    echo "${pid_list}" | xargs -I '{}'  echo "Killing {}";
+    echo "${pid_list}" | xargs kill;
 }
 
 function repo-root()
@@ -198,3 +206,24 @@ function phpu()
     [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${cur_dir}";
     return "${ret_val}";
 }
+
+function line()
+{
+    if [[ -z "${1}" ]]; then
+        echo 'No linenumber given' >&2;
+        return 1;
+    fi
+
+    if [[ -z "${2}" ]]; then
+        echo 'No filename given' >&2;
+        return 2;
+    fi
+
+    if [[ ! -f "${2}" ]]; then
+        echo 'Filename does not exist' >&2;
+        return 3;
+    fi
+
+    head -n "${1}" "${2}" | tail -n 1;
+}
+
