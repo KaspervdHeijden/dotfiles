@@ -1,7 +1,7 @@
 export SHELL=$(which $(ps -p $$ -o 'comm='));
 export LESS="-F -X ${LESS}";
 export GIT_PAGER=less;
-export EDITOR=nano;
+export EDITOR=vim;
 export PAGER=less;
 
 source "${DOTFILES_DIR}/functions.sh";

@@ -63,7 +63,7 @@ function shq()
     local pid_list=$(ps waux | grep 'ssh-agent -s' | grep -v grep | awk '{print $2}' | uniq);
     [[ -z "${pid_list}" ]] && return 0;
 
-    echo "${pid_list}" | xargs -I '{}'  echo "Killing {}";
+    echo "${pid_list}" | xargs -I '{}' echo "Killing {}";
     echo "${pid_list}" | xargs kill;
 }
 
@@ -122,7 +122,8 @@ function gitt()
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z $(git status --porcelain | grep '??') ]]; then
         echo -e "There are untracked files:\n${untracked_files}\n";
-        sleep 2;
+        local dummy;
+        read -t 2 dummy;
     fi
 
     git commit -m "${commit_message}";

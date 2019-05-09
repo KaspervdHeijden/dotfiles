@@ -1,3 +1,6 @@
+# If not running interactively, don't do anything
+[[ -z "${PS1}" ]] && return;
+
 # For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
