@@ -85,16 +85,20 @@ function gitt()
         return 1;
     fi
 
-    local commit_message="${1}";
+    local check_line_endings="1";
     local check_fork="1";
 
-    for arg in "$@"; do
-        if [[ "${arg}" == '-f' ]]; then
-            check_fork="0";
-        else
-            commit_message="${arg}";
-        fi
+    while getopts "ef" arg; do
+        case "${arg}" in
+            e)
+                check_line_endings="0" ;;
+            f)
+                check_fork="0" ;;
+        esac;
     done
+
+    shift $(expr $OPTIND - 1);
+    local commit_message="${1}";
 
     if [[ "${#commit_message}" -lt 3 ]]; then
         echo 'A commit message requires at least 3 characters' >&2;
@@ -117,11 +121,11 @@ function gitt()
         return 5;
     fi
 
-    [[ $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F ':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
+    [[ "${check_line_endings}" == "1" && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F ':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
 
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z $(git status --porcelain | grep '??') ]]; then
-        echo -e "There are untracked files:\n${untracked_files}\n";
+        echo -e "There are untracked files:\n${untracked_files}\n(Ctrl+C to cancel)\n";
         local dummy;
         read -t 2 dummy;
     fi
@@ -225,6 +229,6 @@ function line()
         return 3;
     fi
 
-    head -n "${1}" "${2}" | tail -n 1;
+    sed "${1}! d" "${2}";
 }
 
