@@ -165,7 +165,7 @@ function gith()
 {
     local remotes=$(git remote 2> /dev/null);
     if [[ -z "${remotes}" ]]; then
-        echo "Not in a git repository" >&2;
+        echo 'Not in a git repository' >&2;
         return 1;
     fi
 
@@ -205,7 +205,7 @@ function phpu()
     local cur_dir=$(pwd);
     [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${repo_root}";
 
-    "./vendor/phpunit/phpunit/phpunit";
+    './vendor/phpunit/phpunit/phpunit';
     local ret_val="${?}";
 
     [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${cur_dir}";
