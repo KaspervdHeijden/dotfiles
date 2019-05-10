@@ -232,3 +232,15 @@ function line()
     sed "${1}! d" "${2}";
 }
 
+function cols()
+{
+    local separator="${1}";
+    local input;
+
+    read input;
+    [[ -z "${input}" ]] && return 0;
+
+    [[ -z "${separator}" ]] && separator=',';
+    echo "${input}" | awk -F"${separator}" '{ for (i = 1; i <= NF; ++i) { print i "=" $i; } }';
+}
+
