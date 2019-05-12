@@ -18,8 +18,8 @@ if [[ -x /usr/bin/dircolors ]]; then
     [[ -r ~/.dircolors ]] && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)";
     alias fgrep='fgrep --color=auto';
     alias egrep='egrep --color=auto';
-    alias  grep='grep --color=auto';
-    alias    ls='ls --color=auto';
+    alias grep='grep --color=auto';
+    alias ls='ls --color=auto';
 fi
 
 # Enable programmable completion features (you don't need to enable this, if it's

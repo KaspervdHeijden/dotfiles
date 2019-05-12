@@ -1,9 +1,9 @@
 [[ -x "$(which psysh)" && ! -x "$(which pe)" ]] && alias pe='psysh';
 [[ -x "$(which docker-comper)" ]] && alias dc='docker-compose';
 
-alias nano="$(which nano) --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const";
+alias nano="nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const";
 alias tm="tmux attach -f ${DOTFILES_DIR}/tmux.conf 2> /dev/null || tmux -f ${DOTFILES_DIR}/tmux.conf new > /dev/null 2> /dev/null";
-alias vim="$(which vim) -u ${DOTFILES_DIR}/vimrc.conf";
+alias vim="vim -u ${DOTFILES_DIR}/vimrc.conf";
 
 alias gc='git checkout';
 alias gs='git status';

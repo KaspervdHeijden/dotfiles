@@ -46,7 +46,7 @@ function sha()
 {
     case $(ssh-add -l >/dev/null 2>&1; echo $?) in
         2)
-            eval $(ssh-agent -s) >/dev/null 2>&1;
+            eval $(ssh-agent -s) > /dev/null 2>&1;
             ;&
         1)
             ssh-add >/dev/null;
@@ -69,7 +69,7 @@ function shq()
 
 function repo-root()
 {
-    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    local repo_root=$(git rev-parse --show-toplevel 2 >/dev/null);
     if [[ -z "${repo_root}" ]]; then
         echo 'Not in a git repository' >&2;
         return 1;
@@ -80,7 +80,7 @@ function repo-root()
 
 function gitt()
 {
-    if [[ ! $(git remote 2>/dev/null) ]]; then
+    if [[ ! $(git remote 2> /dev/null) ]]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -105,17 +105,17 @@ function gitt()
         return 2;
     fi
 
-    if [[ $(git symbolic-ref --short HEAD 2>/dev/null) == 'master' ]]; then
+    if [[ $(git symbolic-ref --short HEAD 2> /dev/null) == 'master' ]]; then
         echo 'Not commiting in master' >&2;
         return 3;
     fi
 
-    if [[ "${check_fork}" == "1" && ! $(git remote | grep upstream 2>/dev/null) ]]; then
+    if [[ "${check_fork}" == "1" && ! $(git remote | grep upstream 2> /dev/null) ]]; then
         echo 'Not in your fork' >&2;
         return 4;
     fi
 
-    local git_status=$(git status --porcelain 2>/dev/null);
+    local git_status=$(git status --porcelain 2> /dev/null);
     if [[ -z "${git_status}" ]]; then
         echo 'No staged changes' >&2;
         return 5;
@@ -125,7 +125,7 @@ function gitt()
 
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z $(git status --porcelain | grep '??') ]]; then
-        echo -e "There are untracked files:\n${untracked_files}\n(Ctrl+C to cancel)\n";
+        echo -e "There are untracked files:\n${untracked_files}\n\n(Ctrl+C to cancel)\n";
         local dummy;
         read -t 2 dummy;
     fi
@@ -135,7 +135,7 @@ function gitt()
 
 function gitl()
 {
-    if [[ ! $(git remote 2>/dev/null) ]]; then
+    if [[ ! $(git remote 2> /dev/null) ]]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -169,7 +169,7 @@ function gith()
         return 1;
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
     local remote_name='origin';
     local force_flag='';
 
@@ -235,9 +235,10 @@ function line()
 function cols()
 {
     local separator="${1}";
-    local input;
+    local input='';
 
-    read input;
+    [[ -f "${2}" ]] && input=$(cat "${2}" 2> /dev/null);
+    [[ -z "${input}" ]] && read input;
     [[ -z "${input}" ]] && return 0;
 
     [[ -z "${separator}" ]] && separator=',';
