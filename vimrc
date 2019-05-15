@@ -1,0 +1,85 @@
+" Use Vim defaults instead of 99% vi compatibility
+set nocompatible
+
+" Don't parse vim configurations of the file we're editing,
+"  this could be a security risk and is just annoying imho.
+set nomodeline
+
+" Allow the use of backspace over all characters.
+set backspace=indent,eol,start
+
+" Now we set some defaults for the editor
+set wildmenu                " Turn on the Wild menu
+set lazyredraw              " Don't redraw while executing macros (good performance config)
+set autoread                " Set to auto read when a file is changed from the outside
+set hlsearch                " Highlight search results
+set autoindent              " Always set autoindenting on
+set shiftround              " Indent/outdent to nearest tabstop
+set linebreak               " Don't wrap words by default
+set textwidth=0             " Don't wrap lines by default
+set nobackup                " Don't keep backup files
+set noswapfile              " Don't keep filse like bla.swp
+set nowritebackup           " Don't keep files like bla~
+set noundofile              " Don't keep undo files like un~
+set viminfo='20,\"50        " Read/write a .viminfo file, don't store more than
+                            " 50 lines of registers
+set history=50              " Keep 50 lines of command line history
+set ruler                   " Show the cursor position all the time
+set nowrap                  " Disable text wrapping
+set showcmd                 " Show (partial) command in status line.
+set showmatch               " Show matching brackets.
+set ignorecase              " Do case insensitive matching
+set incsearch               " Incremental search
+set pastetoggle=<F12>       " Use F12 to quickly switch paste mode
+set mouse=v                 " Enable the mouse in visual mode
+
+" Error handling
+set nofoldenable
+set noerrorbells
+set visualbell
+
+" Use a column width of 4 for tabs, and expand tabs into spaces
+set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set path+=**
+
+set cmdheight=2
+
+" Enable syntax highlighing
+syntax on
+
+" If using a dark background within the editing area and
+" syntaxt highlightinh turn on this option as well
+set background=dark
+
+if has("autocmd")
+    filetype plugin on
+endif
+
+if has("multi_byte")
+    if &termencoding == ""
+        let &termencoding = &encoding
+    endif
+
+    set encoding=utf-8
+    setglobal fileencoding=utf-8
+endif
+
+" Show tabs and trailing whitespace as special characters
+set listchars=tab:→\ ,trail:█
+set list
+
+" Remap Ctrl+A/E to Home/End
+noremap <C-a> <Home>
+noremap <C-e> <End>
+
+" Do the same for insert mode
+inoremap <C-a> <Home>
+inoremap <C-e> <End>
+
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+
