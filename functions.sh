@@ -21,6 +21,11 @@ function cds()
         return 0;
     fi
 
+    if [[ -d "${1}" ]]; then
+        cd "${1}";
+        return 0;
+    fi
+
     local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/.repos");
     if [[ -z "${match}" ]]; then
         echo 'No match found' >&2;
@@ -69,7 +74,7 @@ function shq()
 
 function repo-root()
 {
-    local repo_root=$(git rev-parse --show-toplevel 2 >/dev/null);
+    local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
     if [[ -z "${repo_root}" ]]; then
         echo 'Not in a git repository' >&2;
         return 1;
