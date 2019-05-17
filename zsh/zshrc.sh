@@ -1,7 +1,6 @@
 setopt histignoredups appendhistory;
 
-autoload -Uz compinit;
-compinit;
+autoload -Uz compinit && compinit;
 
 HISTFILE=~/.zsh_history;
 HISTSIZE=1000;
@@ -24,7 +23,6 @@ zstyle ':completion:*' verbose true;
 
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31';
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd';
-
 
 if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
     if [[ ! -z "${ZSH_CUSTOM}" && -d "${ZSH_CUSTOM}/plugins/zsh-autosuggestions" ]]; then

@@ -1,7 +1,7 @@
 function repo-search()
 {
     echo -n 'Searching for repositories, please hold...';
-    find / -type d -name ".git" -and -not -wholename "*/vendor/*" -print0 2> /dev/null | xargs -r0n1 dirname > '/tmp/repolist-new' 2> /dev/null;
+    find / -type d -name '.git' -and -not -wholename '*/vendor/*' -print0 2> /dev/null | xargs -r0n1 dirname > '/tmp/repolist-new' 2> /dev/null;
 
     grep -v '/opt/httpd/' '/tmp/repolist-new' > "${DOTFILES_DIR}/.repos";
     rm '/tmp/repolist-new' 2> /dev/null;
@@ -93,7 +93,7 @@ function gitt()
     local check_line_endings="1";
     local check_fork="1";
 
-    while getopts "ef" arg; do
+    while getopts 'ef' arg; do
         case "${arg}" in
             e)
                 check_line_endings="0" ;;
@@ -207,14 +207,7 @@ function phpu()
         return 2;
     fi
 
-    local cur_dir=$(pwd);
-    [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${repo_root}";
-
-    './vendor/phpunit/phpunit/phpunit';
-    local ret_val="${?}";
-
-    [[ "${cur_dir}" = "${repo_dir}" ]] || cd "${cur_dir}";
-    return "${ret_val}";
+    ( cd "${repo_root}" && './vendor/phpunit/phpunit/phpunit'; );
 }
 
 function line()
@@ -235,18 +228,5 @@ function line()
     fi
 
     sed "${1}! d" "${2}";
-}
-
-function cols()
-{
-    local separator="${1}";
-    local input='';
-
-    [[ -f "${2}" ]] && input=$(cat "${2}" 2> /dev/null);
-    [[ -z "${input}" ]] && read input;
-    [[ -z "${input}" ]] && return 0;
-
-    [[ -z "${separator}" ]] && separator=',';
-    echo "${input}" | awk -F"${separator}" '{ for (i = 1; i <= NF; ++i) { print i "=" $i; } }';
 }
 

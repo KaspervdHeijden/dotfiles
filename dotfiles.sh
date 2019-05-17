@@ -7,8 +7,7 @@ export PAGER=less;
 source "${DOTFILES_DIR}/functions.sh";
 source "${DOTFILES_DIR}/aliases.sh";
 
-[[ -f ~/.custom_profile ]] && source ~/.custom_profile;
-
-# Clear any non zero exit codes
-true;
+if [[ -f ~/.custom_profile ]]; then
+    source ~/.custom_profile;
+fi
 
