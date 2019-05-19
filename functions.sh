@@ -1,32 +1,28 @@
 function repo-search()
 {
-    echo -n 'Searching for repositories, please hold...';
-    find / -type d -name '.git' -and -not -wholename '*/vendor/*' -print0 2> /dev/null | xargs -r0n1 dirname > '/tmp/repolist-new' 2> /dev/null;
-
-    grep -v '/opt/httpd/' '/tmp/repolist-new' > "${DOTFILES_DIR}/.repos";
-    rm '/tmp/repolist-new' 2> /dev/null;
-
-    echo ' Done';
+    echo 'Searching for repositories. Please hold...';
+    find / -type d -name '.git' -and -not -wholename '*/vendor/*' -print0 2> /dev/null | xargs -r0n1 dirname | grep -vFf "${DOTFILES_DIR}/repo-list/ignores.txt" 2> /dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
+    mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
 }
 
 function cds()
 {
-    if [[ ! -f "${DOTFILES_DIR}/.repos" ]]; then
-        echo 'No repository list found; please run repo-search and try again' >&2;
-        return 1;
-    fi
-
-    if [[ -z "${1}" ]]; then
-        cat "${DOTFILES_DIR}/.repos";
-        return 0;
-    fi
-
     if [[ -d "${1}" ]]; then
         cd "${1}";
         return 0;
     fi
 
-    local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/.repos");
+    if [[ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]]; then
+        echo 'No repository list found; please run repo-search and try again' >&2;
+        return 1;
+    fi
+
+    if [[ -z "${1}" ]]; then
+        cat "${DOTFILES_DIR}/repo-list/repos.txt";
+        return 0;
+    fi
+
+    local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/repo-list/repos.txt");
     if [[ -z "${match}" ]]; then
         echo 'No match found' >&2;
         return 2;
@@ -37,7 +33,7 @@ function cds()
         return 0;
     fi
 
-    local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/.repos");
+    local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/repo-list/repos.txt");
     if [[ -d "${end_match}" ]]; then
         cd "${end_match}";
         return 0;
@@ -80,7 +76,7 @@ function repo-root()
         return 1;
     fi
 
-    [[ "${1}" == '-o' ]] && echo "${repo_root}" || cd "${repo_root}";
+    [[ "${1}" == '-e' ]] && echo "${repo_root}" || cd "${repo_root}";
 }
 
 function gitt()
