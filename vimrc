@@ -46,6 +46,7 @@ set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set path+=**
 
+set laststatus=2
 set cmdheight=2
 
 " Enable syntax highlighing
