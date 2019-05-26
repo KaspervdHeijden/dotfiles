@@ -1,5 +1,5 @@
 export SHELL=$(which $(ps -p $$ -o 'comm='));
-export LESS="-F -X ${LESS}";
+export LESS="-FXR ${LESS}";
 export GIT_PAGER=less;
 export EDITOR=vim;
 export PAGER=less;

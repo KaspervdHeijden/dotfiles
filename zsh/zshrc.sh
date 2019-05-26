@@ -1,9 +1,11 @@
-setopt histignoredups appendhistory;
+setopt prompt_subst histignoredups appendhistory;
+
 autoload -Uz compinit && compinit;
+autoload -U colors && colors;
 
 HISTFILE=~/.zsh_history;
-HISTSIZE=1000;
-SAVEHIST=1000;
+HISTSIZE=20000;
+SAVEHIST=20000;
 
 [[ -x "$(which dircolors)" ]] && eval "$(dircolors -b)";
 

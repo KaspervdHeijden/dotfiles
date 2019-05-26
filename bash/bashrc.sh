@@ -2,7 +2,7 @@
 
 HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
-HISTSIZE=10000;
+HISTSIZE=20000;
 
 shopt -s checkwinsize;
 shopt -s histappend;
