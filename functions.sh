@@ -1,3 +1,8 @@
+#
+# Populate the list for cds
+#
+# See cds()
+#
 function repo-search()
 {
     echo 'Searching for repositories. Please hold...';
@@ -5,6 +10,22 @@ function repo-search()
     mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
 }
 
+#
+# Navigates to a repository with a name.
+#
+# cds [<partial-name>]
+#
+# View a list of all repositories by calling
+# cds without arguments.
+#
+# If given, the parital name should uniquely
+# identify a repository from this list.
+#
+# This method requires a list of repositories,
+# which can be created using repo-searech.
+#
+# See repo-search
+#
 function cds()
 {
     if [[ -d "${1}" ]]; then
@@ -43,6 +64,9 @@ function cds()
     return 3;
 }
 
+#
+# Starts a SSH agent.
+#
 function sha()
 {
     case $(ssh-add -l >/dev/null 2>&1; echo $?) in
@@ -59,15 +83,12 @@ function sha()
     esac
 }
 
-function shq()
-{
-    local pid_list=$(ps waux | grep 'ssh-agent -s' | grep -v grep | awk '{print $2}' | uniq);
-    [[ -z "${pid_list}" ]] && return 0;
-
-    echo "${pid_list}" | xargs -I '{}' echo "Killing {}";
-    echo "${pid_list}" | xargs kill;
-}
-
+#
+# Navigates to, or prints the root of the current repository.
+# Use -e to print the root diretory to STDOUT.
+#
+# repo-root [-e]
+#
 function repo-root()
 {
     local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
@@ -79,6 +100,15 @@ function repo-root()
     [[ "${1}" == '-e' ]] && echo "${repo_root}" || cd "${repo_root}";
 }
 
+#
+# Wrapper aournd git commit, adding in a few checks.
+#
+# 1. Is the commit message long enough? (minimum required: 3 characters)
+# 2. Are we not committing in master?
+# 3. Are we committing in our own fork? (skip this check using -f)
+# 4. Are there staged changes?
+# 5. Are the DOS line endings? (skip with -e)
+#
 function gitt()
 {
     if [[ ! $(git remote 2> /dev/null) ]]; then
@@ -125,24 +155,27 @@ function gitt()
     [[ "${check_line_endings}" == "1" && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F ':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
 
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
-    if [[ ! -z $(git status --porcelain | grep '??') ]]; then
-        echo -e "There are untracked files:\n${untracked_files}\n\n(Ctrl+C to cancel)\n";
-        local dummy;
-        read -t 2 dummy;
+    if [[ ! -z "${untracked_files}" ]]; then
+        echo -e "\n\nThere are untracked files:\n${untracked_files}\n\n";
     fi
 
     git commit -m "${commit_message}";
 }
 
+#
+# Pulls the current branch from origin.
+#
+# gitl [<remote=origin>]
+#
 function gitl()
 {
-    if [[ ! $(git remote 2> /dev/null) ]]; then
+    local remotes=$(git remote 2> /dev/null);
+    if [[ -z "${remotes}" ]]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
 
     local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
-    local remotes=$(git remote);
     local remote_name='';
 
     if [[ ! -z "${1}" ]]; then
@@ -162,6 +195,12 @@ function gitl()
     git pull "${remote_name}" "${branch_name}";
 }
 
+#
+# Pushes the current branch to origin.
+# Use -f to force push (with lease).
+#
+# gith [-f] [<remote=origin>]
+#
 function gith()
 {
     local remotes=$(git remote 2> /dev/null);
@@ -190,6 +229,46 @@ function gith()
     git push $force_flag "${remote_name}" "${branch_name}";
 }
 
+#
+# Creates a new branch from a fresh master.
+#
+# gitb newFeatureBranch
+#
+function gitb()
+{
+    local new_branch_name="${1}";
+    if [[ -z "${new_branch_name}" ]]; then
+        echo 'No branch name given' >&2;
+        return 1;
+    fi
+
+    local remotes=$(git remote 2> /dev/null);
+    if [[ -z "${remotes}" ]]; then
+        echo 'Not in a git repository' >&2;
+        return 2;
+    fi
+
+    if [[ $(git branch | grep "${new_branch_name}") ]]; then
+        echo "Branch ${new_branch_name} already exists" >&2;
+        return 3;
+    fi
+
+    local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
+    if [[ "${branch_name}" != 'master' ]]; then
+        git checkout master || return 4;
+    fi
+
+    local remote_name='origin';
+    if [[ $(echo "${remotes}" | grep 'upstream') ]]; then
+        remote_name='upstream';
+    fi
+
+    git pull "${remote_name}" master && git checkout -b "${new_branch_name}";
+}
+
+#
+# Executes phpunit in the current repository.
+#
 function phpu()
 {
     if [[ ! -n $(git remote 2>/dev/null) ]]; then
@@ -206,23 +285,32 @@ function phpu()
     ( cd "${repo_root}" && './vendor/phpunit/phpunit/phpunit'; );
 }
 
+
+#
+# Displays a line and optionally a column for a specific (csv) file.
+# line <filename> <linenumber> [<column>] [<separator=,>]
+#
 function line()
 {
     if [[ -z "${1}" ]]; then
-        echo 'No linenumber given' >&2;
+        echo 'No filename given' >&2;
         return 1;
     fi
 
-    if [[ -z "${2}" ]]; then
-        echo 'No filename given' >&2;
+    if [[ ! -f "${1}" ]]; then
+        echo "Filename '${1}' does not exist" >&2;
         return 2;
     fi
 
-    if [[ ! -f "${2}" ]]; then
-        echo 'Filename does not exist' >&2;
+    if [[ -z "${2}" ]]; then
+        echo 'No linenumber given' >&2;
         return 3;
     fi
 
-    sed "${1}! d" "${2}";
+    if [[ -z "${3}" ]]; then
+        sed "${2}! d" "${1}";
+    else
+        sed "${2}! d" "${1}" | awk -F"${4:-,}" '{print $col}' col="${3}";
+    fi
 }
 
