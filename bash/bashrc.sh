@@ -4,8 +4,7 @@ HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
 HISTSIZE=20000;
 
-shopt -s checkwinsize;
-shopt -s histappend;
+shopt -s checkwinsize histappend dirspell;
 
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)";
 if [[ -x /usr/bin/dircolors ]]; then
