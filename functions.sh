@@ -1,7 +1,7 @@
 #
-# Populate the list for cds
+# Populate the list for cds.
 #
-# See cds()
+# @see cds()
 #
 function repo-search()
 {
@@ -24,7 +24,7 @@ function repo-search()
 # This method requires a list of repositories,
 # which can be created using repo-searech.
 #
-# See repo-search
+# @see repo-search
 #
 function cds()
 {
