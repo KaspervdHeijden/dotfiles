@@ -160,6 +160,10 @@ function gitt()
     fi
 
     git commit -m "${commit_message}";
+    local result="${?}";
+
+    git status;
+    return "${result}";
 }
 
 #
@@ -285,7 +289,6 @@ function phpu()
     ( cd "${repo_root}" && './vendor/phpunit/phpunit/phpunit'; );
 }
 
-
 #
 # Displays a line and optionally a column for a specific (csv) file.
 # line <filename> <linenumber> [<column>] [<separator=,>]
@@ -314,3 +317,13 @@ function line()
     fi
 }
 
+#
+# Slugifies all parameters in a single slug string.
+#
+# slug <param1> [<params2>] [...]
+#
+function slug()
+{
+    local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^0-9a-z-]+//g');
+    [[ ! -z "${slugged}" ]] && echo "${slugged}";
+}
