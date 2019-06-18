@@ -147,7 +147,7 @@ function gitt()
     fi
 
     local git_status=$(git status --porcelain 2> /dev/null);
-    if [[ -z "${git_status}" ]]; then
+    if [[ -z $(echo "${git_status}" | grep -E '^M ') ]]; then
         echo 'No staged changes' >&2;
         return 5;
     fi
@@ -156,15 +156,20 @@ function gitt()
 
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z "${untracked_files}" ]]; then
-        echo -e "\n\nThere are untracked files:\n${untracked_files}\n\n";
+        echo -e "There are untracked files:\n${untracked_files}\n";
     fi
 
     git commit -m "${commit_message}";
     local result="${?}";
 
-    echo "// ------------------------";
-    echo "git status --porcelain";
-    git status --porcelain;
+    git_status=$(git status --porcelain);
+    echo '';
+    echo '--------------------------';
+    if [[ -z "${git_status}" ]]; then
+        echo 'Working tree clean';
+    else
+        echo "${git_status}";
+    fi
 
     return "${result}";
 }
