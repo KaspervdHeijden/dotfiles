@@ -162,7 +162,10 @@ function gitt()
     git commit -m "${commit_message}";
     local result="${?}";
 
-    git status;
+    echo "// ------------------------";
+    echo "git status --porcelain";
+    git status --porcelain;
+
     return "${result}";
 }
 
