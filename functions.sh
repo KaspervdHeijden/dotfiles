@@ -324,6 +324,6 @@ function line()
 #
 function slug()
 {
-    local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^0-9a-z-]+//g');
+    local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^0-9a-z-]//g');
     [[ ! -z "${slugged}" ]] && echo "${slugged}";
 }
