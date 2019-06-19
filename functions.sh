@@ -107,9 +107,9 @@ function repo-root()
 # 2. Are we not committing in master?
 # 3. Are we committing in our own fork? (skip this check using -f)
 # 4. Are there staged changes?
-# 5. Are the DOS line endings? (skip with -e)
+# 5. Are there DOS line endings? (skip with -n)
 #
-function gitt()
+function gitc()
 {
     if [[ ! $(git remote 2> /dev/null) ]]; then
         echo 'Not in a git repository' >&2;
@@ -119,9 +119,9 @@ function gitt()
     local check_line_endings="1";
     local check_fork="1";
 
-    while getopts 'ef' arg; do
+    while getopts 'nf' arg; do
         case "${arg}" in
-            e)
+            n)
                 check_line_endings="0" ;;
             f)
                 check_fork="0" ;;
@@ -147,7 +147,7 @@ function gitt()
     fi
 
     local git_status=$(git status --porcelain 2> /dev/null);
-    if [[ -z $(echo "${git_status}" | grep -E '^M ') ]]; then
+    if [[ -z $(echo "${git_status}" | grep -E '^M') ]]; then
         echo 'No staged changes' >&2;
         return 5;
     fi
@@ -163,12 +163,12 @@ function gitt()
     local result="${?}";
 
     git_status=$(git status --porcelain);
-    echo '';
-    echo '--------------------------';
     if [[ -z "${git_status}" ]]; then
-        echo 'Working tree clean';
+        echo '(Working tree clean)';
     else
+        echo '--------------------------';
         echo "${git_status}";
+        echo '--------------------------';
     fi
 
     return "${result}";
@@ -326,7 +326,7 @@ function line()
 }
 
 #
-# Slugifies all parameters in a single slug string.
+# Slugifies all parameters in a single slugged string.
 #
 # slug <param1> [<params2>] [...]
 #

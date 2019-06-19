@@ -23,7 +23,6 @@ alias g='git';
 
 alias rr='repo-root';
 alias lsa='ls -lAFh';
-alias gitc='gitt';
 alias h='history';
 alias c='clear';
 

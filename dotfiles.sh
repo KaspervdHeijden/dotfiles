@@ -11,4 +11,3 @@ source "${DOTFILES_DIR}/aliases.sh";
 if [[ -f ~/.custom_profile ]]; then
     source ~/.custom_profile;
 fi
-

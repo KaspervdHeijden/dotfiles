@@ -25,4 +25,3 @@ fi
 
 source "${DOTFILES_DIR}/bash/prompt.sh";
 source "${DOTFILES_DIR}/dotfiles.sh";
-
