@@ -335,3 +335,11 @@ function slug()
     local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^0-9a-z-]//g');
     [[ ! -z "${slugged}" ]] && echo "${slugged}";
 }
+
+#
+# Updates the environment.
+#
+function update-env()
+{
+    (cd "${DOTFILES_DIR}" && git pull origin master) && source "$(echo ~)/.$(echo "${SHELL}" | awk -F'/' '{print $NF}')rc";
+}

@@ -4,7 +4,6 @@
 alias tm="tmux attach -f ${DOTFILES_DIR}/tmux.conf 2> /dev/null || tmux -f ${DOTFILES_DIR}/tmux.conf new > /dev/null 2> /dev/null";
 alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const';
 alias ack='ack -s --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
-alias relenv=". $(echo ~)/.$(echo $SHELL | awk -F/ '{print $NF}')rc";
 alias vim="vim -u ${DOTFILES_DIR}/vimrc";
 alias shq='killall ssh-agent';
 
