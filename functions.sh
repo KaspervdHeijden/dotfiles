@@ -164,7 +164,7 @@ function gitc()
 
     git_status=$(git status --porcelain);
     if [[ -z "${git_status}" ]]; then
-        echo '(Working tree clean)';
+        echo 'Working tree clean';
     else
         echo '--------------------------';
         echo "${git_status}";
