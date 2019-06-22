@@ -116,8 +116,8 @@ function gitc()
         return 1;
     fi
 
-    local check_line_endings="1";
-    local check_fork="1";
+    local check_line_endings="${GITC_CHECK_LINE_ENDINGS:-1}";
+    local check_fork="${GITC_CHECK_FORK:-1}";
 
     while getopts 'nf' arg; do
         case "${arg}" in
@@ -152,7 +152,7 @@ function gitc()
         return 5;
     fi
 
-    [[ "${check_line_endings}" == "1" && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F ':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
+    [[ "${check_line_endings}" == "1" && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
 
     local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
     if [[ ! -z "${untracked_files}" ]]; then
@@ -164,7 +164,7 @@ function gitc()
 
     git_status=$(git status --porcelain);
     if [[ -z "${git_status}" ]]; then
-        echo 'Working tree clean';
+        echo 'Working tree clean :)';
     else
         echo '--------------------------';
         echo "${git_status}";
