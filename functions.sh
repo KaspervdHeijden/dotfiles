@@ -298,6 +298,20 @@ function phpu()
 }
 
 #
+# Executes phpstan from any directory within a repository.
+#
+function phps()
+{
+    local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
+    if [[ ! -x "${repo_root}/vendor/bin/phpstan" ]]; then
+        echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
+        return 1;
+    fi
+
+    (cd "${repo_root}" && vendor/bin/phpstan -vvv analyse -c phpstan.neon);
+}
+
+#
 # Displays a line and optionally a column for a specific (csv) file.
 # line <filename> <linenumber> [<column>] [<separator=,>]
 #
