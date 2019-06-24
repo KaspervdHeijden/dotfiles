@@ -101,7 +101,7 @@ function repo-root()
 }
 
 #
-# Wrapper aournd git commit, adding in a few checks.
+# Wrapper around git commit, adding in a few checks.
 #
 # 1. Is the commit message long enough? (minimum required: 3 characters)
 # 2. Are we not committing in master?
@@ -116,15 +116,13 @@ function gitc()
         return 1;
     fi
 
-    local check_line_endings="${GITC_CHECK_LINE_ENDINGS:-1}";
-    local check_fork="${GITC_CHECK_FORK:-1}";
+    local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo '1');
+    local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo '1');
 
     while getopts 'nf' arg; do
         case "${arg}" in
-            n)
-                check_line_endings="0" ;;
-            f)
-                check_fork="0" ;;
+            n) check_line_endings="0" ;;
+            f) check_fork="0" ;;
         esac;
     done
 
@@ -162,15 +160,7 @@ function gitc()
     git commit -m "${commit_message}";
     local result="${?}";
 
-    git_status=$(git status --porcelain);
-    if [[ -z "${git_status}" ]]; then
-        echo 'Working tree clean :)';
-    else
-        echo '--------------------------';
-        echo "${git_status}";
-        echo '--------------------------';
-    fi
-
+    [[ ! -z "$(git status --porcelain)" ]] && git status;
     return "${result}";
 }
 
