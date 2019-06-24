@@ -6,7 +6,7 @@
 function repo-search()
 {
     echo 'Searching for repositories. Please hold...';
-    find / -type d -name '.git' -and -not -wholename '*/vendor/*' -print0 2> /dev/null | xargs -r0n1 dirname | grep -vFf "${DOTFILES_DIR}/repo-list/ignores.txt" 2> /dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
+    find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2> /dev/null | xargs -r0n1 dirname 2> /dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
     mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
 }
 
