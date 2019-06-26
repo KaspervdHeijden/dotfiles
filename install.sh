@@ -2,7 +2,7 @@ dotfiles_dir=$(realpath $(dirname "${0}"));
 echo "Including dotfiles from ${dotfiles_dir}...";
 
 for shell_name in bash zsh; do
-    file="$(echo ~)/.${shell_name}rc";
+    file=~/${shell_name}rc;
     if [ $(grep 'DOTFILES_DIR=' "${file}") ]; then
         continue;
     fi

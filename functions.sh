@@ -121,8 +121,8 @@ function gitc()
 
     while getopts 'nf' arg; do
         case "${arg}" in
-            n) check_line_endings="0" ;;
-            f) check_fork="0" ;;
+            n) check_line_endings='0' ;;
+            f) check_fork='0' ;;
         esac;
     done
 
@@ -150,18 +150,17 @@ function gitc()
         return 5;
     fi
 
-    [[ "${check_line_endings}" == "1" && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
+    [[ "${check_line_endings}" == '1' && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
+    git commit -m "${commit_message}" || return 6;
 
-    local untracked_files=$(git status --porcelain | grep '??' | awk '{print $2}');
-    if [[ ! -z "${untracked_files}" ]]; then
-        echo -e "There are untracked files:\n${untracked_files}\n";
+    local git_status_after=$(git status --porcelain 2> /dev/null);
+    if [[ -z "${git_status_after}" ]]; then
+        echo '----------------------------';
+        echo "${git_status_after}";
+        echo '----------------------------';
     fi
 
-    git commit -m "${commit_message}";
-    local result="${?}";
-
-    [[ ! -z "$(git status --porcelain)" ]] && git status;
-    return "${result}";
+    return 0;
 }
 
 #
@@ -345,5 +344,5 @@ function slug()
 #
 function update-env()
 {
-    (cd "${DOTFILES_DIR}" && git pull origin master) && source "$(echo ~)/.$(echo "${SHELL}" | awk -F'/' '{print $NF}')rc";
+    ($(test "${1}" -eq '--no-pull') || (cd "${DOTFILES_DIR}" && git pull origin master)) && source ~/.$(getent passwd "${USER}" | cut -d : -f 7 | awk -F/ '{print $NF}')rc;
 }

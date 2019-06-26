@@ -6,6 +6,7 @@ alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --a
 alias ack='ack -s --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 alias vim="vim -u ${DOTFILES_DIR}/vimrc";
 alias shq='killall ssh-agent';
+alias hlp='declare -f';
 
 alias gcm='git checkout master';
 alias gca='git commit --amend';
