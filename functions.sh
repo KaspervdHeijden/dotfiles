@@ -154,7 +154,7 @@ function gitc()
     git commit -m "${commit_message}" || return 6;
 
     local git_status_after=$(git status --porcelain 2> /dev/null);
-    if [[ -z "${git_status_after}" ]]; then
+    if [[ ! -z "${git_status_after}" ]]; then
         echo '----------------------------';
         echo "${git_status_after}";
         echo '----------------------------';
@@ -237,7 +237,13 @@ function gith()
 #
 function gitb()
 {
-    local new_branch_name="${1}";
+    if [[ "${1}" == '-s' ]]; then
+        shift;
+        local new_branch_name=$(slug "$@");
+    else
+        local new_branch_name="${1}";
+    fi
+
     if [[ -z "${new_branch_name}" ]]; then
         echo 'No branch name given' >&2;
         return 1;
@@ -283,7 +289,7 @@ function phpu()
         return 2;
     fi
 
-    ( cd "${repo_root}" && './vendor/phpunit/phpunit/phpunit'; );
+    (cd "${repo_root}" && './vendor/phpunit/phpunit/phpunit');
 }
 
 #
@@ -342,7 +348,7 @@ function slug()
 #
 # Updates the environment.
 #
-function update-env()
+function df-update()
 {
-    ($(test "${1}" -eq '--no-pull') || (cd "${DOTFILES_DIR}" && git pull origin master)) && source ~/.$(getent passwd "${USER}" | cut -d : -f 7 | awk -F/ '{print $NF}')rc;
+    ($(test "${1}" = '--no-pull') || (cd "${DOTFILES_DIR}" && git pull origin master)) && source ~/.$(getent passwd "${USER}" | cut -d : -f 7 | awk -F/ '{print $NF}')rc;
 }
