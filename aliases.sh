@@ -19,6 +19,7 @@ alias gr='git rebase';
 alias gb='git branch';
 alias gt='git remote';
 alias gm='git merge';
+alias gf='git fetch';
 alias gd='git diff';
 alias gp='git push';
 alias ga='git add';
@@ -32,7 +33,6 @@ alias c='clear';
 alias ....='cd ../../..';
 alias ...='cd ../..';
 alias ..='cd ..';
-
 
 alias 1='cd -';
 alias 2='cd -2';
