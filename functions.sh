@@ -346,6 +346,16 @@ function slug()
 }
 
 #
+# Calulates a mathmatical expression.
+#
+# calc <formula>
+#
+function calc()
+{
+    [[ ! -z "${1}" ]] && awk "BEGIN {printf \"%.2f\n\", $1}" | sed 's/\.00$//';
+}
+
+#
 # Updates the environment.
 #
 function df-update()
