@@ -151,7 +151,7 @@ function gitc()
     fi
 
     [[ "${check_line_endings}" == '1' && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
-    git commit -m "${commit_message}" || return 6;
+    git commit -m "${commit_message}" || return 7;
 
     local git_status_after=$(git status --porcelain 2> /dev/null);
     if [[ ! -z "${git_status_after}" ]]; then
