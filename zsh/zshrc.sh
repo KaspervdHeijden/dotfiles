@@ -1,4 +1,4 @@
-setopt prompt_subst histignoredups appendhistory;
+setopt prompt_subst histignoredups appendhistory interactivecomments;
 
 autoload -Uz compinit && compinit;
 autoload -U colors && colors;
