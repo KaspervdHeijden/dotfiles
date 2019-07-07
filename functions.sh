@@ -36,7 +36,7 @@ function repo-add()
         return 3;
     fi
 
-    echo  "Adding ${repo_doot}";
+    echo "Adding ${repo_root}";
     echo "${repo_root}" >> "${DOTFILES_DIR}/repo-list/repos.txt";
 }
 
