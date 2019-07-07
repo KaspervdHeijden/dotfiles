@@ -11,6 +11,36 @@ function repo-search()
 }
 
 #
+# Adds a repository to the list.
+#
+# repo-add <dir>
+#
+function repo-add()
+{
+    local dir_to_add="${1-$(pwd)}";
+
+    if [[ ! -d "${dir_to_add}" ]]; then
+        echo 'Not a directory' >&2;
+        return 1;
+    fi
+
+    local repo_root=$(cd "${dir_to_add}"; git rev-parse --show-toplevel 2> /dev/null);
+    if [[ -z "${repo_root}" ]]; then
+        echo 'Not a valid git repository' >&2;
+        return 2;
+    fi
+
+    [[ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]] && touch "${DOTFILES_DIR}/repo-list/repos.txt";
+    if [[ ! -z $(grep "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt") ]]; then
+        echo 'Repository already present' >&2;
+        return 3;
+    fi
+
+    echo  "Adding ${repo_doot}";
+    echo "${repo_root}" >> "${DOTFILES_DIR}/repo-list/repos.txt";
+}
+
+#
 # Navigates to a repository with a name.
 #
 # cds [<partial-name>]
