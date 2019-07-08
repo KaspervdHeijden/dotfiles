@@ -17,8 +17,12 @@ function repo-search()
 #
 function repo-add()
 {
-    local dir_to_add="${1-$(pwd)}";
+    if [[ ! -x "$(which git)" ]]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
 
+    local dir_to_add="${1-$(pwd)}";
     if [[ ! -d "${dir_to_add}" ]]; then
         echo 'Not a directory' >&2;
         return 1;
@@ -121,6 +125,11 @@ function sha()
 #
 function repo-root()
 {
+    if [[ ! -x "$(which git)" ]]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
+
     local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
     if [[ -z "${repo_root}" ]]; then
         echo 'Not in a git repository' >&2;
@@ -141,6 +150,11 @@ function repo-root()
 #
 function gitc()
 {
+    if [[ ! -x "$(which git)" ]]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
+
     if [[ ! $(git remote 2> /dev/null) ]]; then
         echo 'Not in a git repository' >&2;
         return 1;
@@ -200,6 +214,11 @@ function gitc()
 #
 function gitl()
 {
+    if [[ ! -x "$(which git)" ]]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
+
     local remotes=$(git remote 2> /dev/null);
     if [[ -z "${remotes}" ]]; then
         echo 'Not in a git repository' >&2;
@@ -234,6 +253,11 @@ function gitl()
 #
 function gith()
 {
+    if [[ ! -x "$(which git)" ]]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
+
     local remotes=$(git remote 2> /dev/null);
     if [[ -z "${remotes}" ]]; then
         echo 'Not in a git repository' >&2;
@@ -267,6 +291,11 @@ function gith()
 #
 function gitb()
 {
+    if [[ ! -x "$(which git)" ]]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
+
     if [[ "${1}" == '-s' ]]; then
         shift;
         local new_branch_name=$(slug "$@");

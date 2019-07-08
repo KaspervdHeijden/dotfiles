@@ -1,7 +1,7 @@
 [[ -x "$(which psysh)" && ! -x "$(which pe)" ]] && alias pe='psysh';
 [[ -x "$(which docker-compose)" ]] && alias dc='docker-compose';
 
-[[ -x "$(which tmux)" ]] && alias tm="tmux attach 2> /dev/null || tmux -2u -f ${DOTFILES_DIR}/tmux.conf new -s $(whoami)-on-$(uname --nodename) > /dev/null 2> /dev/null";
+[[ -x "$(which tmux)" ]] && alias tm="tmux attach 2> /dev/null || tmux -2u -f ${DOTFILES_DIR}/tmux.conf new -s $(whoami)-tmux-session > /dev/null 2> /dev/null";
 [[ -x "$(which nano)" ]] && alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const';
 [[ -x "$(which ack)" ]] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 
