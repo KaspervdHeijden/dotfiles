@@ -103,18 +103,22 @@ function cds()
 #
 function sha()
 {
+    local message='';
     case $(ssh-add -l >/dev/null 2>&1; echo $?) in
         2)
             eval $(ssh-agent -s) > /dev/null 2>&1;
             ;&
         1)
             ssh-add >/dev/null;
-            echo "SSH agent running under pid ${SSH_AGENT_PID}";
+            message='SSH agent running';
             ;;
         0)
-            echo "SSH agent already running under pid ${SSH_AGENT_PID}";
+            message='SSH agent alread running';
             ;;
     esac
+
+    [[ -z "${SSH_AGENT_PID}" ]] && message="${message} under pid ${SSH_AGENT_PID}";
+    echo $message;
 }
 
 #
