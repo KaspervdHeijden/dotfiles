@@ -117,7 +117,7 @@ function sha()
             ;;
     esac
 
-    [[ -z "${SSH_AGENT_PID}" ]] && message="${message} under pid ${SSH_AGENT_PID}";
+    [[ ! -z "${SSH_AGENT_PID}" ]] && message="${message} under pid ${SSH_AGENT_PID}";
     echo $message;
 }
 
