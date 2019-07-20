@@ -11,8 +11,5 @@ function dotfiles-prompt-git-status()
 }
 
 [[ -z "${DOTFILES_HOST_PROMPT_COLOR}" ]] && DOTFILES_HOST_PROMPT_COLOR='%F{green}';
-autoload -U colors && colors;
-setopt prompt_subst;
-
 PS1='[%(?..%B%F{red}%?%f%b )%B%F{white}%n%f%b@%f${DOTFILES_HOST_PROMPT_COLOR}%U%m%u%f %F{cyan}%~%f %T$(dotfiles-prompt-git-status)]
 %# ';

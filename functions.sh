@@ -113,7 +113,7 @@ function sha()
             message='SSH agent running';
             ;;
         0)
-            message='SSH agent alread running';
+            message='SSH agent already running';
             ;;
     esac
 
@@ -151,6 +151,8 @@ function repo-root()
 # 3. Are we committing in our own fork? (skip this check using -f)
 # 4. Are there staged changes?
 # 5. Are there DOS line endings? (skip with -n)
+#
+# gitc [-nf]
 #
 function gitc()
 {
@@ -290,8 +292,9 @@ function gith()
 
 #
 # Creates a new branch from a fresh master.
-#
-# gitb newFeatureBranch
+# Use -s to slug the parameter.
+
+# gitb [-s] newFeatureBranch
 #
 function gitb()
 {

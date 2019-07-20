@@ -23,7 +23,6 @@ zstyle ':completion:*' list-colors '';
 zstyle ':completion:*' group-name '';
 zstyle ':completion:*' menu select=2;
 zstyle ':completion:*' verbose true;
-zstyle ':completion:*' menu select;
 
 if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
     if [[ -d "${ZSH}/custom/plugins/zsh-autosuggestions" ]]; then
