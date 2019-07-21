@@ -49,7 +49,7 @@ The same applies to the newline check, to not have to pass `-n` anymore:
 git config --local dotfiles.checkLineEndings 0;
 ```
 
-This needs to be done on every machine, since git varaibles aren't
+This needs to be done on every machine, since git variables aren't
 part of the repository itself.
 
 #### Prompt
