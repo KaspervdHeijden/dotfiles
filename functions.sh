@@ -293,8 +293,8 @@ function gith()
 #
 # Creates a new branch from a fresh master.
 # Use -s to slug the parameter.
-
-# gitb [-s] newFeatureBranch
+#
+# gitb newFeatureBranch
 #
 function gitb()
 {
@@ -303,8 +303,7 @@ function gitb()
         return 10;
     fi
 
-    if [[ "${1}" == '-s' ]]; then
-        shift;
+    if [[ "$#" -gt 1 ]]; then
         local new_branch_name=$(slug "$@");
     else
         local new_branch_name="${1}";
@@ -407,7 +406,7 @@ function line()
 #
 function slug()
 {
-    local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^0-9a-z-]//g' | sed 's/\-\{2,\}/-/g');
+    local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g; s/_/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
     [[ ! -z "${slugged}" ]] && echo "${slugged}";
 }
 
