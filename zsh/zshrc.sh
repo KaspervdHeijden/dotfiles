@@ -37,3 +37,5 @@ fi
 
 source "${DOTFILES_DIR}/zsh/prompt.sh";
 source "${DOTFILES_DIR}/dotfiles.sh";
+
+[[ -r "${HOME}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "${HOME}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
