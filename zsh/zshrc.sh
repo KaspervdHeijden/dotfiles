@@ -26,9 +26,9 @@ zstyle ':completion:*' verbose true;
 
 if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
     if [[ -d "${ZSH}/custom/plugins/zsh-autosuggestions" ]]; then
-        plugins=(sudo zsh-autosuggestions);
+        plugins=(sudo pass zsh-autosuggestions);
     else
-        plugins=(sudo);
+        plugins=(sudo pass);
     fi
 
     export DISABLE_UPDATE_PROMPT=true;
