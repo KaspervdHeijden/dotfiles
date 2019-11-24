@@ -25,11 +25,13 @@ zstyle ':completion:*' menu select=2;
 zstyle ':completion:*' verbose true;
 
 if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
-    if [[ -d "${ZSH}/custom/plugins/zsh-autosuggestions" ]]; then
-        plugins=(sudo pass zsh-autosuggestions);
-    else
-        plugins=(sudo pass);
-    fi
+    plugins=(sudo pass);
+
+    for plugin in "zsh-autosuggestions" "zsh-syntax-highlighting"; do
+        if [[ -d "${ZSH}/custom/plugins/${plugin}" ]]; then
+            plugins+=($plugin);
+        fi
+    done
 
     export DISABLE_UPDATE_PROMPT=true;
     source "${ZSH}/oh-my-zsh.sh";
@@ -37,5 +39,3 @@ fi
 
 source "${DOTFILES_DIR}/zsh/prompt.sh";
 source "${DOTFILES_DIR}/dotfiles.sh";
-
-[[ -r "${HOME}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "${HOME}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
