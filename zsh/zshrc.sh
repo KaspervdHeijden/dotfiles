@@ -3,11 +3,11 @@ setopt prompt_subst histignoredups appendhistory interactivecomments;
 autoload -Uz compinit && compinit;
 autoload -U colors && colors;
 
-HISTFILE=~/.zsh_history;
-HISTSIZE=20000;
-SAVEHIST=20000;
+export HISTFILE=~/.zsh_history;
+export HISTSIZE=20000;
+export SAVEHIST=20000;
 
-[ -x "$(which dircolors)" ] && eval "$(dircolors -b)";
+[ -x "$(command -v dircolors)" ] && eval "$(dircolors -b)";
 
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*';
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s;
@@ -24,7 +24,7 @@ zstyle ':completion:*' group-name '';
 zstyle ':completion:*' menu select=2;
 zstyle ':completion:*' verbose true;
 
-if [ -d "${ZSH}" -a -r "${ZSH}/oh-my-zsh.sh" ]; then
+if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
     plugins=(sudo pass);
 
     for plugin in "zsh-autosuggestions" "zsh-syntax-highlighting"; do
@@ -34,9 +34,9 @@ if [ -d "${ZSH}" -a -r "${ZSH}/oh-my-zsh.sh" ]; then
     done
 
     export DISABLE_UPDATE_PROMPT=true;
-    source "${ZSH}/oh-my-zsh.sh";
+    . "${ZSH}/oh-my-zsh.sh";
 fi
 
-source "${DOTFILES_DIR}/zsh/prompt.sh";
-source "${DOTFILES_DIR}/dotfiles.sh";
+. "${DOTFILES_DIR}/zsh/prompt.sh";
+. "${DOTFILES_DIR}/dotfiles.sh";
 

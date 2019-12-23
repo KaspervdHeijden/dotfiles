@@ -3,7 +3,7 @@
 #
 # @see cds()
 #
-repo-search()
+repo_search()
 {
     echo 'Searching for repositories. Please hold...';
     find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2> /dev/null | xargs -r0n1 dirname 2> /dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
@@ -13,11 +13,11 @@ repo-search()
 #
 # Adds a repository to the list.
 #
-# repo-add <dir>
+# repo_add <dir>
 #
-repo-add()
+repo_add()
 {
-    if [ ! -x "$(which git)" ]; then
+    if [ ! -x "$(command -v git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
@@ -28,7 +28,7 @@ repo-add()
         return 1;
     fi
 
-    local repo_root=$(cd "${dir_to_add}"; git rev-parse --show-toplevel 2> /dev/null);
+    local repo_root=$(cd "${dir_to_add}" && git rev-parse --show-toplevel 2> /dev/null);
     if [ -z "${repo_root}" ]; then
         echo 'Not a valid git repository' >&2;
         return 2;
@@ -56,15 +56,14 @@ repo-add()
 # identify a repository from this list.
 #
 # This method requires a list of repositories,
-# which can be created using repo-searech.
+# which can be created using repo_search.
 #
-# @see repo-search
+# @see repo_search
 #
 cds()
 {
     if [ -d "${1}" ]; then
-        cd "${1}";
-        return 0;
+        cd "${1}" && return 0;
     fi
 
     if [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]; then
@@ -84,14 +83,12 @@ cds()
     fi
 
     if [ -d "${match}" ]; then
-        cd "${match}";
-        return 0;
+        cd "${match}" && return 0;
     fi
 
     local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/repo-list/repos.txt");
     if [ -d "${end_match}" ]; then
-        cd "${end_match}";
-        return 0;
+        cd "${end_match}" && return 0;
     fi
 
     echo 'More than 1 match was found. Please be more specific:' >&2;
@@ -128,11 +125,11 @@ sha()
 # Navigates to, or prints the root of the current repository.
 # Use -e to print the root diretory to STDOUT.
 #
-# repo-root [-e]
+# repo_root [-e]
 #
-repo-root()
+repo_root()
 {
-    if [ ! -x "$(which git)" ]; then
+    if [ ! -x "$(command -v git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
@@ -141,6 +138,11 @@ repo-root()
     if [ -z "${repo_root}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
+    fi
+
+    if [ ! -d "$repo_root}" ]; then
+        echo  'Root is not a directory' >&2;
+        return 2;
     fi
 
     [ "${1}" = '-e' ] && echo "${repo_root}" || cd "${repo_root}";
@@ -155,11 +157,11 @@ repo-root()
 # 4. Are there staged changes?
 # 5. Are there DOS line endings? (skip with -n)
 #
-# gitc [-nf]
+# gitc [-nfm]
 #
 gitc()
 {
-    if [ ! -x "$(which git)" ]; then
+    if [ ! -x "$(command -v git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
@@ -171,15 +173,17 @@ gitc()
 
     local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo '1');
     local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo '1');
+    local check_master='1';
 
-    while getopts 'nf' arg; do
+    while getopts 'mnf' arg; do
         case "${arg}" in
             n) check_line_endings='0' ;;
-            f) check_fork='0' ;;
+            m) check_master='0'       ;;
+            f) check_fork='0'         ;;
         esac;
     done
 
-    shift $(expr $OPTIND - 1);
+    shift "$(expr $OPTIND - 1)";
     local commit_message="${1}";
 
     if [ "${#commit_message}" -lt 3 ]; then
@@ -187,13 +191,13 @@ gitc()
         return 2;
     fi
 
-    if [ "$(git symbolic-ref --short HEAD 2> /dev/null)" = 'master' ]; then
+    if ["${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2> /dev/null)" = 'master' ]; then
         echo 'Not commiting in master' >&2;
         return 3;
     fi
 
-    if [ "${check_fork}" = "1" -a -z $(git remote | grep 'upstream' 2>/dev/null) ]; then
-        echo 'Not in your fork' >&2;
+    if [ "${check_fork}" = "1" ] && [ -z $(git remote | grep 'upstream' 2>/dev/null) ]; then
+        echo 'Not in your fork. Use -f to force committing.' >&2;
         return 4;
     fi
 
@@ -203,7 +207,7 @@ gitc()
         return 5;
     fi
 
-    [ "${check_line_endings}" = '1' -a $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ] && return 6;
+    [ "${check_line_endings}" = '1' ] && [ -n "$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings. Use -n to force committing." }' | tee /dev/stderr)" ] && return 6;
     git commit -m "${commit_message}" || return 7;
 
     local git_status_after=$(git status --porcelain 2> /dev/null);
@@ -223,7 +227,7 @@ gitc()
 #
 gitl()
 {
-    if [ ! -x "$(which git)" ]; then
+    if [ ! -x "$(command -v git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
@@ -245,7 +249,7 @@ gitl()
         remote_name='origin';
     fi
 
-    if [ ! "$(echo "${remotes}" | grep "${remote_name}")" ]; then
+    if [ -z "$(echo "${remotes}" | grep "${remote_name}")" ]; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -262,7 +266,7 @@ gitl()
 #
 gith()
 {
-    if [ ! -x "$(which git)" ]; then
+    if [ ! -x "$(command -v git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
@@ -285,7 +289,7 @@ gith()
         fi
     done
 
-    if [ ! "$(echo "${remotes}" | grep "${remote_name}")" ]; then
+    if [ -z "$(echo "${remotes}" | grep "${remote_name}")" ]; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -301,7 +305,7 @@ gith()
 #
 gitb()
 {
-    if [ ! -x "$(which git)" ]; then
+    if [ ! -x "$(command -v git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi

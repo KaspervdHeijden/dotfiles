@@ -1,4 +1,4 @@
-[[ -z "${PS1}" ]] && return;
+[ -z "${PS1}" ] && return;
 
 HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
@@ -17,12 +17,12 @@ fi
 
 if ! shopt -oq posix; then
     if [ -f /usr/share/bash-completion/bash_completion ]; then
-        source /usr/share/bash-completion/bash_completion;
+        . /usr/share/bash-completion/bash_completion;
     elif [ -f /etc/bash_completion ]; then
-        source /etc/bash_completion;
+        . /etc/bash_completion;
     fi
 fi
 
-source "${DOTFILES_DIR}/bash/prompt.sh";
-source "${DOTFILES_DIR}/dotfiles.sh";
+."${DOTFILES_DIR}/bash/prompt.sh";
+. "${DOTFILES_DIR}/dotfiles.sh";
 
