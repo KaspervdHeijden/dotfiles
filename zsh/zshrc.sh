@@ -24,7 +24,7 @@ zstyle ':completion:*' group-name '';
 zstyle ':completion:*' menu select=2;
 zstyle ':completion:*' verbose true;
 
-if [ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]; then
+if [ -d "${ZSH}" -a -r "${ZSH}/oh-my-zsh.sh" ]; then
     plugins=(sudo pass);
 
     for plugin in "zsh-autosuggestions" "zsh-syntax-highlighting"; do

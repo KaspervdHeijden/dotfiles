@@ -192,12 +192,12 @@ gitc()
         return 3;
     fi
 
-    if [ "${check_fork}" = "1" -a ! $(git remote | grep -q upstream 2> /dev/null) ]; then
+    if [ "${check_fork}" = "1" -a -z $(git remote | grep 'upstream' 2>/dev/null) ]; then
         echo 'Not in your fork' >&2;
         return 4;
     fi
 
-    local git_status=$(git status --porcelain 2> /dev/null);
+    local git_status=$(git status --porcelain 2>/dev/null);
     if [ -z "$(echo "${git_status}" | grep -E '^M|A|R')" ]; then
         echo 'No staged changes' >&2;
         return 5;
