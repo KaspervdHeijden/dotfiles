@@ -3,7 +3,7 @@
 #
 # @see cds()
 #
-function repo-search()
+repo-search()
 {
     echo 'Searching for repositories. Please hold...';
     find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2> /dev/null | xargs -r0n1 dirname 2> /dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
@@ -15,27 +15,27 @@ function repo-search()
 #
 # repo-add <dir>
 #
-function repo-add()
+repo-add()
 {
-    if [[ ! -x "$(which git)" ]]; then
+    if [ ! -x "$(which git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
 
     local dir_to_add="${1-$(pwd)}";
-    if [[ ! -d "${dir_to_add}" ]]; then
+    if [ ! -d "${dir_to_add}" ]; then
         echo 'Not a directory' >&2;
         return 1;
     fi
 
     local repo_root=$(cd "${dir_to_add}"; git rev-parse --show-toplevel 2> /dev/null);
-    if [[ -z "${repo_root}" ]]; then
+    if [ -z "${repo_root}" ]; then
         echo 'Not a valid git repository' >&2;
         return 2;
     fi
 
-    [[ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]] && touch "${DOTFILES_DIR}/repo-list/repos.txt";
-    if [[ ! -z $(grep "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt") ]]; then
+    [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ] && touch "${DOTFILES_DIR}/repo-list/repos.txt";
+    if [ $(grep -q "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt") ]; then
         echo 'Repository already present' >&2;
         return 3;
     fi
@@ -60,64 +60,65 @@ function repo-add()
 #
 # @see repo-search
 #
-function cds()
+cds()
 {
-    if [[ -d "${1}" ]]; then
+    if [ -d "${1}" ]; then
         cd "${1}";
         return 0;
     fi
 
-    if [[ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]]; then
+    if [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]; then
         echo 'No repository list found; please run repo-search and try again' >&2;
         return 1;
     fi
 
-    if [[ -z "${1}" ]]; then
+    if [ -z "${1}" ]; then
         cat "${DOTFILES_DIR}/repo-list/repos.txt";
         return 0;
     fi
 
     local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/repo-list/repos.txt");
-    if [[ -z "${match}" ]]; then
+    if [ -z "${match}" ]; then
         echo 'No match found' >&2;
         return 2;
     fi
 
-    if [[ -d "${match}" ]]; then
+    if [ -d "${match}" ]; then
         cd "${match}";
         return 0;
     fi
 
     local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/repo-list/repos.txt");
-    if [[ -d "${end_match}" ]]; then
+    if [ -d "${end_match}" ]; then
         cd "${end_match}";
         return 0;
     fi
 
-    echo -e "More than 1 match was found. Please be more specific:\n${match}" >&2;
+    echo 'More than 1 match was found. Please be more specific:' >&2;
+    echo "${match}" >&2;
     return 3;
 }
 
 #
 # Starts a SSH agent.
 #
-function sha()
+sha()
 {
     local message='';
-    case $(ssh-add -l >/dev/null 2>&1; echo $?) in
-        2)
-            eval $(ssh-agent -s) > /dev/null 2>&1;
-            ;&
-        1)
-            ssh-add >/dev/null;
-            message='SSH agent running';
-            ;;
-        0)
-            message='SSH agent already running';
-            ;;
-    esac
+    local return_code=$(ssh-add -l >/dev/null 2>&1);
 
-    [[ ! -z "${SSH_AGENT_PID}" ]] && message="${message} under pid ${SSH_AGENT_PID}";
+    if [ "${return_code}" = 2 ]; then
+        eval $(ssh-agent -s) > /dev/null 2>&1;
+    fi
+
+    if [ "${return_code}" = 0 ]; then
+        message='SSH agent running';
+        ssh-add >/dev/null;
+    else
+        message='SSH agent already running';
+    fi
+
+    [ -n "${SSH_AGENT_PID}" ] && message="${message} under pid ${SSH_AGENT_PID}";
     echo $message;
 }
 
@@ -127,20 +128,20 @@ function sha()
 #
 # repo-root [-e]
 #
-function repo-root()
+repo-root()
 {
-    if [[ ! -x "$(which git)" ]]; then
+    if [ ! -x "$(which git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
-    if [[ -z "${repo_root}" ]]; then
+    if [ -z "${repo_root}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
 
-    [[ "${1}" == '-e' ]] && echo "${repo_root}" || cd "${repo_root}";
+    [ "${1}" = '-e' ] && echo "${repo_root}" || cd "${repo_root}";
 }
 
 #
@@ -154,14 +155,14 @@ function repo-root()
 #
 # gitc [-nf]
 #
-function gitc()
+gitc()
 {
-    if [[ ! -x "$(which git)" ]]; then
+    if [ ! -x "$(which git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
 
-    if [[ ! $(git remote 2> /dev/null) ]]; then
+    if [ ! $(git remote 2> /dev/null) ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -179,32 +180,32 @@ function gitc()
     shift $(expr $OPTIND - 1);
     local commit_message="${1}";
 
-    if [[ "${#commit_message}" -lt 3 ]]; then
+    if [ "${#commit_message}" -lt 3 ]; then
         echo 'A commit message requires at least 3 characters' >&2;
         return 2;
     fi
 
-    if [[ $(git symbolic-ref --short HEAD 2> /dev/null) == 'master' ]]; then
+    if [ "$(git symbolic-ref --short HEAD 2> /dev/null)" = 'master' ]; then
         echo 'Not commiting in master' >&2;
         return 3;
     fi
 
-    if [[ "${check_fork}" == "1" && ! $(git remote | grep upstream 2> /dev/null) ]]; then
+    if [ "${check_fork}" = "1" -a ! $(git remote | grep -q upstream 2> /dev/null) ]; then
         echo 'Not in your fork' >&2;
         return 4;
     fi
 
     local git_status=$(git status --porcelain 2> /dev/null);
-    if [[ -z $(echo "${git_status}" | grep -E '^M|A|R') ]]; then
+    if [ -z "$(echo "${git_status}" | grep -E '^M|A|R')" ]; then
         echo 'No staged changes' >&2;
         return 5;
     fi
 
-    [[ "${check_line_endings}" == '1' && $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ]] && return 6;
+    [ "${check_line_endings}" = '1' -a $(echo "${git_status}" | awk '{print $2}' | xargs -n 1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings" }' | tee /dev/stderr) ] && return 6;
     git commit -m "${commit_message}" || return 7;
 
     local git_status_after=$(git status --porcelain 2> /dev/null);
-    if [[ ! -z "${git_status_after}" ]]; then
+    if [ -n "${git_status_after}" ]; then
         echo '----------------------------';
         echo "${git_status_after}";
         echo '----------------------------';
@@ -218,15 +219,15 @@ function gitc()
 #
 # gitl [<remote=origin>]
 #
-function gitl()
+gitl()
 {
-    if [[ ! -x "$(which git)" ]]; then
+    if [ ! -x "$(which git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
 
     local remotes=$(git remote 2> /dev/null);
-    if [[ -z "${remotes}" ]]; then
+    if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -234,16 +235,16 @@ function gitl()
     local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
     local remote_name='';
 
-    if [[ ! -z "${1}" ]]; then
+    if [ -n "${1}" ]; then
         remote_name="${1}";
-    elif [[ $(echo "${remotes}" | grep 'upstream') ]]; then
+    elif [ $(echo "${remotes}" | grep -q 'upstream') ]; then
         remote_name='upstream';
     else
         remote_name='origin';
     fi
 
-    if [[ ! $(echo "${remotes}" | grep "${remote_name}") ]]; then
-        echo "Unknown remote ${remote}" >&2;
+    if [ ! $(echo "${remotes}" | grep -q "${remote_name}") ]; then
+        echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
 
@@ -257,15 +258,15 @@ function gitl()
 #
 # gith [-f] [<remote=origin>]
 #
-function gith()
+gith()
 {
-    if [[ ! -x "$(which git)" ]]; then
+    if [ ! -x "$(which git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
 
     local remotes=$(git remote 2> /dev/null);
-    if [[ -z "${remotes}" ]]; then
+    if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -275,14 +276,14 @@ function gith()
     local force_flag='';
 
     for arg in "$@"; do
-        if [[ "${arg}" == '-f' ]]; then
+        if [ "${arg}" = '-f' ]; then
             force_flag='--force-with-lease';
         else
             remote_name="${arg}";
         fi
     done
 
-    if [[ ! $(echo "${remotes}" | grep "${remote_name}") ]]; then
+    if [ ! $(echo "${remotes}" | grep -q "${remote_name}") ]; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -296,42 +297,42 @@ function gith()
 #
 # gitb newFeatureBranch
 #
-function gitb()
+gitb()
 {
-    if [[ ! -x "$(which git)" ]]; then
+    if [ ! -x "$(which git)" ]; then
         echo 'Git not installed' >&2;
         return 10;
     fi
 
-    if [[ "$#" -gt 1 ]]; then
+    if [ "$#" -gt 1 ]; then
         local new_branch_name=$(slug "$@");
     else
         local new_branch_name="${1}";
     fi
 
-    if [[ -z "${new_branch_name}" ]]; then
+    if [ -z "${new_branch_name}" ]; then
         echo 'No branch name given' >&2;
         return 1;
     fi
 
     local remotes=$(git remote 2> /dev/null);
-    if [[ -z "${remotes}" ]]; then
+    if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 2;
     fi
 
-    if [[ $(git branch | grep "${new_branch_name}") ]]; then
+    if [ $(git branch | grep -q "${new_branch_name}") ]; then
         echo "Branch ${new_branch_name} already exists" >&2;
         return 3;
     fi
 
     local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
-    if [[ "${branch_name}" != 'master' ]]; then
+    if [ "${branch_name}" != 'master' ]; then
         git checkout master || return 4;
     fi
 
     local remote_name='origin';
-    if [[ $(echo "${remotes}" | grep 'upstream') ]]; then
+    if [ $(echo "${remotes}" | grep -q 'upstream') ]; then
         remote_name='upstream';
     fi
 
@@ -341,15 +342,15 @@ function gitb()
 #
 # Executes phpunit in the current repository.
 #
-function phpu()
+phpu()
 {
-    if [[ ! -n $(git remote 2>/dev/null) ]]; then
+    if [ -z $(git remote 2>/dev/null) ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
-    if [[ ! -x "${repo_root}/vendor/phpunit/phpunit/phpunit" ]]; then
+    if [ ! -x "${repo_root}/vendor/phpunit/phpunit/phpunit" ]; then
         echo 'Cannot locate phpunit' >&2;
         return 2;
     fi
@@ -360,10 +361,10 @@ function phpu()
 #
 # Executes phpstan from any directory within a repository.
 #
-function phps()
+phps()
 {
     local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
-    if [[ ! -x "${repo_root}/vendor/bin/phpstan" ]]; then
+    if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
         echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 1;
     fi
@@ -375,24 +376,24 @@ function phps()
 # Displays a line and optionally a column for a specific (csv) file.
 # line <filename> <linenumber> [<column>] [<separator=,>]
 #
-function line()
+line()
 {
-    if [[ -z "${1}" ]]; then
+    if [ -z "${1}" ]; then
         echo 'No filename given' >&2;
         return 1;
     fi
 
-    if [[ ! -f "${1}" ]]; then
+    if [ ! -f "${1}" ]; then
         echo "Filename '${1}' does not exist" >&2;
         return 2;
     fi
 
-    if [[ -z "${2}" ]]; then
+    if [ -z "${2}" ]; then
         echo 'No linenumber given' >&2;
         return 3;
     fi
 
-    if [[ -z "${3}" ]]; then
+    if [ -z "${3}" ]; then
         sed "${2}! d" "${1}";
     else
         sed "${2}! d" "${1}" | awk -F"${4:-,}" '{print $col}' col="${3}";
@@ -404,10 +405,10 @@ function line()
 #
 # slug <param1> [<params2>] [...]
 #
-function slug()
+slug()
 {
     local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g; s/_/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
-    [[ ! -z "${slugged}" ]] && echo "${slugged}";
+    [ -n "${slugged}" ] && echo "${slugged}";
 }
 
 #
@@ -415,15 +416,8 @@ function slug()
 #
 # calc <formula>
 #
-function calc()
+calc()
 {
-    [[ ! -z "${1}" ]] && awk "BEGIN {printf \"%.2f\n\", $1}" | sed 's/\.00$//';
+    [ -n "${1}" ] && awk "BEGIN {printf \"%.2f\n\", $1}" | sed 's/\.00$//';
 }
 
-#
-# Updates the environment.
-#
-function df-update()
-{
-    ($(test "${1}" = '--no-pull') || (cd "${DOTFILES_DIR}" && git pull origin master)) && source ~/.$(getent passwd "${USER}" | cut -d : -f 7 | awk -F/ '{print $NF}')rc;
-}

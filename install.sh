@@ -3,7 +3,7 @@ echo "Including dotfiles from ${dotfiles_dir}...";
 
 for shell_name in bash zsh; do
     file=~/.${shell_name}rc;
-    if [[ ! -z $(grep 'DOTFILES_DIR=' "${file}" 2> /dev/null) ]]; then
+    if [ ! -z $(grep 'DOTFILES_DIR=' "${file}" 2> /dev/null) ]; then
         continue;
     fi
 
@@ -17,7 +17,7 @@ done;
 echo 'Done.';
 
 cur_shell=$(getent passwd "${USER}" | cut -d':' -f7 | awk -F'/' '{print $NF}');
-if [[ -f "${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh" ]]; then
+if [ -f "${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh" ]; then
     echo "Sourcing '${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh'...";
 
     export DOTFILES_DIR="${dotfiles_dir}";

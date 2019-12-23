@@ -1,25 +1,25 @@
-[[ -x "$(which tmux)" ]] && alias tm="tmux attach 2> /dev/null || tmux -2u -f ${DOTFILES_DIR}/tmux.conf new -s $(whoami)-tmux-session > /dev/null 2> /dev/null";
-[[ -x "$(which nano)" ]] && alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const';
-[[ -x "$(which ack)" ]] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
-[[ -x "$(which psysh)" && ! -x "$(which pe)" ]] && alias pe='psysh';
+[ -x "$(which tmux)" ] &&alias tm="tmux attach 2> /dev/null || tmux -2u -f ${DOTFILES_DIR}/tmux.conf new -s $(whoami)-tmux-session > /dev/null 2> /dev/null";
+[ -x "$(which nano)" ] && alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const';
+[ -x "$(which ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
+[ -x "$(which psysh)" -a ! -x "$(which pe)" ] && alias pe='psysh';
 
 alias vim="vim -u ${DOTFILES_DIR}/vimrc";
 alias shq='killall ssh-agent';
 alias hlp='declare -f';
 
 
-if [[ -x "$(which docker-compose)" ]]; then
+if [ -x "$(which docker-compose)" ]; then
    alias dcu='docker-compose up -d';
    alias dce='docker compose exec';
    alias dc='docker-compose';
 fi
 
-if [[ -x "$(which composer)" ]]; then
+if [ -x "$(which composer)" ]; then
     alias ci='composer install --ignore-platform-reqs';
     alias cu='composer update --ignore-platform-reqs';
 fi
 
-if [[ -x "$(which git)" ]]; then
+if [ -x "$(which git)" ]; then
     alias gcm='git checkout master';
     alias gca='git commit --amend';
     alias grm='git rebase master';
