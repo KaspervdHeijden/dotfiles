@@ -8,6 +8,7 @@ export PAGER=less;
 source "${DOTFILES_DIR}/functions.sh";
 source "${DOTFILES_DIR}/aliases.sh";
 
-if [[ -f ~/.custom_profile ]]; then
+if [ -f ~/.custom_profile ]; then
     source ~/.custom_profile;
 fi
+

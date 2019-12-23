@@ -7,7 +7,7 @@ HISTFILE=~/.zsh_history;
 HISTSIZE=20000;
 SAVEHIST=20000;
 
-[[ -x "$(which dircolors)" ]] && eval "$(dircolors -b)";
+[ -x "$(which dircolors)" ] && eval "$(dircolors -b)";
 
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*';
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s;
@@ -24,11 +24,11 @@ zstyle ':completion:*' group-name '';
 zstyle ':completion:*' menu select=2;
 zstyle ':completion:*' verbose true;
 
-if [[ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]]; then
+if [ -d "${ZSH}" && -r "${ZSH}/oh-my-zsh.sh" ]; then
     plugins=(sudo pass);
 
     for plugin in "zsh-autosuggestions" "zsh-syntax-highlighting"; do
-        if [[ -d "${ZSH}/custom/plugins/${plugin}" ]]; then
+        if [ -d "${ZSH}/custom/plugins/${plugin}" ]; then
             plugins+=($plugin);
         fi
     done
@@ -39,3 +39,4 @@ fi
 
 source "${DOTFILES_DIR}/zsh/prompt.sh";
 source "${DOTFILES_DIR}/dotfiles.sh";
+
