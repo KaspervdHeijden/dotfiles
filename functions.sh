@@ -166,7 +166,7 @@ gitc()
         return 10;
     fi
 
-    if [ ! "$(git remote 2> /dev/null)" ]; then
+    if [ ! "$(git remote 2>/dev/null)" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -175,7 +175,7 @@ gitc()
     local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo '1');
     local check_master='1';
 
-    while getopts 'mnf' arg; do
+    while getopts 'nmf' arg; do
         case "${arg}" in
             n) check_line_endings='0' ;;
             m) check_master='0'       ;;
@@ -191,8 +191,8 @@ gitc()
         return 2;
     fi
 
-    if ["${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2> /dev/null)" = 'master' ]; then
-        echo 'Not commiting in master' >&2;
+    if [ "${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2> /dev/null)" = 'master' ]; then
+        echo 'Not commiting in master. Use -m to force committing.' >&2;
         return 3;
     fi
 
