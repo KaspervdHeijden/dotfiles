@@ -9,7 +9,7 @@ function dotfiles-prompt-git-status()
 {
     local output=$(git symbolic-ref --short HEAD 2>/dev/null);
     [ -z "${output}" ] && return 0;
-    [ "${GIT_PROMPT_SHOW_DIRTY}" -a -n "$(git status --porcelain 2> /dev/null)" ]] && output+='*';
+    [ "${GIT_PROMPT_SHOW_DIRTY}" -a -n "$(git status --porcelain 2> /dev/null)" ] && output+='*';
     echo -ne " ${output}";
 }
 
