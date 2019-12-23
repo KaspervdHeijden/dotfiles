@@ -35,7 +35,7 @@ repo-add()
     fi
 
     [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ] && touch "${DOTFILES_DIR}/repo-list/repos.txt";
-    if [ $(grep -q "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt") ]; then
+    if [ -n "$(grep "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt")" ]; then
         echo 'Repository already present' >&2;
         return 3;
     fi
@@ -96,6 +96,7 @@ cds()
 
     echo 'More than 1 match was found. Please be more specific:' >&2;
     echo "${match}" >&2;
+
     return 3;
 }
 
@@ -104,19 +105,20 @@ cds()
 #
 sha()
 {
+    local return_code=$(ssh-add -l >/dev/null 2>&1; echo $?;);
     local message='';
-    local return_code=$(ssh-add -l >/dev/null 2>&1);
 
-    if [ "${return_code}" = 2 ]; then
+    if [ "${return_code}" -eq "0" ]; then
+        echo 'SSH agent already running';
+        return 1;
+    fi
+
+    if [ "${return_code}" -eq "2" ]; then
         eval $(ssh-agent -s) > /dev/null 2>&1;
     fi
 
-    if [ "${return_code}" = 0 ]; then
-        message='SSH agent running';
-        ssh-add >/dev/null;
-    else
-        message='SSH agent already running';
-    fi
+    message='SSH agent running';
+    ssh-add >/dev/null;
 
     [ -n "${SSH_AGENT_PID}" ] && message="${message} under pid ${SSH_AGENT_PID}";
     echo $message;
@@ -162,7 +164,7 @@ gitc()
         return 10;
     fi
 
-    if [ ! $(git remote 2> /dev/null) ]; then
+    if [ ! "$(git remote 2> /dev/null)" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -237,13 +239,13 @@ gitl()
 
     if [ -n "${1}" ]; then
         remote_name="${1}";
-    elif [ $(echo "${remotes}" | grep -q 'upstream') ]; then
+    elif [ -n "$(echo "${remotes}" | grep 'upstream')" ]; then
         remote_name='upstream';
     else
         remote_name='origin';
     fi
 
-    if [ ! $(echo "${remotes}" | grep -q "${remote_name}") ]; then
+    if [ ! "$(echo "${remotes}" | grep "${remote_name}")" ]; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -283,7 +285,7 @@ gith()
         fi
     done
 
-    if [ ! $(echo "${remotes}" | grep -q "${remote_name}") ]; then
+    if [ ! "$(echo "${remotes}" | grep "${remote_name}")" ]; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -321,7 +323,7 @@ gitb()
         return 2;
     fi
 
-    if [ $(git branch | grep -q "${new_branch_name}") ]; then
+    if [ -n "$(git branch | grep "${new_branch_name}")" ]; then
         echo "Branch ${new_branch_name} already exists" >&2;
         return 3;
     fi
@@ -332,7 +334,7 @@ gitb()
     fi
 
     local remote_name='origin';
-    if [ $(echo "${remotes}" | grep -q 'upstream') ]; then
+    if [ -n "$(echo "${remotes}" | grep 'upstream')" ]; then
         remote_name='upstream';
     fi
 
@@ -344,7 +346,7 @@ gitb()
 #
 phpu()
 {
-    if [ -z $(git remote 2>/dev/null) ]; then
+    if [ -z "$(git remote 2>/dev/null)" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi

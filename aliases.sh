@@ -3,8 +3,8 @@
 [ -x "$(which ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(which psysh)" -a ! -x "$(which pe)" ] && alias pe='psysh';
 
+alias shq='killall ssh-agent 2>/dev/null';
 alias vim="vim -u ${DOTFILES_DIR}/vimrc";
-alias shq='killall ssh-agent';
 alias hlp='declare -f';
 
 
