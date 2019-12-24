@@ -38,7 +38,7 @@ if [ -x "$(command -v git)" ]; then
     alias g='git';
 fi
 
-alias rr='repo-root';
+alias rr='repo_root';
 alias lsa='ls -lAFh';
 alias h='history';
 alias c='clear';
