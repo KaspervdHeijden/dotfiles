@@ -58,3 +58,4 @@ show status information in the prompt, but may slow down the prompt.
 
 You can define the `$DOTFILES_HOST_PROMPT_COLOR` variable to control
 the color for the host part in the prompt. It defaults to green.
+

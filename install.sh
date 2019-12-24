@@ -30,3 +30,4 @@ if [ -f "${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh" ]; then
         repo-search;
     fi
 fi
+
