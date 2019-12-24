@@ -379,34 +379,6 @@ phps()
 }
 
 #
-# Displays a line and optionally a column for a specific (csv) file.
-# line <filename> <linenumber> [<column>] [<separator=,>]
-#
-line()
-{
-    if [ -z "${1}" ]; then
-        echo 'No filename given' >&2;
-        return 1;
-    fi
-
-    if [ ! -f "${1}" ]; then
-        echo "Filename '${1}' does not exist" >&2;
-        return 2;
-    fi
-
-    if [ -z "${2}" ]; then
-        echo 'No linenumber given' >&2;
-        return 3;
-    fi
-
-    if [ -z "${3}" ]; then
-        sed "${2}! d" "${1}";
-    else
-        sed "${2}! d" "${1}" | awk -F"${4:-,}" '{print $col}' col="${3}";
-    fi
-}
-
-#
 # Slugifies all parameters in a single slugged string.
 #
 # slug <param1> [<params2>] [...]
