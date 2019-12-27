@@ -1,4 +1,3 @@
-export SHELL="$(command -v $(ps -p $$ -o 'comm='))";
 export LESS="-FXR ${LESS}";
 export GIT_EDITOR=vim;
 export GIT_PAGER=less;
