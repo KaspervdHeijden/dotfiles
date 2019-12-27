@@ -5,43 +5,12 @@
 #
 repo_search()
 {
-    echo 'Searching for repositories. Please hold...';
-    find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2>/dev/null | xargs -r0n1 dirname 2>/dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
-    mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
-}
+    local target=/dev/tty;
+    [ "${1}" = "-q" ] && target=/dev/null;
 
-#
-# Adds a repository to the list.
-#
-# repo_add <dir>
-#
-repo_add()
-{
-    if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
-        return 10;
-    fi
-
-    local dir_to_add="${1:-$(pwd)}";
-    if [ ! -d "${dir_to_add}" ]; then
-        echo 'Not a directory' >&2;
-        return 1;
-    fi
-
-    local repo_root=$(cd "${dir_to_add}" && git rev-parse --show-toplevel 2>/dev/null);
-    if [ -z "${repo_root}" ]; then
-        echo 'Not a valid git repository' >&2;
-        return 2;
-    fi
-
-    [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ] && touch "${DOTFILES_DIR}/repo-list/repos.txt";
-    if grep -q "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt"; then
-        echo 'Repository already present' >&2;
-        return 3;
-    fi
-
-    echo "Adding ${repo_root}";
-    echo "${repo_root}" >> "${DOTFILES_DIR}/repo-list/repos.txt";
+    echo 'Searching for repositories. Please hold...' >$target;
+    find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2>/dev/null | xargs -r0n1 dirname 2>/dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt" >$target;
+    [ -f "${DOTFILES_DIR}/repo-list/new.txt" ] && mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
 }
 
 #
