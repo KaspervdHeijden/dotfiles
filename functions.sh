@@ -247,7 +247,7 @@ gitl()
         remote_name='origin';
     fi
 
-    if echo "${remotes}" | grep -q "${remote_name}"; then
+    if ! echo "${remotes}" | grep -q "${remote_name}"; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
