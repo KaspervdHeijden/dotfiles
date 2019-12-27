@@ -3,7 +3,7 @@ echo "Including dotfiles from ${dotfiles_dir}...";
 
 for shell_name in bash zsh; do
     file=~/.${shell_name}rc;
-    if [ ! -z "$(grep 'DOTFILES_DIR=' "${file}" 2> /dev/null)" ]; then
+    if grep -q 'DOTFILES_DIR=' "${file}" 2>/dev/null; then
         continue;
     fi
 
@@ -11,7 +11,7 @@ for shell_name in bash zsh; do
     echo '' >> "${file}";
     echo '# Include dotfiles' >> "${file}";
     echo "export DOTFILES_DIR='${dotfiles_dir}';" >> "${file}";
-    echo "source \"\${DOTFILES_DIR}/${shell_name}/${shell_name}rc.sh\";" >> "${file}";
+    echo ". \"\${DOTFILES_DIR}/${shell_name}/${shell_name}rc.sh\";" >> "${file}";
 done;
 
 echo 'Done.';
@@ -27,7 +27,7 @@ if [ -f "${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh" ]; then
     read response;
 
     if [ "${response}" = 'y' ] || [ "${response}" = 'Y' ]; then
-        repo-search;
+        repo_search;
     fi
 fi
 

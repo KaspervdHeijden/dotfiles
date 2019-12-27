@@ -4,8 +4,6 @@ HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
 HISTSIZE=20000;
 
-shopt -s checkwinsize histappend dirspell;
-
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)";
 if [ -x /usr/bin/dircolors ]; then
     [ -r ~/.dircolors ] && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)";
@@ -15,14 +13,18 @@ if [ -x /usr/bin/dircolors ]; then
     alias ls='ls --color=auto';
 fi
 
-if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion;
-    elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion;
+if [ -x "$(command -v shopt)" ]; then
+    shopt -s checkwinsize histappend dirspell 2>/dev/null;
+
+    if ! shopt -oq posix 2>/dev/null; then
+        if [ -f /usr/share/bash-completion/bash_completion ]; then
+            . /usr/share/bash-completion/bash_completion;
+        elif [ -f /etc/bash_completion ]; then
+            . /etc/bash_completion;
+        fi
     fi
 fi
 
-."${DOTFILES_DIR}/bash/prompt.sh";
+. "${DOTFILES_DIR}/bash/prompt.sh";
 . "${DOTFILES_DIR}/dotfiles.sh";
 

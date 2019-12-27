@@ -33,7 +33,9 @@ if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
         fi
     done
 
-    export DISABLE_UPDATE_PROMPT=true;
+    export DISABLE_UPDATE_PROMPT="true";
+    export UPDATE_ZSH_DAYS=7;
+
     . "${ZSH}/oh-my-zsh.sh";
 fi
 

@@ -6,7 +6,7 @@
 repo_search()
 {
     echo 'Searching for repositories. Please hold...';
-    find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2> /dev/null | xargs -r0n1 dirname 2> /dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
+    find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2>/dev/null | xargs -r0n1 dirname 2>/dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt";
     mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
 }
 
@@ -22,20 +22,20 @@ repo_add()
         return 10;
     fi
 
-    local dir_to_add="${1-$(pwd)}";
+    local dir_to_add="${1:-$(pwd)}";
     if [ ! -d "${dir_to_add}" ]; then
         echo 'Not a directory' >&2;
         return 1;
     fi
 
-    local repo_root=$(cd "${dir_to_add}" && git rev-parse --show-toplevel 2> /dev/null);
+    local repo_root=$(cd "${dir_to_add}" && git rev-parse --show-toplevel 2>/dev/null);
     if [ -z "${repo_root}" ]; then
         echo 'Not a valid git repository' >&2;
         return 2;
     fi
 
     [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ] && touch "${DOTFILES_DIR}/repo-list/repos.txt";
-    if [ -n "$(grep "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt")" ]; then
+    if grep -q "${repo_root}" "${DOTFILES_DIR}/repo-list/repos.txt"; then
         echo 'Repository already present' >&2;
         return 3;
     fi
@@ -103,18 +103,16 @@ cds()
 sha()
 {
     local return_code=$(ssh-add -l >/dev/null 2>&1; echo $?;);
-    local message='';
-
     if [ "${return_code}" -eq "0" ]; then
         echo 'SSH agent already running';
         return 1;
     fi
 
     if [ "${return_code}" -eq "2" ]; then
-        eval $(ssh-agent -s) > /dev/null 2>&1;
+        eval $(ssh-agent -s) >/dev/null 2>&1;
     fi
 
-    message='SSH agent running';
+    local message='SSH agent running';
     ssh-add >/dev/null;
 
     [ -n "${SSH_AGENT_PID}" ] && message="${message} under pid ${SSH_AGENT_PID}";
@@ -134,7 +132,7 @@ repo_root()
         return 10;
     fi
 
-    local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ -z "${repo_root}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
@@ -166,7 +164,7 @@ gitc()
         return 10;
     fi
 
-    if [ ! "$(git remote 2>/dev/null)" ]; then
+    if ! git remote >/dev/null 2>&1; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -186,31 +184,31 @@ gitc()
     shift "$(expr $OPTIND - 1)";
     local commit_message="${1}";
 
-    if [ "${#commit_message}" -lt 3 ]; then
-        echo 'A commit message requires at least 3 characters' >&2;
+    if [ "${#commit_message}" -lt "5" ]; then
+        echo 'A commit message requires at least 5 characters' >&2;
         return 2;
     fi
 
-    if [ "${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2> /dev/null)" = 'master' ]; then
-        echo 'Not commiting in master. Use -m to force committing.' >&2;
+    if [ "${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = 'master' ]; then
+        echo 'Not commiting in master. Use -m to override.' >&2;
         return 3;
     fi
 
-    if [ "${check_fork}" = "1" ] && [ -z $(git remote | grep 'upstream' 2>/dev/null) ]; then
-        echo 'Not in your fork. Use -f to force committing.' >&2;
+    if [ "${check_fork}" = "1" ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
+        echo 'Not in your fork. Use -f to override.' >&2;
         return 4;
     fi
 
     local git_status=$(git status --porcelain 2>/dev/null);
-    if [ -z "$(echo "${git_status}" | grep -E '^M|A|R')" ]; then
+    if ! echo "${git_status}" | grep -qE '^M|A|R'; then
         echo 'No staged changes' >&2;
         return 5;
     fi
 
-    [ "${check_line_endings}" = '1' ] && [ -n "$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings. Use -n to force committing." }' | tee /dev/stderr)" ] && return 6;
+    [ "${check_line_endings}" = '1' ] && [ -n "$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings. Use -n to override." }' | tee /dev/stderr)" ] && return 6;
     git commit -m "${commit_message}" || return 7;
 
-    local git_status_after=$(git status --porcelain 2> /dev/null);
+    local git_status_after=$(git status --porcelain 2>/dev/null);
     if [ -n "${git_status_after}" ]; then
         echo '----------------------------';
         echo "${git_status_after}";
@@ -232,7 +230,7 @@ gitl()
         return 10;
     fi
 
-    local remotes=$(git remote 2> /dev/null);
+    local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
@@ -243,13 +241,13 @@ gitl()
 
     if [ -n "${1}" ]; then
         remote_name="${1}";
-    elif [ -n "$(echo "${remotes}" | grep 'upstream')" ]; then
+    elif echo "${remotes}" | grep -q 'upstream'; then
         remote_name='upstream';
     else
         remote_name='origin';
     fi
 
-    if [ -z "$(echo "${remotes}" | grep "${remote_name}")" ]; then
+    if echo "${remotes}" | grep -q "${remote_name}"; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -271,13 +269,13 @@ gith()
         return 10;
     fi
 
-    local remotes=$(git remote 2> /dev/null);
+    local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
+    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
     local remote_name='origin';
     local force_flag='';
 
@@ -289,7 +287,7 @@ gith()
         fi
     done
 
-    if [ -z "$(echo "${remotes}" | grep "${remote_name}")" ]; then
+    if ! echo "${remotes}" | grep -q "${remote_name}"; then
         echo "Unknown remote ${remote_name}" >&2;
         return 2;
     fi
@@ -321,24 +319,24 @@ gitb()
         return 1;
     fi
 
-    local remotes=$(git remote 2> /dev/null);
+    local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 2;
     fi
 
-    if [ -n "$(git branch | grep "${new_branch_name}")" ]; then
+    if git branch 2>/dev/null | grep -q "${new_branch_name}"; then
         echo "Branch ${new_branch_name} already exists" >&2;
         return 3;
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2> /dev/null);
-    if [ "${branch_name}" != 'master' ]; then
+    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
+    if [ ! "${branch_name}" = 'master' ]; then
         git checkout master || return 4;
     fi
 
     local remote_name='origin';
-    if [ -n "$(echo "${remotes}" | grep 'upstream')" ]; then
+    if echo "${remotes}" | grep -q 'upstream'; then
         remote_name='upstream';
     fi
 
@@ -350,7 +348,7 @@ gitb()
 #
 phpu()
 {
-    if [ -z "$(git remote 2>/dev/null)" ]; then
+    if ! git remote >/dev/null 2>&1; then
         echo 'Not in a git repository' >&2;
         return 1;
     fi
@@ -369,7 +367,7 @@ phpu()
 #
 phps()
 {
-    local repo_root=$(git rev-parse --show-toplevel 2> /dev/null);
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
         echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 1;
@@ -385,7 +383,7 @@ phps()
 #
 slug()
 {
-    local slugged=$(echo "$@" | xargs echo | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g; s/_/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
+    local slugged=$(echo "$@" | xargs echo | tr '[A-Z]' '[a-z]' | sed 's/ /-/g; s/_/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
     [ -n "${slugged}" ] && echo "${slugged}";
 }
 
