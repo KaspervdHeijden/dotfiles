@@ -31,10 +31,7 @@ repo_search()
 #
 cds()
 {
-    if [ -d "${1}" ]; then
-        cd "${1}" && return 0;
-    fi
-
+    [ -d "${1}" ] && cd "${1}" && return 0;
     if [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]; then
         echo 'No repository list found; please run repo-search and try again' >&2;
         return 1;
@@ -51,14 +48,10 @@ cds()
         return 2;
     fi
 
-    if [ -d "${match}" ]; then
-        cd "${match}" && return 0;
-    fi
+    [ -d "${match}" ] && cd "${match}" && return 0;
 
     local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/repo-list/repos.txt");
-    if [ -d "${end_match}" ]; then
-        cd "${end_match}" && return 0;
-    fi
+    [ -d "${end_match}" ] && cd "${end_match}" && return 0;
 
     echo 'More than 1 match was found. Please be more specific:' >&2;
     echo "${match}" >&2;
@@ -77,9 +70,7 @@ sha()
         return 1;
     fi
 
-    if [ "${return_code}" -eq "2" ]; then
-        eval $(ssh-agent -s) >/dev/null 2>&1;
-    fi
+    [ "${return_code}" -eq "2" ] && eval $(ssh-agent -s) >/dev/null 2>&1;
 
     local message='SSH agent running';
     ssh-add >/dev/null;
@@ -108,7 +99,7 @@ repo_root()
     fi
 
     if [ ! -d "$repo_root}" ]; then
-        echo  'Root is not a directory' >&2;
+        echo 'Root is not a directory' >&2;
         return 2;
     fi
 
@@ -119,10 +110,10 @@ repo_root()
 # Wrapper around git commit, adding in a few checks.
 #
 # 1. Is the commit message long enough? (minimum required: 3 characters)
-# 2. Are we not committing in master?
-# 3. Are we committing in our own fork? (skip this check using -f)
+# 2. Are we not committing in master? (override with -m)
+# 3. Are we committing in our own fork? (override with -f)
 # 4. Are there staged changes?
-# 5. Are there DOS line endings? (skip with -n)
+# 5. Are there DOS line endings? (override with -n)
 #
 # gitc [-nfm]
 #
@@ -139,8 +130,8 @@ gitc()
     fi
 
     local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo '1');
+    local check_master=$(git config --local --no-includes --get dotfiles.checkMaster || echo '1');
     local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo '1');
-    local check_master='1';
 
     while getopts 'nmf' arg; do
         case "${arg}" in
@@ -205,31 +196,31 @@ gitl()
         return 1;
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
-    local remote_name='';
+    local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local remote='';
 
     if [ -n "${1}" ]; then
-        remote_name="${1}";
+        remote="${1}";
     elif echo "${remotes}" | grep -q 'upstream'; then
-        remote_name='upstream';
+        remote='upstream';
     else
-        remote_name='origin';
+        remote='origin';
     fi
 
-    if ! echo "${remotes}" | grep -q "${remote_name}"; then
-        echo "Unknown remote ${remote_name}" >&2;
+    if ! echo "${remotes}" | grep -q "${remote}"; then
+        echo "Unknown remote ${remote}" >&2;
         return 2;
     fi
 
-    echo "Pulling ${remote_name} ${branch_name}";
-    git pull "${remote_name}" "${branch_name}";
+    echo "Pulling ${remote} ${branch}";
+    git pull "${remote}" "${branch}";
 }
 
 #
 # Pushes the current branch to origin.
-# Use -f to force push (with lease).
+# Use -f to force-with-lease, or -ff to force.
 #
-# gith [-f] [<remote=origin>]
+# gith [-f] [-ff] [<remote=origin>]
 #
 gith()
 {
@@ -244,29 +235,30 @@ gith()
         return 1;
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
-    local remote_name='origin';
-    local force_flag='';
+    local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local remote='origin';
+    local flags='';
 
     for arg in "$@"; do
         if [ "${arg}" = '-f' ]; then
-            force_flag='--force-with-lease';
+            flags='--force-with-lease';
+        elif [ "${arg}" = '-ff' ]; then
+            flags='--force';
         else
-            remote_name="${arg}";
+            remote="${arg}";
         fi
     done
 
-    if ! echo "${remotes}" | grep -q "${remote_name}"; then
-        echo "Unknown remote ${remote_name}" >&2;
+    if ! echo "${remotes}" | grep -q "${remote}"; then
+        echo "Unknown remote ${remote}" >&2;
         return 2;
     fi
 
-    git push $force_flag "${remote_name}" "${branch_name}";
+    git push $flags "${remote}" "${branch}";
 }
 
 #
 # Creates a new branch from a fresh master.
-# Use -s to slug the parameter.
 #
 # gitb newFeatureBranch
 #
@@ -323,12 +315,12 @@ phpu()
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
-    if [ ! -x "${repo_root}/vendor/phpunit/phpunit/phpunit" ]; then
+    if [ ! -x "${repo_root}/vendor/bin/phpunit" ]; then
         echo 'Cannot locate phpunit' >&2;
         return 2;
     fi
 
-    (cd "${repo_root}" && './vendor/phpunit/phpunit/phpunit');
+    (cd "${repo_root}" && ./vendor/bin/phpunit);
 }
 
 #
@@ -342,7 +334,16 @@ phps()
         return 1;
     fi
 
-    (cd "${repo_root}" && vendor/bin/phpstan -vvv analyse -c phpstan.neon);
+    [ -f "${repo_root}/phpstan.neon" ] && file='-c phpstan.neon';
+
+    (
+        cd "${repo_root}" || return 2;
+        if [ -f ./phpstan.neon ]; then
+            ./vendor/bin/phpstan -vvv analyse -c phpstan.neon;
+        else
+            ./vendor/bin/phpstan -vvv analyse;
+        fi
+    );
 }
 
 #
@@ -352,17 +353,19 @@ phps()
 #
 slug()
 {
-    local slugged=$(echo "$@" | xargs echo | tr '[A-Z]' '[a-z]' | sed 's/ /-/g; s/_/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
+    local slugged=$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's[ \ _/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
     [ -n "${slugged}" ] && echo "${slugged}";
 }
 
 #
 # Calulates a mathmatical expression.
 #
-# calc <formula>
+# calc <formula> [<formula>] [...]
 #
 calc()
 {
-    [ -n "${1}" ] && awk "BEGIN {printf \"%.2f\n\", $1}" | sed 's/\.00$//';
+    for arg in "$@"; do
+        [ -n "${arg}" ] && awk "BEGIN {printf \"%.2f\n\", ${arg}}" | sed 's/\.00$//';
+    done;
 }
 
