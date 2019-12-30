@@ -353,7 +353,7 @@ phps()
 #
 slug()
 {
-    local slugged=$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's[ \ _/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
+    local slugged=$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's/[ _]/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
     [ -n "${slugged}" ] && echo "${slugged}";
 }
 

@@ -1,5 +1,3 @@
-alias grep='grep -i --color=auto --exclude-dir=.bzr --exclude-dir=CVS --exclude-dir=.git --exclude-dir=.hg --exclude-dir=.svn --exclude-dir=vendor --exclude-dir=.composer';
-
 [ -x "$(command -v tmux)" ] && alias tm="tmux attach 2>/dev/null || tmux -2u -f ${DOTFILES_DIR}/tmux.conf new -s $(whoami)-tmux-session >/dev/null 2>/dev/null";
 [ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const';
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
@@ -25,6 +23,7 @@ if [ -x "$(command -v git)" ]; then
     alias grm='git rebase master';
     alias gc='git checkout';
     alias gap='git add -p';
+    alias gt='git remote';
     alias gs='git status';
     alias gr='git rebase';
     alias gb='git branch';
