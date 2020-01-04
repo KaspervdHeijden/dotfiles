@@ -37,10 +37,7 @@ cds()
         return 1;
     fi
 
-    if [ -z "${1}" ]; then
-        cat "${DOTFILES_DIR}/repo-list/repos.txt";
-        return 0;
-    fi
+    [ -z "${1}" ] && cat "${DOTFILES_DIR}/repo-list/repos.txt" && return 0;
 
     local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/repo-list/repos.txt");
     if [ -z "${match}" ]; then
