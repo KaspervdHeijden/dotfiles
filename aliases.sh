@@ -34,6 +34,6 @@ if [ -x "$(command -v git)" ]; then
     alias g='git';
 fi
 
-alias rr='repo_root';
+alias rr='cd $(repo_root)';
 alias lsa='ls -lAFh';
 

@@ -77,10 +77,9 @@ sha()
 }
 
 #
-# Navigates to, or prints the root of the current repository.
-# Use -e to print the root diretory to STDOUT.
+# Prints the root of the current repository.
 #
-# repo_root [-e]
+# repo_root
 #
 repo_root()
 {
@@ -95,12 +94,12 @@ repo_root()
         return 1;
     fi
 
-    if [ ! -d "$repo_root}" ]; then
+    if [ ! -d "${repo_root}" ]; then
         echo 'Root is not a directory' >&2;
         return 2;
     fi
 
-    [ "${1}" = '-e' ] && echo "${repo_root}" || cd "${repo_root}";
+    echo "${repo_root}";
 }
 
 #
