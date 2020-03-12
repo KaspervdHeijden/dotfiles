@@ -8,7 +8,6 @@ export PAGER=less;
 . "${DOTFILES_DIR}/functions.sh";
 . "${DOTFILES_DIR}/aliases.sh";
 
-if [ -f ~/.custom_profile ]; then
-    . ~/.custom_profile;
-fi
+[ -x "$(command -v neofetch)" ] && neofetch -cpu_temp C --kernel_shorthand off --distro_shorthand off  --memory_percent on;
+[ -f ~/.dotfiles ] && . ~/.dotfiles;
 

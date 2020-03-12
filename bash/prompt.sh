@@ -14,6 +14,6 @@ dotfiles_prompt_git_status()
     echo -ne " ${output}";
 }
 
-[ -z "${DOTFILES_HOST_PROMPT_COLOR}" ] && DOTFILES_HOST_PROMPT_COLOR='1;4;32';
-PS1="[\$(dotfiles_prompt_last_exitcode)\e[1;37m\u\e[0;37m@\e[${DOTFILES_HOST_PROMPT_COLOR}m\h\e[0;36m \w\e[0m \$(date +'%H:%M')\e[1;32m\$(dotfiles_prompt_git_status)\e[0;0m]\n% ";
+[ -z "${DOTFILES_HOST_PROMPT_COLOR_BASH}" ] && DOTFILES_HOST_PROMPT_COLOR_BASH='1;4;32';
+PS1="[\$(dotfiles_prompt_last_exitcode)\e[1;37m\u\e[0;37m@\e[${DOTFILES_HOST_PROMPT_COLOR_BASH}m\h\e[0;36m \w\e[0m \$(date +'%H:%M')\e[1;32m\$(dotfiles_prompt_git_status)\e[0;0m]\n% ";
 

@@ -63,7 +63,7 @@ sha()
 {
     local return_code=$(ssh-add -l >/dev/null 2>&1; echo $?;);
     if [ "${return_code}" -eq "0" ]; then
-        echo 'SSH agent already running';
+        echo 'SSH agent already running' >&2;
         return 1;
     fi
 
@@ -73,7 +73,7 @@ sha()
     ssh-add >/dev/null;
 
     [ -n "${SSH_AGENT_PID}" ] && message="${message} under pid ${SSH_AGENT_PID}";
-    echo $message;
+    echo "${message}";
 }
 
 #
@@ -329,8 +329,6 @@ phps()
         echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 1;
     fi
-
-    [ -f "${repo_root}/phpstan.neon" ] && file='-c phpstan.neon';
 
     (
         cd "${repo_root}" || return 2;
