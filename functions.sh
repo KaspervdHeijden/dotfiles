@@ -63,7 +63,7 @@ sha()
 {
     local return_code=$(ssh-add -l >/dev/null 2>&1; echo $?;);
     if [ "${return_code}" -eq "0" ]; then
-        echo 'SSH agent already running';
+        echo 'SSH agent already running' >&2;
         return 1;
     fi
 
@@ -73,14 +73,13 @@ sha()
     ssh-add >/dev/null;
 
     [ -n "${SSH_AGENT_PID}" ] && message="${message} under pid ${SSH_AGENT_PID}";
-    echo $message;
+    echo "${message}";
 }
 
 #
-# Navigates to, or prints the root of the current repository.
-# Use -e to print the root diretory to STDOUT.
+# Prints the root of the current repository.
 #
-# repo_root [-e]
+# repo_root
 #
 repo_root()
 {
@@ -95,12 +94,12 @@ repo_root()
         return 1;
     fi
 
-    if [ ! -d "$repo_root}" ]; then
+    if [ ! -d "${repo_root}" ]; then
         echo 'Root is not a directory' >&2;
         return 2;
     fi
 
-    [ "${1}" = '-e' ] && echo "${repo_root}" || cd "${repo_root}";
+    echo "${repo_root}";
 }
 
 #
@@ -330,8 +329,6 @@ phps()
         echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 1;
     fi
-
-    [ -f "${repo_root}/phpstan.neon" ] && file='-c phpstan.neon';
 
     (
         cd "${repo_root}" || return 2;
