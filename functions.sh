@@ -61,13 +61,10 @@ cds()
 #
 sha()
 {
-    local return_code=$(ssh-add -l >/dev/null 2>&1; echo $?;);
-    if [ "${return_code}" -eq "0" ]; then
-        echo 'SSH agent already running' >&2;
-        return 1;
-    fi
-
-    [ "${return_code}" -eq "2" ] && eval $(ssh-agent -s) >/dev/null 2>&1;
+    case $(ssh-add -l >/dev/null 2>&1; echo $?) in
+        0) echo 'SSH agent already running' >&2; return 1 ;;
+        2) eval $(ssh-agent -s) >/dev/null 2>&1 ;;
+    esac
 
     local message='SSH agent running';
     ssh-add >/dev/null;
@@ -125,9 +122,9 @@ gitc()
         return 1;
     fi
 
-    local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo '1');
-    local check_master=$(git config --local --no-includes --get dotfiles.checkMaster || echo '1');
-    local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo '1');
+    local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}");
+    local check_master=$(git config --local --no-includes --get dotfiles.checkMaster || echo "${DF_CHECK_MASTER:-1}");
+    local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo "${DF_CHECK_FORK:-1}");
 
     while getopts 'nmf' arg; do
         case "${arg}" in
