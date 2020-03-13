@@ -3,6 +3,8 @@
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
 
+
+alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoremove';
 alias vim="vim -u '${DOTFILES_DIR}/vim.conf'";
 alias shq='killall ssh-agent 2>/dev/null';
 
