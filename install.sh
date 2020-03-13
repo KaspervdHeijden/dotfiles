@@ -22,12 +22,5 @@ if [ -f "${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh" ]; then
 
     export DOTFILES_DIR="${dotfiles_dir}";
     . "${dotfiles_dir}/${cur_shell}/${cur_shell}rc.sh";
-
-    echo 'Run repo-search? (this may take a while!) [y/n]';
-    read response;
-
-    if [ "${response}" = 'y' ] || [ "${response}" = 'Y' ]; then
-        repo_search;
-    fi
 fi
 
