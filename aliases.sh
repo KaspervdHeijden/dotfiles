@@ -3,7 +3,7 @@
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
 
-alias vim="vim -u '${DOTFILES_DIR}/vimrc'";
+alias vim="vim -u '${DOTFILES_DIR}/vim.conf'";
 alias shq='killall ssh-agent 2>/dev/null';
 
 if [ -x "$(command -v docker-compose)" ]; then
