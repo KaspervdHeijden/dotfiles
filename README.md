@@ -12,16 +12,16 @@ Dotfiles has the following dependencies:
 Personally, I also want:
 1. ack
 2. tree
+3. neofetch
 
 Install them all by doing:
 ```sh
-sudo apt-get update && sudo apt-get install zsh git tmux ack-grep tree;
+sudo apt -y update && sudo apt -y install zsh git tmux ack-grep tree neofetch;
 ```
 
 ### Installation
 
-First, clone this repository (I suggest to clone from the home dir).
-Then, source the `install.sh` file.
+First, clone this repository. Then source the `install.sh` file:
 ```sh
 cd && git clone 'https://github.com/KaspervdHeijden/dotfiles.git' && source dotfiles/install.sh;
 ```
@@ -35,8 +35,8 @@ echo 'set completion-ignore-case On' >> ~/.inputrc;
 ### Notes
 
 #### gitc function
-Working with a repository where you do not need or want to perform
-fork- and/or newline checks, you can pass the appropriate flags every time,
+Working with a repository where you don't need (or want) to perform
+fork-, master- and/or newline checks, you can pass the appropriate flags every time,
 or you can define git variables for them.
 
 Add the variable to the specific repoosity, to not have to pass `-f` anymore:
@@ -52,10 +52,14 @@ git config --local dotfiles.checkLineEndings 0;
 This needs to be done on every machine, since git variables aren't
 part of the repository itself.
 
-#### Prompt
-Setting the variable `$GIT_PROMPT_SHOW_DIRTY` to a non-empty value will
-show status information in the prompt, but may slow down the prompt.
+You can also use global variables, `$DF_CHECK_FORK`, `$DF_CHECK_LINE_ENDINGS`
+and `$DF_CHECK_MASTER`. These can be set in `~/.dotfiles` which will be sourced
+last.
 
-You can define the `$DOTFILES_HOST_PROMPT_COLOR` variable to control
+#### Prompt
+Setting the variable `$DF_GIT_PROMPT_SHOW_DIRTY` to a non-empty value will
+show status information in the prompt, but may significantly slow down the prompt.
+
+You can define the `$DF_DOTFILES_HOST_PROMPT_COLOR` variable to control
 the color for the host part in the prompt. It defaults to green.
 

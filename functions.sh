@@ -60,11 +60,8 @@ sha()
         2) eval $(ssh-agent -s) >/dev/null 2>&1 ;;
     esac
 
-    local message='SSH agent running';
     ssh-add >/dev/null;
-
-    [ -n "${SSH_AGENT_PID}" ] && message="${message} under pid ${SSH_AGENT_PID}";
-    echo "${message}";
+    [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
 }
 
 #
