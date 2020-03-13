@@ -1,2 +1,0 @@
-/opt/httpd/
-/mnt/f/

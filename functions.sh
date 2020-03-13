@@ -1,59 +1,53 @@
 #
-# Populate the list for cds.
+# Navigates to a repository with a given partial directory name.
+# If multiple matches are found use the second argument to select one.
 #
-# @see cds()
-#
-repo_search()
-{
-    local target=/dev/tty;
-    [ "${1}" = "-q" ] && target=/dev/null;
-
-    echo 'Searching for repositories. Please hold...' >$target;
-    find / -type d -name '.git' -and -not -wholename '*/vendor/*' $(printf "-and -not -wholename *%s* " $(cat "${DOTFILES_DIR}/repo-list/ignores.txt")) -print0 2>/dev/null | xargs -r0n1 dirname 2>/dev/null | tee "${DOTFILES_DIR}/repo-list/new.txt" >$target;
-    [ -f "${DOTFILES_DIR}/repo-list/new.txt" ] && mv "${DOTFILES_DIR}/repo-list/new.txt" "${DOTFILES_DIR}/repo-list/repos.txt";
-}
-
-#
-# Navigates to a repository with a name.
-#
-# cds [<partial-name>]
-#
-# View a list of all repositories by calling
-# cds without arguments.
-#
-# If given, the parital name should uniquely
-# identify a repository from this list.
-#
-# This method requires a list of repositories,
-# which can be created using repo_search.
-#
-# @see repo_search
+# cds [<partial-name>] [index]
 #
 cds()
 {
-    [ -d "${1}" ] && cd "${1}" && return 0;
-    if [ ! -f "${DOTFILES_DIR}/repo-list/repos.txt" ]; then
-        echo 'No repository list found; please run repo-search and try again' >&2;
-        return 1;
+    if [ "${#DF_REPO_DIRS[@]}" -eq 0 ]; then
+        echo 'Array $DF_REPO_DIRS must not be empty' >&2;
+        return 6;
     fi
 
-    [ -z "${1}" ] && cat "${DOTFILES_DIR}/repo-list/repos.txt" && return 0;
+    local repo_list=$(find $DF_REPO_DIRS[@] -maxdepth ${DF_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
+    local search="${1}";
+    if [ -z "${search}" ]; then
+        echo "${repo_list}";
+        return 0;
+    fi
 
-    local match=$(grep -ie "/[^/]*${1}[^/]*$" "${DOTFILES_DIR}/repo-list/repos.txt");
-    if [ -z "${match}" ]; then
-        echo 'No match found' >&2;
+    if [ -d "${search}" ]; then
+        cd "${search}" && return 0 || return 1;
+    fi
+
+    local matches=$(echo "${repo_list}" | grep -ie "/[^/]*${search}[^/]*$");
+    if [ -z "${matches}" ]; then
+        echo "No matches found for '${search}*'" >&2;
         return 2;
     fi
 
-    [ -d "${match}" ] && cd "${match}" && return 0;
+    if [ -d "${matches}" ]; then
+        echo "${matches}";
+        cd "${matches}" && return 0 || return 3;
+    fi
 
-    local end_match=$(grep -ie "/[^/]*${1}$" "${DOTFILES_DIR}/repo-list/repos.txt");
-    [ -d "${end_match}" ] && cd "${end_match}" && return 0;
+    local index="${2}";
+    if [ -n "${index}" ]; then
+        local line=$(echo "${matches}" | sed -n "${index}p");
+        if [ -d "${line}" ]; then
+            echo "${line}";
+            cd "${line}" && return 0 || return 4;
+        fi
 
-    echo 'More than 1 match was found. Please be more specific:' >&2;
-    echo "${match}" >&2;
+        echo "Invalid index '${index}'" >&2;
+    fi
 
-    return 3;
+    echo 'Multiple matches found:' >&2;
+    echo "${matches}" >&2;
+
+    return 5;
 }
 
 #
