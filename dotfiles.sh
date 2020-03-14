@@ -9,5 +9,7 @@ export PAGER=less;
 . "${DOTFILES_DIR}/aliases.sh";
 
 [ -x "$(command -v neofetch)" ] && neofetch -cpu_temp C --kernel_shorthand off --distro_shorthand off  --memory_percent on;
-[ -f ~/.dotfiles ] && . ~/.dotfiles;
+
+[ -f "${HOME}/.config/dotfiles/config.sh" ] && . "${HOME}/.config/dotfiles/config.sh";
+[ -f "${HOME}/.dotfiles" ] && . "${HOME}/.dotfiles";
 
