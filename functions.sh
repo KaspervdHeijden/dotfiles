@@ -51,20 +51,6 @@ cds()
 }
 
 #
-# Starts a SSH agent.
-#
-sha()
-{
-    case $(ssh-add -l >/dev/null 2>&1; echo $?) in
-        0) echo 'SSH agent already running' >&2; return 1 ;;
-        2) eval $(ssh-agent -s) >/dev/null 2>&1 ;;
-    esac
-
-    ssh-add >/dev/null;
-    [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
-}
-
-#
 # Prints the root of the current repository.
 #
 # repo_root
@@ -326,6 +312,20 @@ phps()
             ./vendor/bin/phpstan -vvv analyse;
         fi
     );
+}
+
+#
+# Starts a SSH agent.
+#
+sha()
+{
+    case $(ssh-add -l >/dev/null 2>&1; echo $?) in
+        0) echo 'SSH agent already running' >&2; return 1 ;;
+        2) eval $(ssh-agent -s) >/dev/null 2>&1 ;;
+    esac
+
+    ssh-add >/dev/null;
+    [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
 }
 
 #
