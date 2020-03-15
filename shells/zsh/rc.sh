@@ -45,6 +45,6 @@ if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
     . "${ZSH}/oh-my-zsh.sh";
 fi
 
-. "${DOTFILES_DIR}/zsh/prompt.sh";
+. "${DOTFILES_DIR}/shells/zsh/prompt.sh";
 . "${DOTFILES_DIR}/dotfiles.sh";
 

@@ -31,6 +31,6 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
-. "${DOTFILES_DIR}/bash/prompt.sh";
+. "${DOTFILES_DIR}/shells/bash/prompt.sh";
 . "${DOTFILES_DIR}/dotfiles.sh";
 

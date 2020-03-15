@@ -23,12 +23,12 @@ sudo apt -y update && sudo apt -y install zsh git tmux ack-grep tree neofetch;
 
 First, clone this repository. Then source the `install.sh` file:
 ```sh
-cd && git clone 'https://github.com/KaspervdHeijden/dotfiles.git' && source dotfiles/install.sh;
+cd && git clone 'https://github.com/KaspervdHeijden/dotfiles.git' && source dotfiles/setup/install.sh;
 ```
 
-If you're using bash, you can make autocomplete case-insensitive by doing:
+When using bash, you can make autocomplete case-insensitive by doing:
 ```sh
-[[ ! -f ~/.inputrc && -f /etc/.inputrc ]] && echo '$include /etc/.inputrc' > ~/.inputrc;
+[ ! -f ~/.inputrc ] && [ -f /etc/.inputrc ] && echo '$include /etc/.inputrc' > ~/.inputrc;
 echo 'set completion-ignore-case On' >> ~/.inputrc;
 ```
 
@@ -53,13 +53,13 @@ This needs to be done on every machine, since git variables aren't
 part of the repository itself.
 
 You can also use global variables, `$DF_CHECK_FORK`, `$DF_CHECK_LINE_ENDINGS`
-and `$DF_CHECK_MASTER`. These can be set in `~/.dotfiles` which will be sourced
-last.
+and `$DF_CHECK_MASTER`. These can be set in `~/.config/dotfiles/config.sh`
+which will be sourced last.
 
 #### Prompt
 Setting the variable `$DF_GIT_PROMPT_SHOW_DIRTY` to a non-empty value will
 show status information in the prompt, but may significantly slow down the prompt.
 
-You can define the `$DF_DOTFILES_HOST_PROMPT_COLOR` variable to control
-the color for the host part in the prompt. It defaults to green.
+You can define the `$DF_DOTFILES_HOST_PROMPT_COLOR_BASH` or `$DF_DOTFILES_HOST_PROMPT_COLOR_ZSH`
+variables to control the color for the host part in the prompt. It defaults to green.
 
