@@ -130,7 +130,7 @@ gitc()
     fi
 
     local git_status=$(git status --porcelain 2>/dev/null);
-    if ! echo "${git_status}" | grep -qE '^M|A|R'; then
+    if ! echo "${git_status}" | grep -qE '^M|A|R|D'; then
         echo 'No staged changes' >&2;
         return 5;
     fi
