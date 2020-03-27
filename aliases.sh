@@ -23,6 +23,7 @@ if [ -x "$(command -v git)" ]; then
     alias gcm='git checkout master';
     alias gca='git commit --amend';
     alias grm='git rebase master';
+    alias gds='git diff --staged';
     alias gc='git checkout';
     alias gap='git add -p';
     alias gt='git remote';
