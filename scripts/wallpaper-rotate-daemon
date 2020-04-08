@@ -1,0 +1,41 @@
+#! /usr/bin/env sh
+
+for binary in 'gsettings' 'shuf'; do
+    if [ ! -x "$(command -v "${binary}")" ]; then
+        echo "Binary not found ${binary}" >&2;
+        exit 2;
+    fi
+done
+
+wallpaper_dir="${HOME}/Pictures";
+timeout=600;
+
+while getopts 'd:t:' arg; do
+    case "${arg}" in
+        d) wallpaper_dir="${OPTARG}" ;;
+        t) timeout="${OPTARG}"       ;;
+    esac;
+done
+
+if [ ! -d "${wallpaper_dir}" ]; then
+    echo "Not a directory '${wallpaper_dir}" >&2;
+    exit 3;
+fi
+
+[ "${timeout}" -lt 60 ] && timeout=60;
+
+while true; do
+    sleep "${timeout}";
+
+    image=$(find "${wallpaper_dir}" -maxdepth 3 -type f -name '*.jpg' -o -name '*.jpeg' 2>/dev/null | shuf -n1);
+    if [ ! -f "${image}" ]; then
+        echo 'No image found' >&2;
+        exit 4;
+    fi
+
+    if ! gsettings set org.gnome.desktop.background picture-uri "file://${image}"; then
+        echo 'Could not change the background image' >&2;
+        exit 5;
+    fi
+done
+
