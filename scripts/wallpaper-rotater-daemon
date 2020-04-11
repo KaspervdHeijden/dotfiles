@@ -1,0 +1,59 @@
+#! /usr/bin/env sh
+
+for binary in 'gsettings' 'shuf'; do
+    if [ ! -x "$(command -v "${binary}")" ]; then
+        echo "Binary not found ${binary}" >&2;
+        exit 2;
+    fi
+done
+
+wallpaper_dir="${HOME}/Pictures";
+timeout=600;
+counter=1;
+mode='r';
+
+while getopts ':m:d:t:' arg; do
+    case "${arg}" in
+        d) wallpaper_dir="${OPTARG}" ;;
+        t) timeout="${OPTARG}"       ;;
+        m) mode="${OPTARG}"          ;;
+    esac;
+done
+
+if [ ! -d "${wallpaper_dir}" ]; then
+    echo "Not a directory '${wallpaper_dir}" >&2;
+    exit 3;
+fi
+
+[ "${timeout}" -lt 60 ] && timeout=60;
+
+while true; do
+    sleep "${timeout}";
+
+    image_list==$(find "${wallpaper_dir}" -maxdepth 3 -type f -name '*.jpg' -o -name '*.jpeg' 2>/dev/null);
+    num_images="$(echo "${image_list}" | wc -l)";
+    if [ "${mode}" != 'r' ]; then
+        counter=$((counter % num_images + 1));
+        new_image=$(echo "${image_list}" | sed -n "${counter}p");
+    else
+        new_image=$(echo "${image_list}" | shuf -n1);
+
+        if [ "${num_images}" -gt 1 ]; then
+            current_image=$(gsettings get org.gnome.desktop.background picture-uri);
+            while [ "${current_image}" = "'file://${new_image}'" ]; do
+                new_image=$(echo "${image_list}" | shuf -n1);
+            done
+        fi
+    fi
+
+    if [ ! -f "${new_image}" ]; then
+        echo 'No image found' >&2;
+        exit 4;
+    fi
+
+    if ! gsettings set org.gnome.desktop.background picture-uri "file://${new_image}"; then
+        echo "Could not change the background image to ${new_image}" >&2;
+        exit 5;
+    fi
+done
+
