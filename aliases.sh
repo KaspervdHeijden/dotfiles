@@ -1,8 +1,7 @@
 [ -x "$(command -v tmux)" ] && alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DOTFILES_DIR}/config/tmux.conf' new -s '$(whoami)-tmux-session' >/dev/null 2>/dev/null";
-[ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --morespace --smooth --tabsize=4 --autoindent --cut --nowrap --wordbounds --const';
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
+[ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
-
 
 alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoremove';
 alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
