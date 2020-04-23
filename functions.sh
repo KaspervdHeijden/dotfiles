@@ -351,3 +351,13 @@ calc()
     done;
 }
 
+#
+# Searches country by name or code
+#
+# country <code-or-name>
+#
+country()
+{
+    grep -i "${1}" "${DOTFILES_DIR}/country-codes";
+}
+
