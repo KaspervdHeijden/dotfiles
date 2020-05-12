@@ -351,3 +351,35 @@ calc()
     done;
 }
 
+#
+# Convert file line endings to unix line endings
+#
+# nl2unix <file> [<file>] [...]
+#
+nl2unix()
+{
+    for arg in "$@"; do
+        if [ ! -f "${arg}" ]; then
+            echo "File not found: ${arg}" >&2;
+            return 1;
+        fi
+
+        if ! file "${arg}" | grep -q ' line terminators'; then
+            echo "Unchanged ${arg}";
+            continue;
+        fi;
+
+        if ! cat "${arg}" | tr -d '\r' > "${arg}.new"; then
+            return 2;
+        fi
+
+        if mv "${arg}.new" "${arg}" 2>/dev/null; then
+            echo "Converted ${arg}";
+        else
+            echo "Could not rename ${arg}.new";
+            rm "${arg}.new";
+            return 2;
+        fi
+    done;
+}
+
