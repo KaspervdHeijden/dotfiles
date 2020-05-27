@@ -3,9 +3,9 @@
 [ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
 
-alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoremove';
-alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
-alias shq='killall ssh-agent 2>/dev/null';
+[ -x "$(command -v apt)" ] && alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoremove';
+[ -x "$(command -v vim)" ] && alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
+[ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
 
 if [ -x "$(command -v docker-compose)" ]; then
    alias dcu='docker-compose up -d';
@@ -14,8 +14,8 @@ if [ -x "$(command -v docker-compose)" ]; then
 fi
 
 if [ -x "$(command -v composer)" ]; then
-    alias ci='composer install --ignore-platform-reqs';
-    alias cu='composer update --ignore-platform-reqs';
+    alias ci='sh -c "composer install --ignore-platform-reqs"';
+    alias cu='sh -c "composer update --ignore-platform-reqs"';
 fi
 
 if [ -x "$(command -v git)" ]; then

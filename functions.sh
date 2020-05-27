@@ -183,7 +183,7 @@ gitl()
     fi
 
     echo "Pulling ${remote} ${branch}";
-    git pull "${remote}" "${branch}";
+    git pull "${remote}" "${branch}" || return 3;
 }
 
 #
@@ -224,7 +224,7 @@ gith()
         return 2;
     fi
 
-    git push $flags "${remote}" "${branch}";
+    git push $flags "${remote}" "${branch}" || return 3;
 }
 
 #
@@ -261,17 +261,20 @@ gitb()
         return 3;
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
-    if [ ! "${branch_name}" = 'master' ]; then
-        git checkout master || return 4;
-    fi
-
     local remote_name='origin';
     if echo "${remotes}" | grep -q 'upstream'; then
         remote_name='upstream';
     fi
 
-    git pull "${remote_name}" master && git checkout -b "${new_branch_name}";
+    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local source_branch='master';
+
+    if [ "${branch_name}" != "${source_branch}" ]; then
+        git checkout "${source_branch}" || return 4;
+        git pull "${remote_name}" "${source_branch}" || return 5;
+    fi
+
+    git checkout -b "${new_branch_name}" || return 6;
 }
 
 #
@@ -290,7 +293,7 @@ phpu()
         return 2;
     fi
 
-    (cd "${repo_root}" && ./vendor/bin/phpunit);
+    (cd "${repo_root}" && sh -c './vendor/bin/phpunit');
 }
 
 #
@@ -307,9 +310,9 @@ phps()
     (
         cd "${repo_root}" || return 2;
         if [ -f ./phpstan.neon ]; then
-            ./vendor/bin/phpstan -vvv analyse -c phpstan.neon;
+            sh -c './vendor/bin/phpstan -vvv analyse -c phpstan.neon';
         else
-            ./vendor/bin/phpstan -vvv analyse;
+            sh -c './vendor/bin/phpstan -vvv analyse';
         fi
     );
 }
@@ -324,7 +327,7 @@ sha()
         2) eval $(ssh-agent -s) >/dev/null 2>&1 ;;
     esac
 
-    ssh-add >/dev/null;
+    ssh-add >/dev/null || return 2;
     [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
 }
 
@@ -352,13 +355,15 @@ calc()
 }
 
 #
-# Convert file line endings to unix line endings
+# Convert DOS file line endings to unix line endings.
 #
-# nl2unix <file> [<file>] [...]
+# dos2unix <file> [<file>] [...]
 #
-nl2unix()
+dos2unix()
 {
     for arg in "$@"; do
+        [ -z "${arg}" ] && continue;
+
         if [ ! -f "${arg}" ]; then
             echo "File not found: ${arg}" >&2;
             return 1;
@@ -367,19 +372,15 @@ nl2unix()
         if ! file "${arg}" | grep -q ' line terminators'; then
             echo "Unchanged ${arg}";
             continue;
-        fi;
-
-        if ! cat "${arg}" | tr -d '\r' > "${arg}.new"; then
-            return 2;
         fi
 
-        if mv "${arg}.new" "${arg}" 2>/dev/null; then
-            echo "Converted ${arg}";
-        else
-            echo "Could not rename ${arg}.new";
-            rm "${arg}.new";
-            return 2;
+        local new_content=$(cat "${arg}" | tr -d '\r');
+        if ! echo "${new_content}" | diff "${arg}" - >/dev/null; then
+            echo "Unchanged ${arg}";
+            continue;
         fi
+
+        echo "${new_content}" > "{$arg}";
     done;
 }
 

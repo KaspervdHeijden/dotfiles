@@ -5,21 +5,26 @@ if [ ! -x "$(command -v gsettings)" ]; then
     exit 2;
 fi
 
+if ! gsettings get org.gnome.desktop.background picture-uri >/dev/null 2>/dev/null; then
+    echo 'Could not get current wallpaper' >&2;
+    exit 3;
+fi
+
 wallpaper_dirs='';
 random_mode=0;
 timeout=300;
 
 while getopts ':rd:t:' arg; do
     case "${arg}" in
-        d) [ -d "${OPTARG}" ] && wallpaper_dirs="${wallpaper_dirs} ${OPTARG}"; ;;
-        t) timeout="${OPTARG}"       ;;
-        r) random_mode=1             ;;
+        d) [ -d "${OPTARG}" ] && wallpaper_dirs="${wallpaper_dirs} ${OPTARG}" ;;
+        t) timeout="${OPTARG}" ;;
+        r) random_mode=1       ;;
     esac;
 done
 
 if [ -z "${wallpaper_dirs}" ]; then
     echo 'No valid directories given' >&2;
-    exit 3;
+    exit 4;
 fi
 
 [ "${timeout}" -lt 30 ] && timeout=30;
@@ -46,12 +51,12 @@ while true; do
 
     if [ ! -f "${new_image}" ]; then
         echo 'No image found' >&2;
-        exit 4;
+        exit 5;
     fi
 
     if ! gsettings set org.gnome.desktop.background picture-uri "file://${new_image}" 2>/dev/null; then
         echo "Could not change the wallpaper to ${new_image}" >&2;
-        exit 5;
+        exit 6;
     fi
 done
 
