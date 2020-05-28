@@ -271,9 +271,9 @@ gitb()
 
     if [ "${branch_name}" != "${source_branch}" ]; then
         git checkout "${source_branch}" || return 4;
-        git pull "${remote_name}" "${source_branch}" || return 5;
     fi
 
+    git pull "${remote_name}" "${source_branch}" || return 5;
     git checkout -b "${new_branch_name}" || return 6;
 }
 

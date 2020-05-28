@@ -10,5 +10,7 @@ export PAGER=less;
 
 [ -x "$(command -v neofetch)" ] && neofetch -cpu_temp C --kernel_shorthand off --distro_shorthand off  --memory_percent on;
 
-[ -f "${HOME}/.config/dotfiles/config.sh" ] && . "${HOME}/.config/dotfiles/config.sh" || true;
+if [ -f "${HOME}/.config/dotfiles/config.sh" ]; then
+    . "${HOME}/.config/dotfiles/config.sh";
+fi
 
