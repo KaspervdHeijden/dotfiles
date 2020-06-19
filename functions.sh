@@ -350,7 +350,7 @@ slug()
 calc()
 {
     for arg in "$@"; do
-        [ -n "${arg}" ] && awk "BEGIN {printf \"%.2f\n\", ${arg}}" | sed 's/\.00$//';
+        [ -n "${arg}" ] && awk "BEGIN { printf \"%.2f\n\", ${arg} }" | sed 's/\.00$//';
     done;
 }
 
