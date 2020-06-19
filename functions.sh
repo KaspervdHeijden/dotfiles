@@ -380,6 +380,11 @@ dos2unix()
             continue;
         fi
 
+        if [ $(echo "${new_content}" | wc -l) -ne $(cat "${arg}" | wc -l) ]; then
+            echo "Line count mismatch for '${arg}'" >&2;
+            return 2;
+        fi
+
         echo "${new_content}" > "${arg}";
     done;
 }
