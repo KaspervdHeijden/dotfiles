@@ -375,12 +375,12 @@ dos2unix()
         fi
 
         local new_content=$(cat "${arg}" | tr -d '\r');
-        if ! echo "${new_content}" | diff "${arg}" - >/dev/null; then
+        if echo "${new_content}" | diff "${arg}" - >/dev/null; then
             echo "Unchanged ${arg}";
             continue;
         fi
 
-        echo "${new_content}" > "{$arg}";
+        echo "${new_content}" > "${arg}";
     done;
 }
 
