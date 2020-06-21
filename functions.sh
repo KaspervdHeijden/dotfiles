@@ -375,6 +375,11 @@ dos2unix()
         fi
 
         local new_content=$(cat "${arg}" | tr -d '\r');
+        if ! $?; then
+            echo "Error processing '${arg}'" >&2;
+            return 2;
+        fi
+
         if echo "${new_content}" | diff "${arg}" - >/dev/null; then
             echo "Unchanged ${arg}";
             continue;
@@ -382,7 +387,7 @@ dos2unix()
 
         if [ $(echo "${new_content}" | wc -l) -ne $(cat "${arg}" | wc -l) ]; then
             echo "Line count mismatch for '${arg}'" >&2;
-            return 2;
+            return 3;
         fi
 
         echo "${new_content}" > "${arg}";
