@@ -7,8 +7,7 @@
 cds()
 {
     if [ "${#DF_REPO_DIRS[@]}" -eq 0 ]; then
-        echo 'Array $DF_REPO_DIRS must not be empty' >&2;
-        return 6;
+        DF_REPO_DIRS=("${HOME}");
     fi
 
     local repo_list=$(find $DF_REPO_DIRS[@] -maxdepth ${DF_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
@@ -45,7 +44,7 @@ cds()
     fi
 
     echo 'Multiple matches found:' >&2;
-    echo "${matches}" >&2;
+    echo "${matches}" | awk '{print NR ": " $0}' >&2;
 
     return 5;
 }
@@ -239,12 +238,7 @@ gitb()
         return 10;
     fi
 
-    if [ "$#" -gt 1 ]; then
-        local new_branch_name=$(slug "$@");
-    else
-        local new_branch_name="${1}";
-    fi
-
+    local new_branch_name="${1}"
     if [ -z "${new_branch_name}" ]; then
         echo 'No branch name given' >&2;
         return 1;

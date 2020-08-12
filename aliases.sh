@@ -6,6 +6,7 @@
 [ -x "$(command -v apt)" ] && alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoremove';
 [ -x "$(command -v vim)" ] && alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
 [ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
+[ -x  '/snap/bin/phpstorm' ] && alias code='/snap/bin/phpstorm';
 
 if [ -x "$(command -v docker-compose)" ]; then
    alias dcu='docker-compose up -d';
