@@ -10,7 +10,7 @@ __df_prompt_git_status()
     local output=$(git symbolic-ref --short HEAD 2>/dev/null);
     [ -z "${output}" ] && return 0;
 
-    [ "${DF_GIT_PROMPT_SHOW_DIRTY}" ] && [ -n "$(git status --porcelain 2>/dev/null)" ] && output="${output}*";
+    [ "${DF_GIT_PROMPT_SHOW_DIRTY}" ] && [ -n "$(git status -uno --porcelain 2>/dev/null)" ] && output="${output}*";
     echo -ne " ${output}";
 }
 

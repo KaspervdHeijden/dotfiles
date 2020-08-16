@@ -6,7 +6,7 @@ __df_prompt_git_status()
     [ -z "${branch_name}" ] && return 0;
 
     local output="%F{green}%B${branch_name}%b%f";
-    [ "${DF_GIT_PROMPT_SHOW_DIRTY}" ] && [ -n "$(git status --porcelain 2>/dev/null)" ] && output="${output}*";
+    [ "${DF_GIT_PROMPT_SHOW_DIRTY}" ] && [ -n "$(git status -uno --porcelain 2>/dev/null)" ] && output="${output}*";
     echo -ne " ${output}";
 }
 
