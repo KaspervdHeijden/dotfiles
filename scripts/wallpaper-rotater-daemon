@@ -18,7 +18,7 @@ timeout=300;
 while getopts ':rd:t:' arg; do
     case "${arg}" in
         d) [ -d "${OPTARG}" ] && wallpaper_dirs="${wallpaper_dirs} ${OPTARG}" ;;
-        s) [ -n "${OPTARG}" ] && [ "${OPTARG}" -eq "${OPTARG}" ] 2>/dev/null && search_depth="${OPTARG}";
+        s) [ -n "${OPTARG}" ] && [ "${OPTARG}" -eq "${OPTARG}" ] 2>/dev/null && search_depth="${OPTARG}" ;;
         t) timeout="${OPTARG}" ;;
         r) random_mode=1       ;;
     esac;
