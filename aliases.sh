@@ -1,4 +1,4 @@
-[ -x "$(command -v tmux)" ] && alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DOTFILES_DIR}/config/tmux.conf' new -s '$(whoami)-tmux-session' >/dev/null 2>/dev/null";
+[ -x "$(command -v tmux)" ] && alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DOTFILES_DIR}/config/tmux.conf' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
@@ -20,6 +20,7 @@ if [ -x "$(command -v composer)" ]; then
 fi
 
 if [ -x "$(command -v git)" ]; then
+    alias masin='git checkout master && { git pull upstream master 2>/dev/null || git pull origin master } && git checkout -- && git rebase master';
     alias gcm='git checkout master';
     alias gca='git commit --amend';
     alias grm='git rebase master';
@@ -37,6 +38,6 @@ if [ -x "$(command -v git)" ]; then
     alias g='git';
 fi
 
-alias rr='repo_root && cd $(repo_root)';
+alias rr='repo_root -c';
 alias lsa='ls -lAFh';
 

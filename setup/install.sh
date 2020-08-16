@@ -1,7 +1,7 @@
 export DOTFILES_DIR=$(realpath "$(dirname "${0}")/../");
 
 echo "Including dotfiles from ${DOTFILES_DIR}...";
-for shell_name in $(cd "${DOTFILES_DIR}/shells"; ls -d */ | sed 's/\/$//'); do
+for shell_name in $(cd "${DOTFILES_DIR}/shells"; ls -d *); do
     if [ ! -f "${DOTFILES_DIR}/shells/${shell_name}/rc.sh" ]; then
         continue;
     fi
@@ -13,10 +13,11 @@ for shell_name in $(cd "${DOTFILES_DIR}/shells"; ls -d */ | sed 's/\/$//'); do
     fi
 
     echo " -> adding config for ${shell_name} to ${file}";
-    echo '' >> "${file}";
+
+    [ -s "${file}" ] || echo '' >> "${file}";
     echo '# Include dotfiles' >> "${file}";
     echo "export DOTFILES_DIR='${DOTFILES_DIR}';" >> "${file}";
-    echo ". \"\${DOTFILES_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
+    echo "source \"\${DOTFILES_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
 done;
 echo 'Done.';
 
@@ -34,6 +35,6 @@ echo 'Done.';
 cur_shell=$(getent passwd "${USER}" | cut -d':' -f7 | xargs -I{} basename {} | head -n1);
 if [ -f "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "Sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
-    . "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
+    source "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
 fi
 

@@ -11,12 +11,14 @@ if ! gsettings get org.gnome.desktop.background picture-uri >/dev/null 2>/dev/nu
 fi
 
 wallpaper_dirs='';
+search_depth=1;
 random_mode=0;
 timeout=300;
 
 while getopts ':rd:t:' arg; do
     case "${arg}" in
         d) [ -d "${OPTARG}" ] && wallpaper_dirs="${wallpaper_dirs} ${OPTARG}" ;;
+        s) [ -n "${OPTARG}" ] && [ "${OPTARG}" -eq "${OPTARG}" ] 2>/dev/null && search_depth="${OPTARG}";
         t) timeout="${OPTARG}" ;;
         r) random_mode=1       ;;
     esac;
@@ -33,7 +35,7 @@ while true; do
     sleep "${timeout}";
 
     cur_image=$(gsettings get org.gnome.desktop.background picture-uri 2>/dev/null | sed "s/^\([\"']\)\(.*\)\1\$/\2/g");
-    image_list=$(find $wallpaper_dirs -maxdepth 1 -type f -name '*.jpg' -o -name '*.jpeg' 2>/dev/null | sort);
+    image_list=$(find $wallpaper_dirs -maxdepth "${search_depth}" -type f -name '*.jpg' -o -name '*.jpeg' 2>/dev/null | sort);
     num_images=$(echo "${image_list}" | wc -l);
 
     if [ "${num_images}" -lt 2 ]; then

@@ -72,7 +72,7 @@ repo_root()
         return 2;
     fi
 
-    echo "${repo_root}";
+    [ "${1}" = '-c' ] && cd "${repo_root}" || echo "${repo_root}";
 }
 
 #
@@ -119,12 +119,12 @@ gitc()
     fi
 
     if [ "${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = 'master' ]; then
-        echo 'Not commiting in master. Use -m to override.' >&2;
+        echo 'Not commiting in master (use -m to override)' >&2;
         return 3;
     fi
 
     if [ "${check_fork}" = "1" ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
-        echo 'Not in your fork. Use -f to override.' >&2;
+        echo 'Not in your fork (use -f to override)' >&2;
         return 4;
     fi
 
@@ -134,7 +134,14 @@ gitc()
         return 5;
     fi
 
-    [ "${check_line_endings}" = '1' ] && [ -n "$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{ print $1 " has dos line endings. Use -n to override." }' | tee /dev/stderr)" ] && return 6;
+    if [ "${check_line_endings}" = '1' ]; then
+        local files_with_dos_lines=$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{print $1 " has dos line endings"}');
+        if [ -n "${files_with_dos_lines}" ]; then
+            echo "${files_with_dos_lines}" >&2;
+            echo ' (use -n to override)' >&2;
+            return 6;
+        fi
+    fi;
     git commit -m "${commit_message}" || return 7;
 
     local git_status_after=$(git status --porcelain 2>/dev/null);
@@ -186,7 +193,7 @@ gitl()
 }
 
 #
-# Pushes the current branch to origin.
+# Pushes the current branch to a remote.
 # Use -f to force-with-lease, or -ff to force.
 #
 # gith [-f] [-ff] [<remote=origin>]
@@ -229,7 +236,7 @@ gith()
 #
 # Creates a new branch from a fresh master.
 #
-# gitb newFeatureBranch
+# gitb new-feature-branch
 #
 gitb()
 {
@@ -238,16 +245,27 @@ gitb()
         return 10;
     fi
 
-    local new_branch_name="${1}"
-    if [ -z "${new_branch_name}" ]; then
-        echo 'No branch name given' >&2;
-        return 1;
-    fi
-
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
         echo 'Not in a git repository' >&2;
         return 2;
+    fi
+
+    local current_branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local source_branch='master';
+    local new_branch_name='';
+
+    for arg in "$@"; do
+        if [ "${arg}" = '-c']; then
+            source_branch="${current_branch_name}";
+        else
+            new_branch_name="${arg}";
+        fi
+    done
+
+    if [ -z "${new_branch_name}" ]; then
+        echo 'No branch name given' >&2;
+        return 1;
     fi
 
     if git branch 2>/dev/null | grep -q "${new_branch_name}"; then
@@ -260,14 +278,16 @@ gitb()
         remote_name='upstream';
     fi
 
-    local branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
-    local source_branch='master';
-
-    if [ "${branch_name}" != "${source_branch}" ]; then
+    if [ "${current_branch_name}" != "${source_branch}" ]; then
         git checkout "${source_branch}" || return 4;
     fi
 
-    git pull "${remote_name}" "${source_branch}" || return 5;
+    if [ "${source_branch}" = 'master' ]; then
+        git pull "${remote_name}" "${source_branch}" || return 5;
+    else
+        echo "Not pulling ${source_branch}...";
+    fi
+
     git checkout -b "${new_branch_name}" || return 6;
 }
 
