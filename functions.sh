@@ -256,7 +256,7 @@ gitb()
     local new_branch_name='';
 
     for arg in "$@"; do
-        if [ "${arg}" = '-c']; then
+        if [ "${arg}" = '-c' ]; then
             source_branch="${current_branch_name}";
         else
             new_branch_name="${arg}";
