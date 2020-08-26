@@ -177,14 +177,14 @@ gitl()
 
     if [ -n "${1}" ]; then
         remote="${1}";
-    elif echo "${remotes}" | grep -q 'upstream'; then
+    elif echo "${remotes}" | grep -q 'upstream' 2>/dev/null; then
         remote='upstream';
     else
         remote='origin';
     fi
 
-    if ! echo "${remotes}" | grep -q "${remote}"; then
-        echo "Unknown remote ${remote}" >&2;
+    if ! echo "${remotes}" | grep -q "${remote}" 2>/dev/null; then
+        echo "Unknown remote '${remote}'" >&2;
         return 2;
     fi
 
@@ -225,8 +225,8 @@ gith()
         fi
     done
 
-    if ! echo "${remotes}" | grep -q "${remote}"; then
-        echo "Unknown remote ${remote}" >&2;
+    if ! echo "${remotes}" | grep -q "${remote}" 2>/dev/null; then
+        echo "Unknown remote '${remote}'" >&2;
         return 2;
     fi
 
@@ -268,8 +268,8 @@ gitb()
         return 1;
     fi
 
-    if git branch 2>/dev/null | grep -q "${new_branch_name}"; then
-        echo "Branch ${new_branch_name} already exists" >&2;
+    if git branch 2>/dev/null | grep -q "${new_branch_name}" 2>/dev/null; then
+        echo "Branch '${new_branch_name}' already exists" >&2;
         return 3;
     fi
 
@@ -285,7 +285,7 @@ gitb()
     if [ "${source_branch}" = 'master' ]; then
         git pull "${remote_name}" "${source_branch}" || return 5;
     else
-        echo "Not pulling ${source_branch}...";
+        echo "Not pulling '${source_branch}'";
     fi
 
     git checkout -b "${new_branch_name}" || return 6;
