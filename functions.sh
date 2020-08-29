@@ -6,19 +6,17 @@
 #
 cds()
 {
-    if [ "${#DF_REPO_DIRS[@]}" -eq 0 ]; then
-        DF_REPO_DIRS=("${HOME}");
+    local search="${1}";
+    if [ -d "${search}" ]; then
+        cd "${search}" && return 0 || return 1;
     fi
 
+    [ "${#DF_REPO_DIRS[@]}" -eq 0 ] && DF_REPO_DIRS=("${HOME}");
+
     local repo_list=$(find $DF_REPO_DIRS[@] -maxdepth ${DF_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
-    local search="${1}";
     if [ -z "${search}" ]; then
         echo "${repo_list}";
         return 0;
-    fi
-
-    if [ -d "${search}" ]; then
-        cd "${search}" && return 0 || return 1;
     fi
 
     local matches=$(echo "${repo_list}" | grep -ie "/[^/]*${search}[^/]*$");
@@ -323,11 +321,7 @@ phps()
 
     (
         cd "${repo_root}" || return 2;
-        if [ -f ./phpstan.neon ]; then
-            sh -c './vendor/bin/phpstan -vvv analyse -c phpstan.neon';
-        else
-            sh -c './vendor/bin/phpstan -vvv analyse';
-        fi
+        sh -c "./vendor/phpstan -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstand.neon')";
     );
 }
 
@@ -336,12 +330,17 @@ phps()
 #
 sha()
 {
+    if [ ! -x ssh-add ]; then
+        echo 'Dependency ssh-add not found' >&2;
+        return 1;
+    fi
+
     case $(ssh-add -l >/dev/null 2>&1; echo $?) in
-        0) echo 'SSH agent already running' >&2; return 1 ;;
-        2) eval $(ssh-agent -s) >/dev/null 2>&1 ;;
+        0) echo 'SSH agent already running' >&2; return 2 ;;
+        2) eval $(ssh-agent -s) >/dev/null 2>&1           ;;
     esac
 
-    ssh-add >/dev/null || return 2;
+    ssh-add >/dev/null || return 3;
     [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
 }
 

@@ -15,8 +15,11 @@ if [ -x "$(command -v docker-compose)" ]; then
 fi
 
 if [ -x "$(command -v composer)" ]; then
-    alias ci='sh -c "composer install --ignore-platform-reqs"';
-    alias cu='sh -c "composer update --ignore-platform-reqs"';
+    alias cii='sh -c "composer install --ignore-platform-reqs"';
+    alias cui='sh -c "composer update --ignore-platform-reqs"';
+
+    alias ci='sh -c "composer install"';
+    alias cu='sh -c "composer update"';
 fi
 
 if [ -x "$(command -v git)" ]; then
