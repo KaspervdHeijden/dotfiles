@@ -330,7 +330,7 @@ phps()
 #
 sha()
 {
-    if [ ! -x ssh-add ]; then
+    if [ ! -x $(command -v ssh-add) ]; then
         echo 'Dependency ssh-add not found' >&2;
         return 1;
     fi
