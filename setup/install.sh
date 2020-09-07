@@ -17,7 +17,7 @@ for shell_name in $(cd "${DOTFILES_DIR}/shells"; ls -d *); do
     [ -s "${file}" ] || echo '' >> "${file}";
     echo '# Include dotfiles' >> "${file}";
     echo "export DOTFILES_DIR='${DOTFILES_DIR}';" >> "${file}";
-    echo "source \"\${DOTFILES_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
+    echo ". \"\${DOTFILES_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
 done;
 echo 'Done.';
 
@@ -35,6 +35,6 @@ echo 'Done.';
 cur_shell=$(getent passwd "${USER}" | cut -d':' -f7 | xargs -I{} basename {} | head -n1);
 if [ -f "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "Sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
-    source "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
+    . "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
 fi
 
