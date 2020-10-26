@@ -18,6 +18,9 @@ if [ -x "$(command -v composer)" ]; then
     alias cii='sh -c "composer install --ignore-platform-reqs"';
     alias cui='sh -c "composer update --ignore-platform-reqs"';
 
+    alias ssh-ci='ssh-agent sh -c "ssh-add && composer install"';
+    alias ssh-cu='ssh-agent sh -c "ssh-add && composer update"';
+
     alias ci='sh -c "composer install"';
     alias cu='sh -c "composer update"';
 fi

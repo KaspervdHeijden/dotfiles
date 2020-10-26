@@ -321,7 +321,7 @@ phps()
 
     (
         cd "${repo_root}" || return 2;
-        sh -c "./vendor/phpstan -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstand.neon')";
+        sh -c "./vendor/bin/phpstan -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstan.neon')";
     );
 }
 
