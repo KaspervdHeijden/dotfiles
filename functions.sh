@@ -310,7 +310,7 @@ gcc()
         [ -z "${choice}" ] && return 2;
     fi
 
-    local chosen_branch=$(echo "${available_branches}" | sed -n "${choice}p");
+    local chosen_branch=$(echo "${available_branches}" | sed -n "${choice}p" | xargs echo);
     [ -z "${chosen_branch}" ] && return 3;
 
     git checkout "${chosen_branch}";
