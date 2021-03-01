@@ -10,7 +10,7 @@
 
 if [ -x "$(command -v docker-compose)" ]; then
    alias dcu='docker-compose up -d';
-   alias dce='docker compose exec';
+   alias dce='docker-compose exec';
    alias dc='docker-compose';
 fi
 

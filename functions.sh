@@ -289,6 +289,33 @@ gitb()
     git checkout -b "${new_branch_name}" || return 6;
 }
 
+gcc()
+{
+    if [ ! -x "$(command -v git)" ]; then
+        echo 'Git not installed' >&2;
+        return 10;
+    fi
+
+    local available_branches=$(git branch 2>/dev/null | grep -v '^*');
+    if [ -z "${available_branches}" ]; then
+        echo 'No branches available' >&2;
+        return 1;
+    fi
+
+    echo "${available_branches}" | grep -n .;
+
+    local choice="${1}";
+    if  [ -z "${choice}" ]; then
+        read choice;
+        [ -z "${choice}" ] && return 2;
+    fi
+
+    local chosen_branch=$(echo "${available_branches}" | sed -n "${choice}p");
+    [ -z "${chosen_branch}" ] && return 3;
+
+    git checkout "{$chosen_branch}";
+}
+
 #
 # Executes phpunit in the current repository.
 #
@@ -330,7 +357,7 @@ phps()
 #
 sha()
 {
-    if [ ! -x $(command -v ssh-add) ]; then
+    if [ ! -x "$(command -v ssh-add)" ]; then
         echo 'Dependency ssh-add not found' >&2;
         return 1;
     fi
