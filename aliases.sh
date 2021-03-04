@@ -2,8 +2,10 @@
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
+[ -x "$(command -v apt)" ] && alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoclean && sudo apt -y autoremove';
 
-[ -x "$(command -v apt)" ] && alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoremove';
+alias update >/dev/null && [ -x "$(command -v snap)" ] && alias update-all='update && sudo snap refresh';
+
 [ -x "$(command -v vim)" ] && alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
 [ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
 [ -x  '/snap/bin/phpstorm' ] && alias code='/snap/bin/phpstorm';
@@ -46,4 +48,6 @@ fi
 
 alias rr='repo_root -c';
 alias lsa='ls -lAFh';
+
+alias start-day='sha;vpn;update-all';
 
