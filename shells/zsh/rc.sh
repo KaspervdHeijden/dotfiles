@@ -3,11 +3,7 @@ setopt prompt_subst histignoredups appendhistory interactivecomments;
 autoload -Uz compinit && compinit;
 autoload -U colors && colors;
 
-bindkey "\e[1~" beginning-of-line;
-bindkey "\e[H" beginning-of-line;
-bindkey "\e[3~" delete-char;
-bindkey "\e[4~" end-of-line;
-bindkey "\e[F" end-of-line;
+bindkey -e;
 
 export HISTFILE=~/.zsh_history;
 export HISTSIZE=20000;
