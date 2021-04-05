@@ -4,7 +4,7 @@
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
 [ -x "$(command -v apt)" ] && alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoclean && sudo apt -y autoremove';
 
-alias update >/dev/null && [ -x "$(command -v snap)" ] && alias update-all='update && sudo snap refresh';
+alias update >/dev/null && alias update-all='update && [ -x "$(command -v snap)" ] && sudo snap refresh || true';
 
 [ -x "$(command -v vim)" ] && alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
 [ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
@@ -20,8 +20,8 @@ if [ -x "$(command -v composer)" ]; then
     alias cii='sh -c "composer install --ignore-platform-reqs"';
     alias cui='sh -c "composer update --ignore-platform-reqs"';
 
-    alias ssh-ci='ssh-agent sh -c "ssh-add && composer install"';
-    alias ssh-cu='ssh-agent sh -c "ssh-add && composer update"';
+    alias ssh-ci='ssh-agent sh -c "ssh-add && composer install --ignore-platform-reqs"';
+    alias ssh-cu='ssh-agent sh -c "ssh-add && composer update --ignore-platform-reqs"';
 
     alias ci='sh -c "composer install"';
     alias cu='sh -c "composer update"';
@@ -49,5 +49,5 @@ fi
 alias rr='repo_root -c';
 alias lsa='ls -lAFh';
 
-alias start-day='sha;vpn;update-all';
+alias sd='sha;vpn;update-all';
 

@@ -289,33 +289,6 @@ gitb()
     git checkout -b "${new_branch_name}" || return 6;
 }
 
-gcc()
-{
-    if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
-        return 10;
-    fi
-
-    local available_branches=$(git branch 2>/dev/null | grep -v '^*');
-    if [ -z "${available_branches}" ]; then
-        echo 'No branches available' >&2;
-        return 1;
-    fi
-
-    echo "${available_branches}" | grep -n .;
-
-    local choice="${1}";
-    if  [ -z "${choice}" ]; then
-        read choice;
-        [ -z "${choice}" ] && return 2;
-    fi
-
-    local chosen_branch=$(echo "${available_branches}" | sed -n "${choice}p" | xargs echo);
-    [ -z "${chosen_branch}" ] && return 3;
-
-    git checkout "${chosen_branch}";
-}
-
 #
 # Executes phpunit in the current repository.
 #
@@ -340,17 +313,39 @@ phpu()
 #
 phps()
 {
-    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
-    if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
-        echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
+    if ! git remote >/dev/null 2>&1; then
+        echo 'Not in a git repository' >&2;
         return 1;
     fi
 
-    (
-        cd "${repo_root}" || return 2;
-        sh -c "./vendor/bin/phpstan analyse -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstan.neon')";
-    );
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
+        echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
+        return 2;
+    fi
+
+    (cd "${repo_root}" && sh -c "./vendor/bin/phpstan analyse -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstan.neon')");
 }
+
+#
+# Executes phpcs from any directory within a repository.
+#
+phpcs()
+{
+    if ! git remote >/dev/null 2>&1; then
+        echo 'Not in a git repository' >&2;
+        return 1;
+    fi
+
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    if [ ! x "${repo_root}/vendor/bin/phpcs" ]; then
+        echo 'Cannot locate phpcs' >&2;
+        return 2;
+    fi
+
+    (cd "${repo_root}" &&  sh -c './vendor/bin/phpcs');
+}
+
 
 #
 # Starts a SSH agent.
@@ -378,59 +373,7 @@ sha()
 #
 slug()
 {
-    local slugged=$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's/[ _]/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g');
+    local slugged="$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's/[ _]/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g')";
     [ -n "${slugged}" ] && echo "${slugged}";
-}
-
-#
-# Calulates a mathmatical expression.
-#
-# calc <formula> [<formula>] [...]
-#
-calc()
-{
-    for arg in "$@"; do
-        [ -n "${arg}" ] && awk "BEGIN { printf \"%.2f\n\", ${arg} }" | sed 's/\.00$//';
-    done;
-}
-
-#
-# Convert DOS file line endings to unix line endings.
-#
-# dos2unix <file> [<file>] [...]
-#
-dos2unix()
-{
-    for arg in "$@"; do
-        [ -z "${arg}" ] && continue;
-
-        if [ ! -f "${arg}" ]; then
-            echo "File not found: ${arg}" >&2;
-            return 1;
-        fi
-
-        if ! file "${arg}" | grep -q ' line terminators'; then
-            echo "Unchanged ${arg}";
-            continue;
-        fi
-
-        local new_content=$(cat "${arg}" | tr -d '\r');
-        if ! $?; then
-            echo "Error processing '${arg}'" >&2;
-            return 2;
-        fi
-
-        if echo "${new_content}" | diff "${arg}" - >/dev/null; then
-            echo "Unchanged ${arg}";
-            continue;
-        fi
-
-        if [ $(echo "${new_content}" | wc -l) -ne $(cat "${arg}" | wc -l) ]; then
-            echo "Line count mismatch for '${arg}'" >&2;
-            return 3;
-        fi
-
-        echo "${new_content}" > "${arg}";
-    done;
 }
 
