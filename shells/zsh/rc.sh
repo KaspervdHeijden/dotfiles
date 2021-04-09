@@ -1,3 +1,9 @@
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
 setopt prompt_subst histignoredups appendhistory interactivecomments;
 
 autoload -Uz compinit && compinit;
@@ -41,6 +47,6 @@ if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
     . "${ZSH}/oh-my-zsh.sh";
 fi
 
-. "${DOTFILES_DIR}/shells/zsh/prompt.sh";
-. "${DOTFILES_DIR}/dotfiles.sh";
+source "${DOTFILES_DIR}/shells/zsh/prompt.sh";
+source "${DOTFILES_DIR}/dotfiles.sh";
 
