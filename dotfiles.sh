@@ -1,4 +1,3 @@
-export SHELL=$(getent passwd "${USER}" | cut -d':' -f7);
 export LESS="-FXR ${LESS}";
 export GIT_EDITOR=vim;
 export GIT_PAGER=less;
