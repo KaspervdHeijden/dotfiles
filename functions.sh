@@ -21,13 +21,13 @@ cds()
 
     local matches=$(echo "${repo_list}" | grep -ie "/[^/]*${search}[^/]*$");
     if [ -z "${matches}" ]; then
-        echo "No matches found for '${search}*'" >&2;
-        return 2;
+        echo "no matches found for '${search}*'" >&2;
+        return 3;
     fi
 
     if [ -d "${matches}" ]; then
         echo "${matches}";
-        cd "${matches}" && return 0 || return 3;
+        cd "${matches}" && return 0 || return 4;
     fi
 
     local index="${2}";
@@ -35,16 +35,16 @@ cds()
         local line=$(echo "${matches}" | sed -n "${index}p");
         if [ -d "${line}" ]; then
             echo "${line}";
-            cd "${line}" && return 0 || return 4;
+            cd "${line}" && return 0 || return 5;
         fi
 
-        echo "Invalid index '${index}'" >&2;
+        echo "invalid index '${index}'" >&2;
     fi
 
-    echo 'Multiple matches found:' >&2;
+    echo 'multiple matches found:' >&2;
     echo "${matches}" | awk '{print NR ": " $0}' >&2;
 
-    return 5;
+    return 6;
 }
 
 #
@@ -55,18 +55,18 @@ cds()
 repo_root()
 {
     if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
+        echo 'git not installed' >&2;
         return 10;
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ -z "${repo_root}" ]; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     if [ ! -d "${repo_root}" ]; then
-        echo 'Root is not a directory' >&2;
+        echo 'root is not a directory' >&2;
         return 2;
     fi
 
@@ -87,13 +87,13 @@ repo_root()
 gitc()
 {
     if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
+        echo 'git not installed' >&2;
         return 10;
     fi
 
     if ! git remote >/dev/null 2>&1; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}");
@@ -112,23 +112,23 @@ gitc()
     local commit_message="${1}";
 
     if [ "${#commit_message}" -lt "5" ]; then
-        echo 'A commit message requires at least 5 characters' >&2;
+        echo 'commit message requires at least 5 characters' >&2;
         return 2;
     fi
 
     if [ "${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = 'master' ]; then
-        echo 'Not commiting in master (use -m to override)' >&2;
+        echo 'not commiting in master (use -m to override)' >&2;
         return 3;
     fi
 
     if [ "${check_fork}" = "1" ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
-        echo 'Not in your fork (use -f to override)' >&2;
+        echo 'not in your fork (use -f to override)' >&2;
         return 4;
     fi
 
     local git_status=$(git status --porcelain 2>/dev/null);
     if ! echo "${git_status}" | grep -qE '^M|A|R|D'; then
-        echo 'No staged changes' >&2;
+        echo 'no staged changes' >&2;
         return 5;
     fi
 
@@ -140,6 +140,7 @@ gitc()
             return 6;
         fi
     fi;
+
     git commit -m "${commit_message}" || return 7;
 
     local git_status_after=$(git status --porcelain 2>/dev/null);
@@ -160,14 +161,14 @@ gitc()
 gitl()
 {
     if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
+        echo 'git not installed' >&2;
         return 10;
     fi
 
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
@@ -182,7 +183,7 @@ gitl()
     fi
 
     if ! echo "${remotes}" | grep -q "${remote}" 2>/dev/null; then
-        echo "Unknown remote '${remote}'" >&2;
+        echo "unknown remote '${remote}'" >&2;
         return 2;
     fi
 
@@ -199,14 +200,14 @@ gitl()
 gith()
 {
     if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
+        echo 'git not installed' >&2;
         return 10;
     fi
 
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
@@ -224,7 +225,7 @@ gith()
     done
 
     if ! echo "${remotes}" | grep -q "${remote}" 2>/dev/null; then
-        echo "Unknown remote '${remote}'" >&2;
+        echo "unknown remote '${remote}'" >&2;
         return 2;
     fi
 
@@ -239,14 +240,14 @@ gith()
 gitb()
 {
     if [ ! -x "$(command -v git)" ]; then
-        echo 'Git not installed' >&2;
+        echo 'git not installed' >&2;
         return 10;
     fi
 
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
-        echo 'Not in a git repository' >&2;
-        return 2;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local current_branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
@@ -262,12 +263,12 @@ gitb()
     done
 
     if [ -z "${new_branch_name}" ]; then
-        echo 'No branch name given' >&2;
-        return 1;
+        echo 'no branch name given' >&2;
+        return 2;
     fi
 
     if git branch 2>/dev/null | grep -q "${new_branch_name}" 2>/dev/null; then
-        echo "Branch '${new_branch_name}' already exists" >&2;
+        echo "branch '${new_branch_name}' already exists" >&2;
         return 3;
     fi
 
@@ -277,16 +278,16 @@ gitb()
     fi
 
     if [ "${current_branch_name}" != "${source_branch}" ]; then
-        git checkout "${source_branch}" || return 4;
+        git checkout "${source_branch}" || return 3;
     fi
 
     if [ "${source_branch}" = 'master' ]; then
-        git pull "${remote_name}" "${source_branch}" || return 5;
+        git pull "${remote_name}" "${source_branch}" || return 4;
     else
-        echo "Not pulling '${source_branch}'";
+        echo "not pulling '${source_branch}'";
     fi
 
-    git checkout -b "${new_branch_name}" || return 6;
+    git checkout -b "${new_branch_name}" || return 5;
 }
 
 #
@@ -295,13 +296,13 @@ gitb()
 phpu()
 {
     if ! git remote >/dev/null 2>&1; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ ! -x "${repo_root}/vendor/bin/phpunit" ]; then
-        echo 'Cannot locate phpunit' >&2;
+        echo 'cannot locate phpunit' >&2;
         return 2;
     fi
 
@@ -314,13 +315,13 @@ phpu()
 phps()
 {
     if ! git remote >/dev/null 2>&1; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
-        echo "Could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
+        echo "could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 2;
     fi
 
@@ -333,13 +334,13 @@ phps()
 phpcs()
 {
     if ! git remote >/dev/null 2>&1; then
-        echo 'Not in a git repository' >&2;
-        return 1;
+        echo 'not in a git repository' >&2;
+        return 9;
     fi
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ ! x "${repo_root}/vendor/bin/phpcs" ]; then
-        echo 'Cannot locate phpcs' >&2;
+        echo 'cannot locate phpcs' >&2;
         return 2;
     fi
 
@@ -353,16 +354,16 @@ phpcs()
 sha()
 {
     if [ ! -x "$(command -v ssh-add)" ]; then
-        echo 'Dependency ssh-add not found' >&2;
-        return 1;
+        echo 'dependency ssh-add not found' >&2;
+        return 2;
     fi
 
     case $(ssh-add -l >/dev/null 2>&1; echo $?) in
-        0) echo 'SSH agent already running' >&2; return 2 ;;
+        0) echo 'SSH agent already running' >&2; return 3 ;;
         2) eval $(ssh-agent -s) >/dev/null 2>&1           ;;
     esac
 
-    ssh-add >/dev/null || return 3;
+    ssh-add >/dev/null || return 4;
     [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
 }
 
@@ -389,7 +390,7 @@ slug()
 #
 dotf()
 {
-    case "${1}" in
+    case "${1:-nav}" in
         update)
             (
                 cd "${DOTFILES_DIR}" || return 1;
@@ -400,15 +401,15 @@ dotf()
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
-                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ] && return 0 || return 1;
-            ) || dotf reload;
+                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
+            ) || . "${DOTFILES_DIR}/shells/$(ps -p $$ | tail -1 | awk '{print $4}')/rc.sh";
         ;;
 
         env)
             local all_vars=$(grep '# export ' "${DOTFILES_DIR}/setup/config.sh");
             local used_vars=$(env | grep 'DF_\|DOTFILES_');
 
-            echo "${used_vars}" | cut -d'=' -f1 | while read var_name; do all_vars=$(echo "${all_vars}" | grep -v "${var_name}"); done;
+            echo "${used_vars}" | cut -d'=' -f1 | while read var_name; do all_vars=$(echo "${all_vars}" | grep -v "#export ${var_name}="); done;
             [ -n "${used_vars}" ] && echo "${used_vars}";
             [ -n "${all_vars}" ] && echo "${all_vars}";
         ;;

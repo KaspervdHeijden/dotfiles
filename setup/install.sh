@@ -32,7 +32,7 @@ if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
 fi
 echo 'Done.';
 
-cur_shell=$(getent passwd "${USER}" | cut -d':' -f7 | xargs -I{} basename {} | head -n1);
+cur_shell=$(ps -p $$ | tail -1 | awk '{print $4}');
 if [ -f "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "Sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
     . "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
