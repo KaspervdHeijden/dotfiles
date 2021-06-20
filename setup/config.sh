@@ -21,3 +21,6 @@
 # export DF_GIT_PROMPT_SHOW_DIRTY=0;
 # export DF_HOST_PROMPT_COLOR_ZSH=;
 
+# Set to non empty value to call neofetch on start.
+# export DF_SHOW_NEOFETCH=;
+

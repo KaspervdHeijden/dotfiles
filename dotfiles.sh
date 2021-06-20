@@ -4,12 +4,12 @@ export GIT_PAGER=less;
 export EDITOR=vim;
 export PAGER=less;
 
-source "${DOTFILES_DIR}/functions.sh";
-source "${DOTFILES_DIR}/aliases.sh";
+. "${DOTFILES_DIR}/functions.sh";
+. "${DOTFILES_DIR}/aliases.sh";
 
-[ -x "$(command -v neofetch)" ] && neofetch --gpu_brand off --cpu_temp C --kernel_shorthand off --distro_shorthand off --memory_percent on;
+[ "${DF_SHOW_NEOFETCH}" ] && [ -x "$(command -v neofetch)" ] && neofetch --cpu_temp C --kernel_shorthand off --distro_shorthand off --memory_percent on;
 
 if [ -f "${HOME}/.config/dotfiles/config.sh" ]; then
-    source "${HOME}/.config/dotfiles/config.sh";
+    . "${HOME}/.config/dotfiles/config.sh";
 fi
 
