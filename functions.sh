@@ -377,3 +377,25 @@ slug()
     [ -n "${slugged}" ] && echo "${slugged}";
 }
 
+dotf()
+{
+    case "${1}" in
+        update)
+            (cd "${DOTFILES_DIR}" && git pull --ff "$(git remote -v | grep 'KaspervdHeijden@github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1)" master) ;;
+        env)
+            local all_vars=$(grep --color=never '# export '  "${DOTFILES_DIR}/setup/config.sh");
+            local used_vars=$(env | grep --color=never 'DF_\|DOTFILES_');
+
+            echo "${used_vars}" | cut -d'=' -f1 | while read var_name; do all_vars=$(echo "${all_vars}" | grep -v "${var_name}"); done;
+            echo "${used_vars}";
+            echo "${all_vars}" ;;
+        reload)
+            source "${DOTFILES_DIR}/shells/$(ps -p $$ | tail -1 | awk '{print $4}')/rc.sh" ;;
+        nav)
+            cd "${DOTFILES_DIR}" ;;
+        *)
+            echo "command not recognized: '${1}', expecting 'update', 'env', 'reload' or 'nav'" >&2;
+            return 2;;
+    esac
+}
+
