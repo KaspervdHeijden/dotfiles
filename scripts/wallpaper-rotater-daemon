@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 
 if [ ! -x "$(command -v gsettings)" ]; then
-    echo 'Binary not found: gsettings' >&2;
+    echo 'binary not found: gsettings' >&2;
     exit 2;
 fi
 
 if ! gsettings get org.gnome.desktop.background picture-uri >/dev/null 2>/dev/null; then
-    echo 'Could not get current wallpaper' >&2;
+    echo 'could not load current wallpaper' >&2;
     exit 3;
 fi
 
@@ -25,7 +25,7 @@ while getopts ':rd:t:' arg; do
 done
 
 if [ -z "${wallpaper_dirs}" ]; then
-    echo 'No valid directories given' >&2;
+    echo 'no directories given' >&2;
     exit 4;
 fi
 
@@ -52,12 +52,12 @@ while true; do
     fi
 
     if [ ! -f "${new_image}" ]; then
-        echo 'No image found' >&2;
+        echo 'no image found' >&2;
         exit 5;
     fi
 
     if ! gsettings set org.gnome.desktop.background picture-uri "file://${new_image}" 2>/dev/null; then
-        echo "Could not change the wallpaper to '${new_image}'" >&2;
+        echo "could not change the wallpaper to '${new_image}'" >&2;
         exit 6;
     fi
 done

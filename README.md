@@ -12,11 +12,10 @@ Dotfiles has the following dependencies:
 Personally, I also want:
 1. ack
 2. tree
-3. neofetch
 
 Install them all by doing:
 ```sh
-sudo apt -y update && sudo apt -y install zsh git tmux ack-grep tree neofetch;
+sudo apt -y update && sudo apt -y install zsh git tmux ack-grep tree;
 ```
 
 ### Installation
@@ -49,8 +48,7 @@ The same applies to the newline check, to not have to pass `-n` anymore:
 git config --local dotfiles.checkLineEndings 0;
 ```
 
-This needs to be done on every machine, since git variables aren't
-part of the repository itself.
+This needs to be done on every machine, since git variables aren't part of the repository itself.
 
 You can also use global variables, `$DF_CHECK_FORK`, `$DF_CHECK_LINE_ENDINGS`
 and `$DF_CHECK_MASTER`. These can be set in `~/.config/dotfiles/config.sh`

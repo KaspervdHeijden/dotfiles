@@ -1,6 +1,6 @@
 export DOTFILES_DIR=$(realpath "$(dirname "${0}")/../");
 
-echo "Including dotfiles from ${DOTFILES_DIR}...";
+echo "including dotfiles from ${DOTFILES_DIR}...";
 for shell_name in $(cd "${DOTFILES_DIR}/shells"; ls -d *); do
     if [ ! -f "${DOTFILES_DIR}/shells/${shell_name}/rc.sh" ]; then
         continue;
@@ -19,9 +19,8 @@ for shell_name in $(cd "${DOTFILES_DIR}/shells"; ls -d *); do
     echo "export DOTFILES_DIR='${DOTFILES_DIR}';" >> "${file}";
     echo ". \"\${DOTFILES_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
 done;
-echo 'Done.';
 
-echo 'Configuring dotfiles...';
+echo 'configuring dotfiles...';
 if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     mkdir -p "${HOME}/.config/dotfiles";
 
@@ -30,11 +29,10 @@ if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
         cat "${HOME}/.dotfiles" >> "${HOME}/.config/dotfiles/config.sh" && rm "${HOME}/.dotfiles";
     fi
 fi
-echo 'Done.';
 
 cur_shell=$(ps -p $$ | tail -1 | awk '{print $4}');
 if [ -f "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh" ]; then
-    echo "Sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
+    echo "sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
     . "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
 fi
 
