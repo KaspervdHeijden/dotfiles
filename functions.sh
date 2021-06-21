@@ -403,7 +403,7 @@ dof()
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
                 [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
-            ) || . dotf reload;
+            ) || . dof reload;
         ;;
 
         env)
@@ -425,7 +425,7 @@ dof()
 
 
         *)
-            echo "command not recognized: '${1}', expecting one of $(dotf options)" >&2;
+            echo "command not recognized: '${1}', expecting one of 'update', 'reload', 'env' or 'nav'" >&2;
             return 2;
         ;;
     esac
