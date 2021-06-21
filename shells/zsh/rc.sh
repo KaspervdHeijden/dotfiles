@@ -47,6 +47,24 @@ if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
     . "${ZSH}/oh-my-zsh.sh";
 fi
 
+
 . "${DOTFILES_DIR}/shells/zsh/prompt.sh";
 . "${DOTFILES_DIR}/dotfiles.sh";
 
+if declare -f dotf >/dev/null 2>/dev/null; then
+    compdef _dotf dotf;
+
+    _dotf()
+    {
+        _arguments '1: :(update reload env nav)';
+    }
+fi
+
+if declare -f cds >/dev/null 2>/dev/null; then
+    compdef _cds cds
+
+    _cds()
+    {
+        _arguments "1: :($(cds | xargs))";
+    }
+fi

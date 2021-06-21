@@ -402,7 +402,7 @@ dotf()
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
                 [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
-            ) || . "${DOTFILES_DIR}/shells/$(ps -p $$ | tail -1 | awk '{print $4}')/rc.sh";
+            ) || . dotf reload;
         ;;
 
         env)
@@ -422,8 +422,9 @@ dotf()
             cd "${DOTFILES_DIR}" && pwd;
         ;;
 
+
         *)
-            echo "command not recognized: '${1}', expecting 'update', 'env', 'reload' or 'nav'" >&2;
+            echo "command not recognized: '${1}', expecting one of $(dotf options)" >&2;
             return 2;
         ;;
     esac
