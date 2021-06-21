@@ -234,8 +234,9 @@ gith()
 
 #
 # Creates a new branch from a fresh master.
+# Use -c to branch from current branch instead.
 #
-# gitb new-feature-branch
+# gitb [-c] new-feature-branch
 #
 gitb()
 {
@@ -388,7 +389,7 @@ slug()
 # dotf env      Show relevant variables
 # dotf nav      Navigates to the dotfiles repo
 #
-dotf()
+dof()
 {
     case "${1:-nav}" in
         update)

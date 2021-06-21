@@ -51,20 +51,40 @@ fi
 . "${DOTFILES_DIR}/shells/zsh/prompt.sh";
 . "${DOTFILES_DIR}/dotfiles.sh";
 
-if declare -f dotf >/dev/null 2>/dev/null; then
-    compdef _dotf dotf;
+if declare -f dof >/dev/null 2>/dev/null; then
+    compdef _dof dof;
 
-    _dotf()
+    _dof()
     {
         _arguments '1: :(update reload env nav)';
     }
 fi
 
 if declare -f cds >/dev/null 2>/dev/null; then
-    compdef _cds cds
+    compdef _cds cds;
 
     _cds()
     {
         _arguments "1: :($(cds | xargs))";
     }
 fi
+
+if declare -f gitl >/dev/null 2>/dev/null; then
+    compdef _gitl gitl;
+
+    _gitl()
+    {
+        _arguments "1: :($(git remote))";
+    }
+fi
+
+if declare -f gitb >/dev/null 2>/dev/null; then
+    compdef _gitb gitb;
+
+    _gitb()
+    {
+        local current_branch=$(git symbolic-ref --short HEAD 2>/dev/null);
+        _arguments "-c[branch from current '${current_branch}' instead]";
+    }
+fi
+
