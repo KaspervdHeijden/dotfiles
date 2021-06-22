@@ -49,6 +49,7 @@ cds()
 
 #
 # Prints the root of the current repository.
+# Pass -c to only display the root dir.
 #
 # repo_root
 #
@@ -61,7 +62,7 @@ repo_root()
 
     local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
     if [ -z "${repo_root}" ]; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -92,7 +93,7 @@ gitc()
     fi
 
     if ! git remote >/dev/null 2>&1; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -167,7 +168,7 @@ gitl()
 
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -206,7 +207,7 @@ gith()
 
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -247,7 +248,7 @@ gitb()
 
     local remotes=$(git remote 2>/dev/null);
     if [ -z "${remotes}" ]; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -297,7 +298,7 @@ gitb()
 phpu()
 {
     if ! git remote >/dev/null 2>&1; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -316,7 +317,7 @@ phpu()
 phps()
 {
     if ! git remote >/dev/null 2>&1; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -335,7 +336,7 @@ phps()
 phpcs()
 {
     if ! git remote >/dev/null 2>&1; then
-        echo 'not in a git repository' >&2;
+        echo 'not a git repository' >&2;
         return 9;
     fi
 
@@ -355,7 +356,7 @@ phpcs()
 sha()
 {
     if [ ! -x "$(command -v ssh-add)" ]; then
-        echo 'dependency ssh-add not found' >&2;
+        echo 'dependency not found: ssh-add' >&2;
         return 2;
     fi
 
@@ -403,7 +404,7 @@ dof()
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
                 [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
-            ) || . dof reload;
+            ) || dof reload;
         ;;
 
         env)

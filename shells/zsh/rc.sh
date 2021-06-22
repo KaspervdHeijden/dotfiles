@@ -60,6 +60,16 @@ if declare -f dof >/dev/null 2>/dev/null; then
     }
 fi
 
+if declare -f repo_root >/dev/null 2>/dev/null; then
+    compdef _repo_root repo_root
+
+    _repo_root()
+    {
+        _arguments '-c[Only display root directory]';
+    }
+fi
+
+
 if declare -f cds >/dev/null 2>/dev/null; then
     compdef _cds cds;
 
@@ -84,7 +94,7 @@ if declare -f gitb >/dev/null 2>/dev/null; then
     _gitb()
     {
         local current_branch=$(git symbolic-ref --short HEAD 2>/dev/null);
-        _arguments "-c[branch from current '${current_branch}' instead]";
+        _arguments "-c[Branch from current '${current_branch}' instead]";
     }
 fi
 
