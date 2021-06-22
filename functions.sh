@@ -417,7 +417,7 @@ dof()
         ;;
 
         reload)
-            . "${DOTFILES_DIR}/shells/$(ps -p $$ | tail -1 | awk '{print $4}')/rc.sh";
+            . "${DOTFILES_DIR}/shells/$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')/rc.sh";
         ;;
 
         nav)

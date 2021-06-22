@@ -30,7 +30,7 @@ if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     fi
 fi
 
-cur_shell=$(ps -p $$ | tail -1 | awk '{print $4}');
+cur_shell=$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//');
 if [ -f "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
     . "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
