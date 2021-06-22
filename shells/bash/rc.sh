@@ -34,3 +34,16 @@ fi
 . "${DOTFILES_DIR}/shells/bash/prompt.sh";
 . "${DOTFILES_DIR}/dotfiles.sh";
 
+if declare -f dof >/dev/null 2>/dev/null; then
+    complete -W 'update reload env nav' dof;
+fi
+
+if declare -f cds >/dev/null 2>/dev/null; then
+    complete -F _cds cds
+
+    _cds()
+    {
+        COMPREPLY=($(compgen -W "$(cds | xargs -I{} basename {} | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}") );
+    }
+fi
+

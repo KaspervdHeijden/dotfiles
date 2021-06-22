@@ -13,7 +13,7 @@ cds()
 
     [ "${#DF_REPO_DIRS[@]}" -eq 0 ] && DF_REPO_DIRS=("${HOME}");
 
-    local repo_list=$(find $DF_REPO_DIRS[@] -maxdepth ${DF_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
+    local repo_list=$(find ${DF_REPO_DIRS[@]} -maxdepth ${DF_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
     if [ -z "${search}" ]; then
         echo "${repo_list}";
         return 0;
