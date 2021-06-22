@@ -65,7 +65,7 @@ if declare -f cds >/dev/null 2>/dev/null; then
 
     _cds()
     {
-        _arguments "1: :($(cds | xargs))";
+        _arguments "1: :($(cds | xargs -I {} basename {} | xargs))";
     }
 fi
 
