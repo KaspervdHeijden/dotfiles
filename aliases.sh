@@ -49,5 +49,3 @@ fi
 alias rr='repo_root -c';
 alias lsa='ls -lAFh';
 
-alias sd='sha;vpn;update-all';
-
