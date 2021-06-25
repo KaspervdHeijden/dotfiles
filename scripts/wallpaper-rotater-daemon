@@ -61,4 +61,3 @@ while true; do
         exit 6;
     fi
 done
-

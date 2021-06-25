@@ -60,4 +60,3 @@ show status information in the prompt, but may significantly slow down the promp
 
 You can define the `$DF_DOTFILES_HOST_PROMPT_COLOR_BASH` or `$DF_DOTFILES_HOST_PROMPT_COLOR_ZSH`
 variables to control the color for the host part in the prompt. It defaults to green.
-

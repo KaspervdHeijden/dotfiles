@@ -10,4 +10,3 @@ export PAGER=less;
 if [ -f "${HOME}/.config/dotfiles/config.sh" ]; then
     . "${HOME}/.config/dotfiles/config.sh";
 fi
-

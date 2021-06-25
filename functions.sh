@@ -424,11 +424,9 @@ dof()
             cd "${DOTFILES_DIR}" && pwd;
         ;;
 
-
         *)
             echo "command not recognized: '${1}', expecting one of 'update', 'reload', 'env' or 'nav'" >&2;
             return 2;
         ;;
     esac
 }
-

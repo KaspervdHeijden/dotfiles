@@ -97,4 +97,3 @@ if declare -f gitb >/dev/null 2>/dev/null; then
         _arguments "-c[Branch from current '${current_branch}' instead]";
     }
 fi
-

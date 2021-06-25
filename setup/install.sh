@@ -35,4 +35,3 @@ if [ -f "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "sourcing '${DOTFILES_DIR}/shells/${cur_shell}/rc.sh'...";
     . "${DOTFILES_DIR}/shells/${cur_shell}/rc.sh";
 fi
-

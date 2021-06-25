@@ -21,4 +21,3 @@
 # Color of the host in the prompt for bash/zsh, defaults to green.
 # export DF_HOST_PROMPT_COLOR_BASH=;
 # export DF_HOST_PROMPT_COLOR_ZSH=;
-

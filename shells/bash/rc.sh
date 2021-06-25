@@ -46,4 +46,3 @@ if declare -f cds >/dev/null 2>/dev/null; then
         COMPREPLY=($(compgen -W "$(cds | xargs -I{} basename {} | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}") );
     }
 fi
-
