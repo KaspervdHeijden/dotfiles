@@ -445,5 +445,11 @@ choose()
         return 2;
     fi
 
-    echo "${input}" | sed -n "${line_number}p";
+    if [ "${line_number}" -eq "${line_number}" ] 2>/dev/null; then
+        echo "${input}" | sed -n "${line_number}p";
+        return 0;
+    fi
+
+    echo "index not numeric '${line_number}'" 2>/dev/null;
+    return 3;
 }
