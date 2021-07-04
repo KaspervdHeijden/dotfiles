@@ -383,7 +383,7 @@ dfs()
     case "${1:-nav}" in
         update)
             (
-                cd "$DF_ROOT_DIR}" || return 1;
+                cd "${DF_ROOT_DIR}" || return 1;
                 local remote=$(git remote -v | grep 'KaspervdHeijden@github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1);
                 local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
                 local last_hash=$(git rev-parse --verify HEAD);
@@ -391,7 +391,12 @@ dfs()
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
-                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
+                if [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ]; then
+                    return 0;
+                fi
+
+                [ -f ./setup/migration.sh ] && ./setup/migration.sh;
+                return 1;
             ) || dfs reload;
         ;;
 
@@ -419,6 +424,11 @@ dfs()
     esac
 }
 
+#
+# Chooses a line being piped into this function
+#
+# choose [<line-number>]
+#
 choose()
 {
     local input="$(cat)";
