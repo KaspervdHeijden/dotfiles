@@ -31,11 +31,11 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
-. "${DOTFILES_DIR}/shells/bash/prompt.sh";
-. "${DOTFILES_DIR}/dotfiles.sh";
+. "${DF_ROOT_DIR}/shells/bash/prompt.sh";
+. "${DF_ROOT_DIR}/dotfiles.sh";
 
-if declare -f dof >/dev/null 2>/dev/null; then
-    complete -W 'update reload env nav' dof;
+if declare -f dfs >/dev/null 2>/dev/null; then
+    complete -W 'update reload env nav' dfs;
 fi
 
 if declare -f cds >/dev/null 2>/dev/null; then

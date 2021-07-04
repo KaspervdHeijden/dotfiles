@@ -4,8 +4,8 @@ export GIT_PAGER=less;
 export EDITOR=vim;
 export PAGER=less;
 
-. "${DOTFILES_DIR}/functions.sh";
-. "${DOTFILES_DIR}/aliases.sh";
+. "${DF_ROOT_DIR}/functions.sh";
+. "${DF_ROOT_DIR}/aliases.sh";
 
 if [ -f "${HOME}/.config/dotfiles/config.sh" ]; then
     . "${HOME}/.config/dotfiles/config.sh";

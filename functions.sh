@@ -11,9 +11,9 @@ cds()
         cd "${search}" && return 0 || return 1;
     fi
 
-    [ "${#DF_REPO_DIRS[@]}" -eq 0 ] && DF_REPO_DIRS=("${HOME}");
+    [ "${#DF_CDS_REPO_DIRS[@]}" -eq 0 ] && DF_CDS_REPO_DIRS=("${HOME}");
 
-    local repo_list=$(find ${DF_REPO_DIRS[@]} -maxdepth ${DF_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
+    local repo_list=$(find ${DF_CDS_REPO_DIRS[@]} -maxdepth ${DF_CDS_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
     if [ -z "${search}" ]; then
         echo "${repo_list}";
         return 0;
@@ -30,21 +30,10 @@ cds()
         cd "${matches}" && return 0 || return 4;
     fi
 
-    local index="${2}";
-    if [ -n "${index}" ]; then
-        local line=$(echo "${matches}" | sed -n "${index}p");
-        if [ -d "${line}" ]; then
-            echo "${line}";
-            cd "${line}" && return 0 || return 5;
-        fi
-
-        echo "invalid index '${index}'" >&2;
-    fi
-
     echo 'multiple matches found:' >&2;
-    echo "${matches}" | awk '{print NR ": " $0}' >&2;
+    echo "${matches}" >&2;
 
-    return 6;
+    return 5;
 }
 
 #
@@ -349,7 +338,6 @@ phpcs()
     (cd "${repo_root}" &&  sh -c './vendor/bin/phpcs');
 }
 
-
 #
 # Starts a SSH agent.
 #
@@ -383,19 +371,19 @@ slug()
 #
 # Manages dotfiles.
 #
-# dotf [update|env|reload|nav]
+# dfs [update|env|reload|nav]
 #
-# dotf update   Updates dotfiles
-# dotf reload   Reloads configuration
-# dotf env      Show relevant variables
-# dotf nav      Navigates to the dotfiles repo
+# dfs update   Updates dotfiles
+# dfs reload   Reloads configuration
+# dfs env      Show relevant variables
+# dfs nav      Navigates to the dotfiles repo
 #
-dof()
+dfs()
 {
     case "${1:-nav}" in
         update)
             (
-                cd "${DOTFILES_DIR}" || return 1;
+                cd "$DF_ROOT_DIR}" || return 1;
                 local remote=$(git remote -v | grep 'KaspervdHeijden@github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1);
                 local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
                 local last_hash=$(git rev-parse --verify HEAD);
@@ -404,12 +392,12 @@ dof()
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
                 [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
-            ) || dof reload;
+            ) || dfs reload;
         ;;
 
         env)
-            local all_vars=$(grep '# export ' "${DOTFILES_DIR}/setup/config.sh");
-            local used_vars=$(env | grep 'DF_\|DOTFILES_');
+            local all_vars=$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh");
+            local used_vars=$(env | grep '^DF_');
 
             echo "${used_vars}" | cut -d'=' -f1 | while read var_name; do all_vars=$(echo "${all_vars}" | grep -v "#export ${var_name}="); done;
             [ -n "${used_vars}" ] && echo "${used_vars}";
@@ -417,11 +405,11 @@ dof()
         ;;
 
         reload)
-            . "${DOTFILES_DIR}/shells/$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')/rc.sh";
+            . "${DF_ROOT_DIR}/shells/$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')/rc.sh";
         ;;
 
         nav)
-            cd "${DOTFILES_DIR}" && pwd;
+            cd "${DF_ROOT_DIR}" && pwd;
         ;;
 
         *)
@@ -429,4 +417,23 @@ dof()
             return 2;
         ;;
     esac
+}
+
+choose()
+{
+    local input="$(cat)";
+    local lines="$(echo "${input}" | wc -l)";
+
+    if  [ ${lines} -lt 2 ]; then
+        echo "${input}";
+        return 0;
+    fi
+
+    local line_number="${1}";
+    if [ -z  "${line_number}" ]; then
+        echo "${input}" | awk '{print NR ": " $0}';
+        return 2;
+    fi
+
+    echo "${input}" | sed -n "${line_number}p";
 }

@@ -1,4 +1,4 @@
-[ -x "$(command -v tmux)" ] && alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DOTFILES_DIR}/config/tmux.conf' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
+[ -x "$(command -v tmux)" ] && alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DF_ROOT_DIR}/config/tmux.conf' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
@@ -6,7 +6,7 @@
 
 alias update >/dev/null && alias update-all='update && [ -x "$(command -v snap)" ] && sudo snap refresh || true';
 
-[ -x "$(command -v vim)" ] && alias vim="vim -u '${DOTFILES_DIR}/config/vim.conf'";
+[ -x "$(command -v vim)" ] && alias vim="vim -u '${DF_ROOT_DIR}/config/vim.conf'";
 [ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
 [ -x  '/snap/bin/phpstorm' ] && alias code='/snap/bin/phpstorm';
 

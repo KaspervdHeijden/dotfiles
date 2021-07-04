@@ -48,13 +48,13 @@ if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
 fi
 
 
-. "${DOTFILES_DIR}/shells/zsh/prompt.sh";
-. "${DOTFILES_DIR}/dotfiles.sh";
+. "${DF_ROOT_DIR}/shells/zsh/prompt.sh";
+. "${DF_ROOT_DIR}/dotfiles.sh";
 
-if declare -f dof >/dev/null 2>/dev/null; then
-    compdef _dof dof;
+if declare -f dfs >/dev/null 2>/dev/null; then
+    compdef _dfs dfs;
 
-    _dof()
+    _dfs()
     {
         _arguments '1: :(update reload env nav)';
     }
