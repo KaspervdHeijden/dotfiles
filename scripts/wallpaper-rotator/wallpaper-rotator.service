@@ -2,8 +2,7 @@
 Description=Wallpaper rotator
 
 [Service]
-ExecStart=$DF_ROOT_DIR/scripts/wallpaper-rotator/wallpaper-rotater-daemon -r -d $HOME/Pictures
+ExecStart=$DF_ROOT_DIR/scripts/wallpaper-rotator/wallpaper-rotater-daemon -r -t 600 -d $DF_DOOT_DIR/wallpapers
 
 [Install]
 WantedBy=default.target
-

@@ -31,6 +31,8 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
+export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE}")/../..")";
+
 . "${DF_ROOT_DIR}/shells/bash/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";
 

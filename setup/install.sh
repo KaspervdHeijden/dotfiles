@@ -1,4 +1,4 @@
-export DF_ROOT_DIR=$(realpath "$(dirname "${0}")/../");
+export DF_ROOT_DIR=$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../");
 
 echo "including dotfiles from ${DF_ROOT_DIR}...";
 for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
@@ -7,17 +7,16 @@ for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
     fi
 
     file="${HOME}/.${shell_name}rc";
-    if grep -q 'export DF_ROOT_DIR=' "${file}" 2>/dev/null; then
+    if grep -q "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" "${file}" 2>/dev/null; then
         echo " -> config for ${shell_name} already present in ${file}";
         continue;
     fi
 
     echo " -> adding config for ${shell_name} to ${file}";
 
-    [ -s "${file}" ] || echo '' >> "${file}";
+    [ -s "${file}" ] && echo '' >> "${file}";
     echo '# Include dotfiles' >> "${file}";
-    echo "export DF_ROOT_DIR='${DF_ROOT_DIR}';" >> "${file}";
-    echo ". \"\${DF_ROOT_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
+    echo ". \"${DF_ROOT_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
 done;
 
 echo 'configuring dotfiles...';

@@ -14,6 +14,7 @@ bindkey -e;
 export HISTFILE=~/.zsh_history;
 export HISTSIZE=20000;
 export SAVEHIST=20000;
+export DF_ROOT_DIR="$(realpath "$(dirname $0)/../../")";
 
 [ -x "$(command -v dircolors)" ] && eval "$(dircolors -b)";
 
