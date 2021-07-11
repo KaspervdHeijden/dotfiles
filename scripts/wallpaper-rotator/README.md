@@ -9,7 +9,7 @@ To use this, install this in a service or as a cronjob with `@reboot`
 [ -d ~/.config/systemd/user ] || mkdir -p ~/.config/systemd/user;
 
 # 2. install the service file while making sure path is correct in the service file
-sed "s#\$DF_ROOT_DIR#${DF_ROOT_DIR}#; s#\$HOME#${HOME}#" ./scripts/wallpaper-rotator/wallpaper-rotator.service > ~/.config/systemd/user/wallpaper-rotator.service;
+sed "s#\$DF_ROOT_DIR#${DF_ROOT_DIR}#g; s#\$HOME#${HOME}#g" ./scripts/wallpaper-rotator/wallpaper-rotator.service > ~/.config/systemd/user/wallpaper-rotator.service;
 
 # 3. optionally edit the file to add a timeout, or to add/change the wallpaper paths
 vim ~/.config/systemd/user/wallpaper-rotator.service;
