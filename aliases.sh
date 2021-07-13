@@ -47,4 +47,4 @@ if [ -x "$(command -v git)" ]; then
 fi
 
 alias rr='repo_root -c';
-alias lsa='ls -lAFh';
+alias lsa='ls -lAFhH';
