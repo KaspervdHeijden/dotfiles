@@ -8,4 +8,7 @@ export PAGER=less;
 . "${DF_ROOT_DIR}/aliases.sh";
 
 [ -f "${HOME}/.config/dotfiles/config.sh" ] && . "${HOME}/.config/dotfiles/config.sh";
-awk -v current_period="$(date +'%m-%d')" '$2 == current_period { print "Birthday today " $1 "!"}' "$([ -f "${DF_BIRTHDAYS_FILE}" ] && echo "${DF_BIRTHDAYS_FILE}" || echo '/dev/null')";
+
+if [ -f "${DF_BIRTHDAYS_FILE}" ]; then
+    awk -v day="$(date +'%m-%d')" '$1 == day { print "!! birthday " $2 " today: '" $3 "'!"; print; }' "${DF_BIRTHDAYS_FILE}";
+fi
