@@ -1,21 +1,22 @@
 ## Dotfiles
 
-This repository enables me to quickly setup a shell environment to my liking.
+This repository enables me to quickly setup a shell environment to my liking. It currently only supports Debian based distro's.
 
 ### Prerequisites
 Dotfiles has the following dependencies:
 
-1. zsh (oh-my-zsh is supported, but not required)
-2. git
-3. tmux
+1. git
+2. tmux
+3. zsh (oh-my-zsh is supported, but not required)
 
 Personally, I also want:
 1. ack
 2. tree
+3. vim
 
 Install them all by doing:
 ```sh
-sudo apt -y update && sudo apt -y install zsh git tmux ack-grep tree;
+sudo apt -y update && sudo apt -y install git tmux ack tree vim zsh;
 ```
 
 ### Installation
@@ -34,9 +35,8 @@ echo 'set completion-ignore-case On' >> ~/.inputrc;
 ### Notes
 
 #### gitc function
-Working with a repository where you don't need (or want) to perform
-fork-, master- and/or newline checks, you can pass the appropriate flags every time,
-or you can define git variables for them.
+Working with a repository where you don't need (or want) to perform fork-, master- and/or
+newline checks, you can pass the appropriate flags or define git variables for them.
 
 Add the variable to the specific repoosity, to not have to pass `-f` anymore:
 ```sh

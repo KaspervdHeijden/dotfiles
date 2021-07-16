@@ -13,13 +13,13 @@ cds()
 
     [ "${#DF_CDS_REPO_DIRS[@]}" -eq 0 ] && DF_CDS_REPO_DIRS=("${HOME}");
 
-    local repo_list=$(find ${DF_CDS_REPO_DIRS[@]} -maxdepth ${DF_CDS_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq);
+    local repo_list="$(find ${DF_CDS_REPO_DIRS[@]} -maxdepth ${DF_CDS_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq)";
     if [ -z "${search}" ]; then
         echo "${repo_list}";
         return 0;
     fi
 
-    local matches=$(echo "${repo_list}" | grep -ie "/[^/]*${search}[^/]*$");
+    local matches="$(echo "${repo_list}" | grep -ie "/[^/]*${search}[^/]*$")";
     if [ -z "${matches}" ]; then
         echo "no matches found for '${search}*'" >&2;
         return 3;
@@ -49,7 +49,7 @@ repo_root()
         return 10;
     fi
 
-    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ -z "${repo_root}" ]; then
         echo 'not a git repository' >&2;
         return 9;
@@ -86,9 +86,9 @@ gitc()
         return 9;
     fi
 
-    local check_line_endings=$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}");
-    local check_master=$(git config --local --no-includes --get dotfiles.checkMaster || echo "${DF_CHECK_MASTER:-1}");
-    local check_fork=$(git config --local --no-includes --get dotfiles.checkFork || echo "${DF_CHECK_FORK:-1}");
+    local check_line_endings="$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}")";
+    local check_master="$(git config --local --no-includes --get dotfiles.checkMaster || echo "${DF_CHECK_MASTER:-1}")";
+    local check_fork="$(git config --local --no-includes --get dotfiles.checkFork || echo "${DF_CHECK_FORK:-1}")";
 
     while getopts 'nmf' arg; do
         case "${arg}" in
@@ -116,7 +116,7 @@ gitc()
         return 4;
     fi
 
-    local git_status=$(git status --porcelain 2>/dev/null);
+    local git_status="$(git status --porcelain 2>/dev/null)";
     if ! echo "${git_status}" | grep -qE '^M|A|R|D'; then
         echo 'no staged changes' >&2;
         return 5;
@@ -133,7 +133,7 @@ gitc()
 
     git commit -m "${commit_message}" || return 7;
 
-    local git_status_after=$(git status --porcelain 2>/dev/null);
+    local git_status_after="$(git status --porcelain 2>/dev/null)";
     if [ -n "${git_status_after}" ]; then
         echo '----------------------------';
         echo "${git_status_after}";
@@ -155,13 +155,13 @@ gitl()
         return 10;
     fi
 
-    local remotes=$(git remote 2>/dev/null);
+    local remotes="$(git remote 2>/dev/null)";
     if [ -z "${remotes}" ]; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
     local remote='';
 
     if [ -n "${1}" ]; then
@@ -194,13 +194,13 @@ gith()
         return 10;
     fi
 
-    local remotes=$(git remote 2>/dev/null);
+    local remotes="$(git remote 2>/dev/null)";
     if [ -z "${remotes}" ]; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
     local remote='origin';
     local flags='';
 
@@ -235,13 +235,13 @@ gitb()
         return 10;
     fi
 
-    local remotes=$(git remote 2>/dev/null);
+    local remotes="$(git remote 2>/dev/null)";
     if [ -z "${remotes}" ]; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local current_branch_name=$(git symbolic-ref --short HEAD 2>/dev/null);
+    local current_branch_name="$(git symbolic-ref --short HEAD 2>/dev/null)";
     local source_branch='master';
     local new_branch_name='';
 
@@ -291,7 +291,7 @@ phpu()
         return 9;
     fi
 
-    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! -x "${repo_root}/vendor/bin/phpunit" ]; then
         echo 'cannot locate phpunit' >&2;
         return 2;
@@ -310,7 +310,7 @@ phps()
         return 9;
     fi
 
-    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
         echo "could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 2;
@@ -329,7 +329,7 @@ phpcs()
         return 9;
     fi
 
-    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null);
+    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! x "${repo_root}/vendor/bin/phpcs" ]; then
         echo 'cannot locate phpcs' >&2;
         return 2;
@@ -445,11 +445,8 @@ choose()
         return 2;
     fi
 
-    if [ "${line_number}" -eq "${line_number}" ] 2>/dev/null; then
-        echo "${input}" | sed -n "${line_number}p";
-        return 0;
+    if ! echo "${input}" | sed -n "${line_number}p" 2>/dev/null; then
+        echo "index not numeric '${line_number}'" >&2;
+        return 3;
     fi
-
-    echo "index not numeric '${line_number}'" 2>/dev/null;
-    return 3;
 }
