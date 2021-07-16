@@ -1,4 +1,4 @@
-export DF_ROOT_DIR=$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../");
+export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../")";
 
 echo "including dotfiles from ${DF_ROOT_DIR}...";
 for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
@@ -29,7 +29,7 @@ if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     fi
 fi
 
-cur_shell=$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//');
+cur_shell="$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')";
 if [ -f "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "sourcing '${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh'...";
     . "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh";

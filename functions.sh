@@ -384,9 +384,9 @@ dfs()
         update)
             (
                 cd "${DF_ROOT_DIR}" || return 1;
-                local remote=$(git remote -v | grep 'KaspervdHeijden@github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1);
-                local branch=$(git symbolic-ref --short HEAD 2>/dev/null);
-                local last_hash=$(git rev-parse --verify HEAD);
+                local remote="$(git remote -v | grep 'KaspervdHeijden@github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1)";
+                local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
+                local last_hash="$(git rev-parse --verify HEAD)";
 
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
@@ -401,8 +401,8 @@ dfs()
         ;;
 
         env)
-            local all_vars=$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh");
-            local used_vars=$(env | grep '^DF_');
+            local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
+            local used_vars="$(env | grep '^DF_')";
 
             echo "${used_vars}" | cut -d'=' -f1 | while read var_name; do all_vars=$(echo "${all_vars}" | grep -v "#export ${var_name}="); done;
             [ -n "${used_vars}" ] && echo "${used_vars}";
