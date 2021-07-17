@@ -7,8 +7,6 @@ export PAGER=less;
 . "${DF_ROOT_DIR}/functions.sh";
 . "${DF_ROOT_DIR}/aliases.sh";
 
-[ -f "${HOME}/.config/dotfiles/config.sh" ] && . "${HOME}/.config/dotfiles/config.sh";
-
-if [ -f "${DF_BIRTHDAYS_FILE}" ]; then
-    awk -v day="$(date +'%m-%d')" '$1 == day { print "Happy birthday " $3 "!"; }' "${DF_BIRTHDAYS_FILE}";
+if [ -f "${HOME}/.config/dotfiles/config.sh" ]; then
+    . "${HOME}/.config/dotfiles/config.sh";
 fi

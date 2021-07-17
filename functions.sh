@@ -348,9 +348,9 @@ sha()
         return 2;
     fi
 
-    case $(ssh-add -l >/dev/null 2>&1; echo $?) in
+    case "$(ssh-add -l >/dev/null 2>&1; echo $?)" in
         0) echo 'SSH agent already running' >&2; return 3 ;;
-        2) eval $(ssh-agent -s) >/dev/null 2>&1           ;;
+        2) eval "$(ssh-agent -s)" >/dev/null 2>&1           ;;
     esac
 
     ssh-add >/dev/null || return 4;
@@ -384,19 +384,14 @@ dfs()
         update)
             (
                 cd "${DF_ROOT_DIR}" || return 1;
-                local remote="$(git remote -v | grep 'KaspervdHeijden@github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1)";
+                local remote="$(git remote -v | grep 'github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1)";
                 local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
                 local last_hash="$(git rev-parse --verify HEAD)";
 
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
-                if [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ]; then
-                    return 0;
-                fi
-
-                [ -f ./setup/migration.sh ] && ./setup/migration.sh;
-                return 1;
+                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
             ) || dfs reload;
         ;;
 
@@ -404,9 +399,9 @@ dfs()
             local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
             local used_vars="$(env | grep '^DF_')";
 
-            echo "${used_vars}" | cut -d'=' -f1 | while read var_name; do all_vars=$(echo "${all_vars}" | grep -v "#export ${var_name}="); done;
+            echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
             [ -n "${used_vars}" ] && echo "${used_vars}";
-            [ -n "${all_vars}" ] && echo "${all_vars}";
+            [ -n "${all_vars}" ] && echo "${all_vars}" | sed 's/export //';
         ;;
 
         reload)
@@ -434,7 +429,7 @@ choose()
     local input="$(cat)";
     local lines="$(echo "${input}" | wc -l)";
 
-    if  [ ${lines} -lt 2 ]; then
+    if  [ "${lines}" -lt 2 ]; then
         echo "${input}";
         return 0;
     fi
@@ -442,7 +437,7 @@ choose()
     local line_number="${1}";
     if [ -z  "${line_number}" ]; then
         echo "${input}" | awk '{print NR ": " $0}';
-        return 2;
+        return 0;
     fi
 
     if ! echo "${input}" | sed -n "${line_number}p" 2>/dev/null; then

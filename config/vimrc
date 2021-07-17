@@ -1,8 +1,7 @@
 " Use Vim defaults instead of 99% vi compatibility
 set nocompatible
 
-" Don't parse vim configurations of the file we're editing,
-"  this could be a security risk and is just annoying imho.
+" Don't parse vim configurations of the file we're editing, this could be a security risk
 set nomodeline
 set number
 
@@ -11,7 +10,7 @@ set backspace=indent,eol,start
 
 " Now we set some defaults for the editor
 set wildmenu                " Turn on the Wild menu
-set lazyredraw              " Don't redraw while executing macros (good performance config)
+set lazyredraw              " Don't redraw while executing macros
 set autoread                " Set to auto read when a file is changed from the outside
 set hlsearch                " Highlight search results
 set autoindent              " Always set autoindenting on
@@ -22,8 +21,6 @@ set nobackup                " Don't keep backup files
 set noswapfile              " Don't keep filse like bla.swp
 set nowritebackup           " Don't keep files like bla~
 set noundofile              " Don't keep undo files like un~
-set viminfo='20,\"50        " Read/write a .viminfo file, don't store more than
-                            " 50 lines of registers
 set history=50              " Keep 50 lines of command line history
 set ruler                   " Show the cursor position all the time
 set nowrap                  " Disable text wrapping

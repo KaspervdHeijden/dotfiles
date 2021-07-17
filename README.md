@@ -1,9 +1,7 @@
 ## Dotfiles
 
 This repository enables me to quickly setup a shell environment to my liking. It currently only supports Debian based distro's.
-
-### Prerequisites
-Dotfiles has the following dependencies:
+Dotfiles uses the following binaries:
 
 1. git
 2. tmux
@@ -38,21 +36,23 @@ echo 'set completion-ignore-case On' >> ~/.inputrc;
 Working with a repository where you don't need (or want) to perform fork-, master- and/or
 newline checks, you can pass the appropriate flags or define git variables for them.
 
-Add the variable to the specific repoosity, to not have to pass `-f` anymore:
+Add the variable to the specific reposity, to not have to pass `-f` anymore:
 ```sh
-git config --local dotfiles.checkFork 0;
-```
-
-The same applies to the newline check, to not have to pass `-n` anymore:
-```sh
+# override line endings check, to not have to pass -n
 git config --local dotfiles.checkLineEndings 0;
+
+# override fork check, to not have to pass -f
+git config --local dotfiles.checkFork 0;
+
+# override master branch check, to not have to pass -m
+git config --local dotfiles.checkMaster 0;
 ```
 
 This needs to be done on every machine, since git variables aren't part of the repository itself.
 
 You can also use global variables, `$DF_CHECK_FORK`, `$DF_CHECK_LINE_ENDINGS`
 and `$DF_CHECK_MASTER`. These can be set in `~/.config/dotfiles/config.sh`
-which will be sourced last.
+which will be sourced last. If set in variables, they apply to _all_ repositories.
 
 #### Prompt
 Setting the variable `$DF_GIT_PROMPT_SHOW_DIRTY` to a non-empty value will

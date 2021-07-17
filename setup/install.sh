@@ -1,7 +1,7 @@
 export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../")";
 
 echo "including dotfiles from ${DF_ROOT_DIR}...";
-for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
+for shell_name in "$(cd "${DF_ROOT_DIR}/shells"; ls -d *)"; do
     if [ ! -f "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" ]; then
         continue;
     fi
