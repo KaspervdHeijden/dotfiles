@@ -384,8 +384,9 @@ slug()
 #
 # Manages dotfiles.
 #
-# dfs [update|env|reload|nav]
+# dfs [edit|update|env|reload|nav]
 #
+# dfs edit     Edit one or more dotfiles
 # dfs env      Show relevant variables
 # dfs install  (Re)installs dotfiles and applies defaults
 # dfs nav      Navigates to the dotfiles repo
@@ -395,13 +396,37 @@ slug()
 dfs()
 {
     case "${1:-nav}" in
+        edit)
+            local files="$(find "${DF_ROOT_DIR}" -type f -not -path '*/\.git/*' | grep "${2}")";
+            if [ -n "${files}" ]; then
+                "${EDITOR}" $(echo "${files}" | xargs);
+            elif echo "${EDITOR}" | grep -q 'vim'; then
+                "${EDITOR}" "${DF_ROOT_DIR}";
+            else
+                echo "no files found for ${2}" >&2;
+                return 2;
+            fi
+        ;;
+
         env)
             local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
             local used_vars="$(env | grep '^DF_')";
 
+            echo 'Defined vars:';
             echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
             [ -n "${used_vars}" ] && echo "${used_vars}";
-            [ -n "${all_vars}" ] && echo "${all_vars}" | sed 's/export //';
+            if [ -n "${all_vars}" ]; then
+                echo '';
+                echo 'Supported vars:';
+                echo "${all_vars}" | sed 's/export //';
+            fi
+
+	    local git_vars="$(git config --list 2>/dev/null | grep '^dotfiles.')";
+	    if [ -n "${git_vars}" ]; then
+                echo '';
+                echo 'Local repository git vars:';
+                echo "${git_vars}";
+            fi
         ;;
 
         install)
@@ -426,12 +451,12 @@ dfs()
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
-                [ "${last_hash}" != "$(git rev-parse --verify HEAD)" ]
+                [ "${last_hash}" != "$(git rev-parse --verify HEAD)" ] && return 2;
             ) || dfs install;
         ;;
 
         *)
-            echo "command not recognized: '${1}', expecting one of 'update', 'reload', 'env' or 'nav'" >&2;
+            echo "command not recognized: '${1}', expecting one of 'edit', 'env', 'install', 'nav', 'reload' or 'update'" >&2;
             return 2;
         ;;
     esac
@@ -458,7 +483,7 @@ choose()
         return 0;
     fi
 
-    if ! echo "${input}" | sed -n "${line_number}p" 2>/dev/null; then
+    if ! echo "${input}" | sed -n "${line_number}p"; then
         echo "index not numeric '${line_number}'" >&2;
         return 3;
     fi

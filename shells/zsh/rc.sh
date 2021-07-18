@@ -55,7 +55,7 @@ fi
 compdef _dfs dfs;
 _dfs()
 {
-    _arguments '1: :(env install nav reload update)';
+    _arguments '1: :(edit env install nav reload update)';
 }
 
 compdef _repo_root repo_root
