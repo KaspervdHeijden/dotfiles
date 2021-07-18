@@ -8,7 +8,7 @@ cds()
 {
     local search="${1}";
     if [ -d "${search}" ]; then
-        cd "${search}" && return 0 || return 1;
+        cd "${search}" && return 0 || return 2;
     fi
 
     [ "${#DF_CDS_REPO_DIRS[@]}" -eq 0 ] && DF_CDS_REPO_DIRS=("${HOME}");
@@ -38,9 +38,9 @@ cds()
 
 #
 # Prints the root of the current repository.
-# Pass -c to only display the root dir.
+# Pass -c to navigate to the root dir instead.
 #
-# repo_root
+# repo_root [-c]
 #
 repo_root()
 {
@@ -67,7 +67,7 @@ repo_root()
 # Wrapper around git commit, adding in a few checks.
 #
 # 1. Is the commit message long enough? (minimum required: 3 characters)
-# 2. Are we not committing in master? (override with -m)
+# 2. Are we not committing in the default branch? (override with -d)
 # 3. Are we committing in our own fork? (override with -f)
 # 4. Are there staged changes?
 # 5. Are there DOS line endings? (override with -n)
@@ -86,15 +86,15 @@ gitc()
         return 9;
     fi
 
+    local check_default_branch="$(git config --local --no-includes --get dotfiles.checkDefaultBranch || echo "${DF_CHECK_DEFAULT_BRANCH:-1}")";
     local check_line_endings="$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}")";
-    local check_master="$(git config --local --no-includes --get dotfiles.checkMaster || echo "${DF_CHECK_MASTER:-1}")";
     local check_fork="$(git config --local --no-includes --get dotfiles.checkFork || echo "${DF_CHECK_FORK:-1}")";
 
-    while getopts 'nmf' arg; do
+    while getopts 'ndf' arg; do
         case "${arg}" in
-            n) check_line_endings='0' ;;
-            m) check_master='0'       ;;
-            f) check_fork='0'         ;;
+            d) check_default_branch='0';;
+            n) check_line_endings='0'  ;;
+            f) check_fork='0'          ;;
         esac;
     done
 
@@ -106,9 +106,18 @@ gitc()
         return 2;
     fi
 
-    if [ "${check_master}" = "1" ] && [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = 'master' ]; then
-        echo 'not commiting in master (use -m to override)' >&2;
-        return 3;
+    if [ "${check_default_branch}" = "1" ]; then
+        local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+        local default_branch='master';
+
+        for candidate in default main master; do
+            [ -f "${repo_root}/.git/refs/heads/${candidate}" ] && default_branch="${candidate}";
+        done
+
+        if [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = "${default_branch}" ]; then
+            echo "not commiting in ${default_branch} (use -d to override)" >&2;
+            return 3;
+        fi
     fi
 
     if [ "${check_fork}" = "1" ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
@@ -123,9 +132,7 @@ gitc()
     fi
 
     if [ "${check_line_endings}" = '1' ]; then
-        local files_with_dos_lines=$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{print $1 " has dos line endings"}');
-        if [ -n "${files_with_dos_lines}" ]; then
-            echo "${files_with_dos_lines}" >&2;
+        if [ -n "$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{print $1 " has dos line endings"}' | tee /dev/stderr)" ]; then
             echo ' (use -n to override)' >&2;
             return 6;
         fi
@@ -177,7 +184,7 @@ gitl()
         return 2;
     fi
 
-    echo "Pulling ${remote} ${branch}";
+    echo "pulling ${remote} ${branch}";
     git pull "${remote}" "${branch}" || return 3;
 }
 
@@ -223,7 +230,7 @@ gith()
 }
 
 #
-# Creates a new branch from a fresh master.
+# Creates a new branch branched from a fresh default branch.
 # Use -c to branch from current branch instead.
 #
 # gitb [-c] new-feature-branch
@@ -242,8 +249,14 @@ gitb()
     fi
 
     local current_branch_name="$(git symbolic-ref --short HEAD 2>/dev/null)";
+    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+    local default_branch='master';
     local source_branch='master';
     local new_branch_name='';
+
+    for candidate in default main master; do
+        [ -f "${repo_root}/.git/refs/heads/${candidate}" ] && default_branch="${candidate}";
+    done
 
     for arg in "$@"; do
         if [ "${arg}" = '-c' ]; then
@@ -272,7 +285,7 @@ gitb()
         git checkout "${source_branch}" || return 3;
     fi
 
-    if [ "${source_branch}" = 'master' ]; then
+    if [ "${source_branch}" = "${default_branch}" ]; then
         git pull "${remote_name}" "${source_branch}" || return 4;
     else
         echo "not pulling '${source_branch}'";
@@ -373,14 +386,36 @@ slug()
 #
 # dfs [update|env|reload|nav]
 #
-# dfs update   Updates dotfiles
-# dfs reload   Reloads configuration
 # dfs env      Show relevant variables
+# dfs install  (Re)installs dotfiles and applies defaults
 # dfs nav      Navigates to the dotfiles repo
+# dfs reload   Reloads configuration
+# dfs update   Updates dotfiles
 #
 dfs()
 {
     case "${1:-nav}" in
+        env)
+            local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
+            local used_vars="$(env | grep '^DF_')";
+
+            echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
+            [ -n "${used_vars}" ] && echo "${used_vars}";
+            [ -n "${all_vars}" ] && echo "${all_vars}" | sed 's/export //';
+        ;;
+
+        install)
+            . "${DF_ROOT_DIR}/setup/install.sh";
+        ;;
+
+        nav)
+            cd "${DF_ROOT_DIR}" && pwd;
+        ;;
+
+        reload)
+            . "${DF_ROOT_DIR}/shells/$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')/rc.sh";
+        ;;
+
         update)
             (
                 cd "${DF_ROOT_DIR}" || return 1;
@@ -391,25 +426,8 @@ dfs()
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
-                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
-            ) || dfs reload;
-        ;;
-
-        env)
-            local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
-            local used_vars="$(env | grep '^DF_')";
-
-            echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
-            [ -n "${used_vars}" ] && echo "${used_vars}";
-            [ -n "${all_vars}" ] && echo "${all_vars}" | sed 's/export //';
-        ;;
-
-        reload)
-            . "${DF_ROOT_DIR}/shells/$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')/rc.sh";
-        ;;
-
-        nav)
-            cd "${DF_ROOT_DIR}" && pwd;
+                [ "${last_hash}" != "$(git rev-parse --verify HEAD)" ]
+            ) || dfs install;
         ;;
 
         *)

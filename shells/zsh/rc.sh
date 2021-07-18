@@ -11,10 +11,10 @@ autoload -U colors && colors;
 
 bindkey -e;
 
+export DF_ROOT_DIR="$(realpath "$(dirname $0)/../../")";
 export HISTFILE=~/.zsh_history;
 export HISTSIZE=20000;
 export SAVEHIST=20000;
-export DF_ROOT_DIR="$(realpath "$(dirname $0)/../../")";
 
 [ -x "$(command -v dircolors)" ] && eval "$(dircolors -b)";
 
@@ -52,49 +52,33 @@ fi
 . "${DF_ROOT_DIR}/shells/zsh/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";
 
-if declare -f dfs >/dev/null 2>/dev/null; then
-    compdef _dfs dfs;
+compdef _dfs dfs;
+_dfs()
+{
+    _arguments '1: :(env install nav reload update)';
+}
 
-    _dfs()
-    {
-        _arguments '1: :(update reload env nav)';
-    }
-fi
+compdef _repo_root repo_root
+_repo_root()
+{
+    _arguments '-c[Only display root directory]';
+}
 
-if declare -f repo_root >/dev/null 2>/dev/null; then
-    compdef _repo_root repo_root
+compdef _cds cds;
+_cds()
+{
+    _arguments "1: :($(cds | xargs -I {} basename {} | xargs))";
+}
 
-    _repo_root()
-    {
-        _arguments '-c[Only display root directory]';
-    }
-fi
+compdef _gitl gitl;
+_gitl()
+{
+    _arguments "1: :($(git remote))";
+}
 
-
-if declare -f cds >/dev/null 2>/dev/null; then
-    compdef _cds cds;
-
-    _cds()
-    {
-        _arguments "1: :($(cds | xargs -I {} basename {} | xargs))";
-    }
-fi
-
-if declare -f gitl >/dev/null 2>/dev/null; then
-    compdef _gitl gitl;
-
-    _gitl()
-    {
-        _arguments "1: :($(git remote))";
-    }
-fi
-
-if declare -f gitb >/dev/null 2>/dev/null; then
-    compdef _gitb gitb;
-
-    _gitb()
-    {
-        local current_branch=$(git symbolic-ref --short HEAD 2>/dev/null);
-        _arguments "-c[Branch from current '${current_branch}' instead]";
-    }
-fi
+compdef _gitb gitb;
+_gitb()
+{
+    local current_branch=$(git symbolic-ref --short HEAD 2>/dev/null);
+    _arguments "-c[Branch from current '${current_branch}' instead]";
+}

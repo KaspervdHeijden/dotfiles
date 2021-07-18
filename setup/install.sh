@@ -1,7 +1,7 @@
-export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../")";
+DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../")";
 
 echo "including dotfiles from ${DF_ROOT_DIR}...";
-for shell_name in "$(cd "${DF_ROOT_DIR}/shells"; ls -d *)"; do
+for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
     if [ ! -f "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" ]; then
         continue;
     fi
@@ -16,10 +16,13 @@ for shell_name in "$(cd "${DF_ROOT_DIR}/shells"; ls -d *)"; do
 
     [ -s "${file}" ] && echo '' >> "${file}";
     echo '# Include dotfiles' >> "${file}";
-    echo ". \"${DF_ROOT_DIR}/shells/${shell_name}/rc.sh\";" >> "${file}";
+    echo ". '${DF_ROOT_DIR}/shells/${shell_name}/rc.sh';" >> "${file}";
 done;
 
 echo 'configuring dotfiles...';
+git config --local dotfiles.checkDefaultBranch 0;
+git config --local dotfiles.checkFork 0;
+
 if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     mkdir -p "${HOME}/.config/dotfiles";
 

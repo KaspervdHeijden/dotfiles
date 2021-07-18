@@ -6,13 +6,14 @@ esac
 
 [ -z "${PS1}" ] && return;
 
+export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE}")/../..")";
 HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
 HISTSIZE=20000;
 
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)";
 if [ -x /usr/bin/dircolors ]; then
-    [ -r ~/.dircolors ] && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)";
+    [ -r "${HOME}/.dircolors" ] && eval "$(dircolors -b "${HOME}/.dircolors")" || eval "$(dircolors -b)";
     alias fgrep='fgrep --color=auto';
     alias egrep='egrep --color=auto';
     alias grep='grep --color=auto';
@@ -31,20 +32,13 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
-export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE}")/../..")";
-
 . "${DF_ROOT_DIR}/shells/bash/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";
 
-if declare -f dfs >/dev/null 2>/dev/null; then
-    complete -W 'update reload env nav' dfs;
-fi
+complete -W 'env install nav reload update' dfs;
 
-if declare -f cds >/dev/null 2>/dev/null; then
-    complete -F _cds cds
-
-    _cds()
-    {
-        COMPREPLY=($(compgen -W "$(cds | xargs -I{} basename {} | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}"));
-    }
-fi
+complete -F _cds cds
+_cds()
+{
+    COMPREPLY=($(compgen -W "$(cds | xargs -I{} basename {} | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}"));
+}

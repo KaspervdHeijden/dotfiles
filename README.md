@@ -33,7 +33,7 @@ echo 'set completion-ignore-case On' >> ~/.inputrc;
 ### Notes
 
 #### gitc function
-Working with a repository where you don't need (or want) to perform fork-, master- and/or
+Working with a repository where you don't need (or want) to perform fork-, default branch- and/or
 newline checks, you can pass the appropriate flags or define git variables for them.
 
 Add the variable to the specific reposity, to not have to pass `-f` anymore:
@@ -44,8 +44,8 @@ git config --local dotfiles.checkLineEndings 0;
 # override fork check, to not have to pass -f
 git config --local dotfiles.checkFork 0;
 
-# override master branch check, to not have to pass -m
-git config --local dotfiles.checkMaster 0;
+# override default branch check, to not have to pass -d
+git config --local dotfiles.checkDefaultBranch 0;
 ```
 
 This needs to be done on every machine, since git variables aren't part of the repository itself.

@@ -6,10 +6,10 @@
 # Should we check for DOS line endings?
 # export DF_CHECK_LINE_ENDINGS=0;
 
-# Should we be allowed to commit in master?
-# export DF_CHECK_MASTER=0;
+# Should we be allowed to commit in the default branch?
+# export DF_CHECK_DEFAULT_BRANCH=0;
 
-# Defines how deep repositories are searched in relative to the directories given in $DF_REPO_DIRS below.
+# Defines how deep repositories are searched in relative to the directories given in $DF_CDS_REPO_DIRS below.
 # export DF_CDS_MAX_DEPTH=2;
 
 # List of directories used to search for repositories for the cds() function.
