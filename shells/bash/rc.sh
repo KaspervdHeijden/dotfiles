@@ -35,7 +35,7 @@ fi
 . "${DF_ROOT_DIR}/shells/bash/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";
 
-complete -W 'edit env install nav reload update' dfs;
+complete -W 'env install nav reload update' dfs;
 
 complete -F _cds cds
 _cds()

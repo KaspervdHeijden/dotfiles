@@ -386,7 +386,6 @@ slug()
 #
 # dfs [edit|update|env|reload|nav]
 #
-# dfs edit     Edit one or more dotfiles
 # dfs env      Show relevant variables
 # dfs install  (Re)installs dotfiles and applies defaults
 # dfs nav      Navigates to the dotfiles repo
@@ -396,18 +395,6 @@ slug()
 dfs()
 {
     case "${1:-nav}" in
-        edit)
-            local files="$(find "${DF_ROOT_DIR}" -type f -not -path '*/\.git/*' | grep "${2}")";
-            if [ -n "${files}" ]; then
-                "${EDITOR}" $(echo "${files}" | xargs);
-            elif echo "${EDITOR}" | grep -q 'vim'; then
-                "${EDITOR}" "${DF_ROOT_DIR}";
-            else
-                echo "no files found for ${2}" >&2;
-                return 2;
-            fi
-        ;;
-
         env)
             local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
             local used_vars="$(env | grep '^DF_')";
@@ -421,8 +408,8 @@ dfs()
                 echo "${all_vars}" | sed 's/export //';
             fi
 
-	    local git_vars="$(git config --list 2>/dev/null | grep '^dotfiles.')";
-	    if [ -n "${git_vars}" ]; then
+            local git_vars="$(git config --local --list 2>/dev/null | grep '^dotfiles.')";
+            if [ -n "${git_vars}" ]; then
                 echo '';
                 echo 'Local repository git vars:';
                 echo "${git_vars}";
@@ -456,7 +443,7 @@ dfs()
         ;;
 
         *)
-            echo "command not recognized: '${1}', expecting one of 'edit', 'env', 'install', 'nav', 'reload' or 'update'" >&2;
+            echo "command not recognized: '${1}', expecting one of 'env', 'install', 'nav', 'reload' or 'update'" >&2;
             return 2;
         ;;
     esac
