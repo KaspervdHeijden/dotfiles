@@ -30,8 +30,8 @@ cds()
         cd "${matches}" && return 0 || return 4;
     fi
 
-    echo 'multiple matches found:' >&2;
-    echo "${matches}" >&2;
+    echo 'multiple matches found' >&2;
+    echo "${matches}";
 
     return 5;
 }
