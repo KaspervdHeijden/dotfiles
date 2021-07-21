@@ -1,6 +1,6 @@
 set nocompatible
 set nomodeline
-set relativenumber
+set number relativenumber
 set backspace=indent,eol,start
 set wildmenu
 set lazyredraw
