@@ -438,7 +438,7 @@ dfs()
                 echo "Updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
-                [ "${last_hash}" != "$(git rev-parse --verify HEAD)" ] && return 2;
+                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
             ) || dfs install;
         ;;
 
