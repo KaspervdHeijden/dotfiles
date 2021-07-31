@@ -6,7 +6,7 @@
 
 alias update >/dev/null && alias update-all='update && [ -x "$(command -v snap)" ] && sudo snap refresh || true';
 
-[ -x "$(command -v vim)" ] && alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc'";
+[ -x "$(command -v vim)" ] && alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc.vim'";
 [ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
 [ -x '/snap/bin/phpstorm' ] && alias code='/snap/bin/phpstorm';
 
