@@ -20,8 +20,11 @@ for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
 done;
 
 echo 'configuring dotfiles...';
-git config --local dotfiles.checkDefaultBranch 0;
-git config --local dotfiles.checkFork 0;
+(
+    cd "${DF_ROOT_DIR}" || return 1;
+    git config --local dotfiles.checkDefaultBranch 0;
+    git config --local dotfiles.checkFork 0;
+);
 
 if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     mkdir -p "${HOME}/.config/dotfiles";

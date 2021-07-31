@@ -12,7 +12,7 @@ autoload -U colors && colors;
 bindkey -e;
 
 export DF_ROOT_DIR="$(realpath "$(dirname $0)/../../")";
-export HISTFILE=~/.zsh_history;
+export HISTFILE="${HOME}/.zsh_history";
 export HISTSIZE=20000;
 export SAVEHIST=20000;
 
@@ -36,18 +36,17 @@ zstyle ':completion:*' verbose true;
 if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
     plugins=(sudo pass);
 
-    for plugin in "zsh-autosuggestions" "zsh-syntax-highlighting"; do
+    for plugin in 'zsh-autosuggestions' 'zsh-syntax-highlighting'; do
         if [ -d "${ZSH}/custom/plugins/${plugin}" ]; then
             plugins+=($plugin);
         fi
     done
 
-    export DISABLE_UPDATE_PROMPT="true";
-    export UPDATE_ZSH_DAYS=7;
+    export DISABLE_UPDATE_PROMPT='1';
+    export UPDATE_ZSH_DAYS='7';
 
     . "${ZSH}/oh-my-zsh.sh";
 fi
-
 
 . "${DF_ROOT_DIR}/shells/zsh/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";
@@ -58,7 +57,7 @@ _dfs()
     _arguments '1: :(env install nav reload update)';
 }
 
-compdef _repo_root repo_root
+compdef _repo_root repo_root;
 _repo_root()
 {
     _arguments '-c[Only display root directory]';
@@ -67,7 +66,11 @@ _repo_root()
 compdef _cds cds;
 _cds()
 {
-    _arguments "1: :($(cds | xargs -I {} basename {} | xargs))";
+    if [ "${DF_CDS_COMPLETE_FULL_PATHS:-0}" -eq 0 ]; then
+        _arguments "1: :($(cds | xargs -I {} basename {} | xargs))";
+    else
+        _arguments "1: :($(cds | xargs))";
+    fi
 }
 
 compdef _gitl gitl;
