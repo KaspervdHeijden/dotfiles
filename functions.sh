@@ -72,7 +72,7 @@ repo_root()
 # 4. Are there staged changes?
 # 5. Are there DOS line endings? (override with -n)
 #
-# gitc [-nfm]
+# gitc [-dfm]
 #
 gitc()
 {
@@ -254,8 +254,11 @@ gitb()
     local source_branch='master';
     local new_branch_name='';
 
-    for candidate in default main master; do
-        [ -f "${repo_root}/.git/refs/heads/${candidate}" ] && default_branch="${candidate}";
+    for candidate in main default; do
+        if [ -f "${repo_root}/.git/refs/heads/${candidate}" ]; then
+            default_branch="${candidate}";
+            source_branch="${candidate}";
+        fi
     done
 
     for arg in "$@"; do
