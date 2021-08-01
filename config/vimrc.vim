@@ -1,7 +1,6 @@
 ﻿syntax on
 
 colorscheme murphy
-hi Normal guibg=NONE ctermbg=NONE
 
 set autoindent smartindent
 set autoread
@@ -48,6 +47,8 @@ set textwidth=0
 set title
 set ttyfast
 set wildmenu
+
+hi Normal guibg=NONE ctermbg=NONE
 
 " Remap Ctrl+A/E to Home/End
 noremap <C-a> <Home>
