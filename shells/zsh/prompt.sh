@@ -11,5 +11,5 @@ __df_prompt_git_status()
 }
 
 [ -z "${DF_HOST_PROMPT_COLOR_ZSH}" ] && DF_HOST_PROMPT_COLOR_ZSH='%F{green}';
-PS1='[%(?..%B%F{red}%?%f%b )%B%F{white}%n%f%b@%f${DF_HOST_PROMPT_COLOR_ZSH}%U%m%u%f $(uname -s) %F{cyan}%~%f %D{%Y-%m-%d} %T$(__df_prompt_git_status)]
+PS1='[%(?..%B%F{red}%?%f%b )%B%F{white}%n%f%b@%f${DF_HOST_PROMPT_COLOR_ZSH}%U%m%u%f %F{yellow}zsh%f $(uname -s) %F{cyan}%~%f %D{%Y-%m-%d} %T$(__df_prompt_git_status)]
 %# ';

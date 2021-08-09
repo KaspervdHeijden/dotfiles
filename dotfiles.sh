@@ -1,4 +1,4 @@
-if [ -x "$(command  -v vim)" ]; then
+if command -v vim >/dev/null; then
     export GIT_EDITOR=vim;
     export EDITOR=vim;
 else

@@ -107,14 +107,15 @@ gitc()
     fi
 
     if [ "${check_default_branch}" = "1" ]; then
+        local current_branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
         local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
-        local default_branch='master';
+        local default_branch="${current_branch}";
 
-        for candidate in default main master; do
+        for candidate in master default main trunk development; do
             [ -f "${repo_root}/.git/refs/heads/${candidate}" ] && default_branch="${candidate}";
         done
 
-        if [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = "${default_branch}" ]; then
+        if [ "${current_branch}" = "${default_branch}" ]; then
             echo "not commiting in ${default_branch} (use -d to override)" >&2;
             return 12;
         fi

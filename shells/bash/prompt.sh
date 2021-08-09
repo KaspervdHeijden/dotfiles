@@ -15,4 +15,4 @@ __df_prompt_git_status()
 }
 
 [ -z "${DF_HOST_PROMPT_COLOR_BASH}" ] && DF_HOST_PROMPT_COLOR_BASH='4;32';
-PS1="[\$(__df_prompt_last_exitcode)\e[1;37m\u\e[0;37m@\e[${DF_HOST_PROMPT_COLOR_BASH}m\h\e[0m \$(uname -s)\e[0;36m \w\e[0m \$(date +'%Y-%m-%d %H:%M')\e[1;32m\$(__df_prompt_git_status)\e[0;0m]\n% ";
+PS1="[\$(__df_prompt_last_exitcode)\e[1;37m\u\e[0;37m@\e[${DF_HOST_PROMPT_COLOR_BASH}m\h\e[0m \e[0;33mbash\e[0m \$(uname -s)\e[0;36m \w\e[0m \$(date +'%Y-%m-%d %H:%M')\e[1;32m\$(__df_prompt_git_status)\e[0;0m]\n% ";

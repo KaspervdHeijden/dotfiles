@@ -4,8 +4,7 @@
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
 
 if [ -x "$(command -v apt)" ]; then
-    alias update='sudo sh -c "apt -y update && sudo apt -y upgrade && sudo apt -y autoclean && sudo apt -y autoremove"';
-    alias update-all='update && [ -x "$(command -v snap)" ] && sudo snap refresh || true';
+    alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { [ ! -x "$(command -v snap)" ] || snap refresh }"';
 fi
 
 [ -x "$(command -v vim)" ] && alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc.vim'";
