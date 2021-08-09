@@ -1,7 +1,13 @@
+if [ -x "$(command  -v vim)" ]; then
+    export GIT_EDITOR=vim;
+    export EDITOR=vim;
+else
+    export GIT_EDITOR=nano;
+    export EDITOR=nano;
+fi
+
 export LESS="-FXR ${LESS}";
-export GIT_EDITOR=vim;
 export GIT_PAGER=less;
-export EDITOR=vim;
 export PAGER=less;
 
 . "${DF_ROOT_DIR}/functions.sh";

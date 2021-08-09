@@ -8,7 +8,7 @@ cds()
 {
     local search="${1}";
     if [ -d "${search}" ]; then
-        cd "${search}" && return 0 || return 2;
+        cd "${search}" && return 0 || return 11;
     fi
 
     [ "${#DF_CDS_REPO_DIRS[@]}" -eq 0 ] && DF_CDS_REPO_DIRS=("${HOME}");
@@ -22,18 +22,18 @@ cds()
     local matches="$(echo "${repo_list}" | grep -ie "/[^/]*${search}[^/]*$")";
     if [ -z "${matches}" ]; then
         echo "no matches found for '${search}*'" >&2;
-        return 3;
+        return 12;
     fi
 
     if [ -d "${matches}" ]; then
         echo "${matches}";
-        cd "${matches}" && return 0 || return 4;
+        cd "${matches}" && return 0 || return 13;
     fi
 
     echo 'multiple matches found' >&2;
     echo "${matches}";
 
-    return 5;
+    return 14;
 }
 
 #
@@ -57,7 +57,7 @@ repo_root()
 
     if [ ! -d "${repo_root}" ]; then
         echo 'root is not a directory' >&2;
-        return 2;
+        return 11;
     fi
 
     [ "${1}" = '-c' ] && cd "${repo_root}" || echo "${repo_root}";
@@ -103,7 +103,7 @@ gitc()
 
     if [ "${#commit_message}" -lt "5" ]; then
         echo 'commit message requires at least 5 characters' >&2;
-        return 2;
+        return 11;
     fi
 
     if [ "${check_default_branch}" = "1" ]; then
@@ -116,25 +116,25 @@ gitc()
 
         if [ "$(git symbolic-ref --short HEAD 2>/dev/null)" = "${default_branch}" ]; then
             echo "not commiting in ${default_branch} (use -d to override)" >&2;
-            return 3;
+            return 12;
         fi
     fi
 
     if [ "${check_fork}" = "1" ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
         echo 'not in your fork (use -f to override)' >&2;
-        return 4;
+        return 13;
     fi
 
     local git_status="$(git status --porcelain 2>/dev/null)";
     if ! echo "${git_status}" | grep -qE '^M|A|R|D'; then
         echo 'no staged changes' >&2;
-        return 5;
+        return 14;
     fi
 
     if [ "${check_line_endings}" = '1' ]; then
         if [ -n "$(echo "${git_status}" | awk '{print $2}' | xargs -n1 file | grep 'CRLF' | awk -F':' '{print $1 " has dos line endings"}' | tee /dev/stderr)" ]; then
             echo ' (use -n to override)' >&2;
-            return 6;
+            return 15;
         fi
     fi;
 
@@ -181,11 +181,11 @@ gitl()
 
     if ! echo "${remotes}" | grep -q "${remote}" 2>/dev/null; then
         echo "unknown remote '${remote}'" >&2;
-        return 2;
+        return 11;
     fi
 
     echo "pulling ${remote} ${branch}";
-    git pull "${remote}" "${branch}" || return 3;
+    git pull "${remote}" "${branch}" || return 12;
 }
 
 #
@@ -226,7 +226,7 @@ gith()
         return 2;
     fi
 
-    git push $flags "${remote}" "${branch}" || return 3;
+    git push $flags "${remote}" "${branch}" || return 11;
 }
 
 #
@@ -271,12 +271,12 @@ gitb()
 
     if [ -z "${new_branch_name}" ]; then
         echo 'no branch name given' >&2;
-        return 2;
+        return 11;
     fi
 
     if git branch 2>/dev/null | grep -q "${new_branch_name}" 2>/dev/null; then
         echo "branch '${new_branch_name}' already exists" >&2;
-        return 3;
+        return 12;
     fi
 
     local remote_name='origin';
@@ -285,16 +285,16 @@ gitb()
     fi
 
     if [ "${current_branch_name}" != "${source_branch}" ]; then
-        git checkout "${source_branch}" || return 3;
+        git checkout "${source_branch}" || return 13;
     fi
 
     if [ "${source_branch}" = "${default_branch}" ]; then
-        git pull "${remote_name}" "${source_branch}" || return 4;
+        git pull "${remote_name}" "${source_branch}" || return 14;
     else
         echo "not pulling '${source_branch}'";
     fi
 
-    git checkout -b "${new_branch_name}" || return 5;
+    git checkout -b "${new_branch_name}" || return 15;
 }
 
 #
@@ -310,7 +310,7 @@ phpu()
     local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! -x "${repo_root}/vendor/bin/phpunit" ]; then
         echo 'cannot locate phpunit' >&2;
-        return 2;
+        return 11;
     fi
 
     (cd "${repo_root}" && sh -c './vendor/bin/phpunit');
@@ -329,7 +329,7 @@ phps()
     local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
         echo "could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
-        return 2;
+        return 11;
     fi
 
     (cd "${repo_root}" && sh -c "./vendor/bin/phpstan analyse -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstan.neon')");
@@ -348,7 +348,7 @@ phpcs()
     local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! x "${repo_root}/vendor/bin/phpcs" ]; then
         echo 'cannot locate phpcs' >&2;
-        return 2;
+        return 11;
     fi
 
     (cd "${repo_root}" &&  sh -c './vendor/bin/phpcs');
@@ -434,7 +434,7 @@ dfs()
         update)
             (
                 cd "${DF_ROOT_DIR}" || return 1;
-                local remote="$(git remote -v | grep 'github.com/KaspervdHeijden/dotfiles.git (fetch)' | cut -f1)";
+                local remote="$(git remote -v | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
                 local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
                 local last_hash="$(git rev-parse --verify HEAD)";
 
@@ -453,13 +453,14 @@ dfs()
 }
 
 #
-# Chooses a line being piped into this function
+# Chooses a line being piped into this function.
 #
 # choose [<line-number>]
 #
 choose()
 {
     local input="$(cat)";
+    [ "${input}" = '' ] && return 11;
     local lines="$(echo "${input}" | wc -l)";
 
     if  [ "${lines}" -lt 2 ]; then
@@ -473,8 +474,8 @@ choose()
         return 0;
     fi
 
-    if ! echo "${input}" | sed -n "${line_number}p"; then
+    if ! echo "${input}" | sed -n "${line_number} p"; then
         echo "index not numeric '${line_number}'" >&2;
-        return 3;
+        return 12;
     fi
 }

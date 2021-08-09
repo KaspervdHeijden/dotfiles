@@ -5,12 +5,12 @@ Dotfiles uses the following binaries:
 
 1. git
 2. tmux
-3. zsh (oh-my-zsh is supported, but not required)
+3. vim
+4. zsh (oh-my-zsh is supported, but not required)
 
 Personally, I also want:
 1. ack
 2. tree
-3. vim
 
 Install them all by doing:
 ```sh

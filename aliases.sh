@@ -2,29 +2,18 @@
 [ -x "$(command -v ack)" ] && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 [ -x "$(command -v nano)" ] && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 [ -x "$(command -v psysh)" ] && [ ! -x "$(command -v pe)" ] && alias pe='psysh';
-[ -x "$(command -v apt)" ] && alias update='sudo apt -y update && sudo apt -y upgrade && sudo apt -y autoclean && sudo apt -y autoremove';
 
-alias update >/dev/null && alias update-all='update && [ -x "$(command -v snap)" ] && sudo snap refresh || true';
+if [ -x "$(command -v apt)" ]; then
+    alias update='sudo sh -c "apt -y update && sudo apt -y upgrade && sudo apt -y autoclean && sudo apt -y autoremove"';
+    alias update-all='update && [ -x "$(command -v snap)" ] && sudo snap refresh || true';
+fi
 
 [ -x "$(command -v vim)" ] && alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc.vim'";
 [ -x "$(command -v ssh-agent)" ] && alias shq='killall ssh-agent 2>/dev/null';
-[ -x '/snap/bin/phpstorm' ] && alias code='/snap/bin/phpstorm';
-
-if [ -x "$(command -v docker-compose)" ]; then
-   alias dcu='docker-compose up -d';
-   alias dce='docker-compose exec';
-   alias dc='docker-compose';
-fi
 
 if [ -x "$(command -v composer)" ]; then
-    alias cii='sh -c "composer install --ignore-platform-reqs"';
-    alias cui='sh -c "composer update --ignore-platform-reqs"';
-
-    alias ssh-ci='ssh-agent sh -c "ssh-add && composer install --ignore-platform-reqs"';
-    alias ssh-cu='ssh-agent sh -c "ssh-add && composer update --ignore-platform-reqs"';
-
-    alias ci='sh -c "composer install"';
-    alias cu='sh -c "composer update"';
+    alias ci='composer install';
+    alias cu='composer update';
 fi
 
 if [ -x "$(command -v git)" ]; then
