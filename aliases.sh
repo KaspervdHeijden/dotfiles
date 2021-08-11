@@ -1,4 +1,4 @@
-command -v apt >/dev/null && alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { command -v snap >dev/null && snap refresh || true; }"';
+command -v apt >/dev/null && alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { command -v snap >/dev/null && snap refresh || true; }"';
 command -v tmux >/dev/null && alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DF_ROOT_DIR}/config/tmuxrc' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
 command -v ack >/dev/null && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 command -v nano >/dev/null && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
