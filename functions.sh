@@ -1,3 +1,14 @@
+
+#
+# Navigates to a directory and show it's content.
+#
+# ccd <path>
+#
+ccd()
+{
+    cd $1 && pwd && ls -laFH;
+}
+
 #
 # Navigates to a repository with a given partial directory name.
 # If multiple matches are found use the second argument to select one.
@@ -275,7 +286,7 @@ gitb()
         return 11;
     fi
 
-    if git branch 2>/dev/null | grep -q "${new_branch_name}" 2>/dev/null; then
+    if git branch 2>/dev/null | grep -q "${new_branch_name}"; then
         echo "branch '${new_branch_name}' already exists" >&2;
         return 12;
     fi
@@ -477,6 +488,6 @@ choose()
 
     if ! echo "${input}" | sed -n "${line_number} p"; then
         echo "index not numeric '${line_number}'" >&2;
-        return 12;
+        return 11;
     fi
 }
