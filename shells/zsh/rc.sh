@@ -16,7 +16,7 @@ export HISTFILE="${HOME}/.zsh_history";
 export HISTSIZE=20000;
 export SAVEHIST=20000;
 
-[ -x "$(command -v dircolors)" ] && eval "$(dircolors -b)";
+command -v dircolors >/dev/null && eval "$(dircolors -b)";
 
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*';
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s;
@@ -32,24 +32,6 @@ zstyle ':completion:*' list-colors '';
 zstyle ':completion:*' group-name '';
 zstyle ':completion:*' menu select=2;
 zstyle ':completion:*' verbose true;
-
-if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
-    plugins=(sudo pass);
-
-    for plugin in 'zsh-autosuggestions' 'zsh-syntax-highlighting'; do
-        if [ -d "${ZSH}/custom/plugins/${plugin}" ]; then
-            plugins+=($plugin);
-        fi
-    done
-
-    export DISABLE_UPDATE_PROMPT='1';
-    export UPDATE_ZSH_DAYS='7';
-
-    . "${ZSH}/oh-my-zsh.sh";
-fi
-
-. "${DF_ROOT_DIR}/shells/zsh/prompt.sh";
-. "${DF_ROOT_DIR}/dotfiles.sh";
 
 compdef _dfs dfs;
 _dfs()
@@ -85,3 +67,18 @@ _gitb()
     local current_branch=$(git symbolic-ref --short HEAD 2>/dev/null);
     _arguments "-c[Branch from current '${current_branch}' instead]";
 }
+
+if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
+    export DISABLE_UPDATE_PROMPT=1;
+    export UPDATE_ZSH_DAYS=7;
+    export plugins=(sudo pass);
+
+    . "${ZSH}/oh-my-zsh.sh";
+fi
+
+. "${DF_ROOT_DIR}/shells/zsh/prompt.sh";
+. "${DF_ROOT_DIR}/dotfiles.sh";
+
+if [ -f "${DF_ROOT_DIR}/plugins/zsh.sh" ]; then
+    . "${DF_ROOT_DIR}/plugins/zsh.sh";
+fi

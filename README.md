@@ -21,7 +21,7 @@ sudo apt -y update && sudo apt -y install git tmux ack tree vim zsh;
 
 First, clone this repository. Then source the `install.sh` file:
 ```sh
-cd && git clone 'https://github.com/KaspervdHeijden/dotfiles.git' && . ./dotfiles/setup/install.sh;
+cd && git clone 'https://github.com/KaspervdHeijden/dotfiles.git' && dfs install;
 ```
 
 When using bash, you can make autocomplete case-insensitive by doing:

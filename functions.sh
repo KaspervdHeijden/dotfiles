@@ -414,12 +414,12 @@ dfs()
             local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
             local used_vars="$(env | grep '^DF_')";
 
-            echo 'Defined vars:';
+            echo 'defined vars:';
             echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
             [ -n "${used_vars}" ] && echo "${used_vars}";
             if [ -n "${all_vars}" ]; then
                 echo '';
-                echo 'Supported vars:';
+                echo 'supported vars:';
                 echo "${all_vars}" | sed 's/export //';
             fi
 

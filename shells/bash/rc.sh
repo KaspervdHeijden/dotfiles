@@ -32,9 +32,6 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
-. "${DF_ROOT_DIR}/shells/bash/prompt.sh";
-. "${DF_ROOT_DIR}/dotfiles.sh";
-
 complete -W 'env install nav reload update' dfs;
 complete -F _cds cds;
 
@@ -46,3 +43,10 @@ _cds()
         COMPREPLY=($(compgen -W "$(cds | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}"));
     fi
 }
+
+. "${DF_ROOT_DIR}/shells/bash/prompt.sh";
+. "${DF_ROOT_DIR}/dotfiles.sh";
+
+if [ -f "${DF_ROOT_DIR}/plugins/bash.sh" ]; then
+    . "${DF_ROOT_DIR}/plugins/bash.sh";
+fi

@@ -35,6 +35,14 @@ if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     fi
 fi
 
+cat "${DF_ROOT_DIR}/setup/plugins.txt" | while read -r shell name remote source; do
+    echo "${shell}" | grep -q '^#' && continue;
+    [ -d "${DF_ROOT_DIR}/plugins/${name}" ] && continue;
+
+    git clone "${remote}" "${DF_ROOT_DIR}/plugins/${name}";
+    echo ". '${DF_ROOT_DIR}/plugins/${name}/${source}';" >> "${DF_ROOT_DIR}/plugins/${shell}.sh";
+done
+
 cur_shell="$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')";
 if [ -f "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "sourcing '${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh'...";
