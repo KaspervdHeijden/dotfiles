@@ -3,8 +3,8 @@ command -v tmux >/dev/null && alias tm="tmux attach 2>/dev/null || tmux -2u -f '
 command -v ack >/dev/null && alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 command -v nano >/dev/null && alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
 command -v vim >/dev/null && alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc.vim'";
+command -v psysh >/dev/null && { command -v pe >/dev/null || alias pe='psysh'; }
 command -v ssh-agent >/dev/null && alias shq='killall ssh-agent 2>/dev/null';
-command -v psysh >/dev/null && command -v pe >/dev/null || alias pe='psysh';
 
 if command -v composer >/dev/null; then
     alias ci='composer install';
