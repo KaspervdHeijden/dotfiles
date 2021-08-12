@@ -57,6 +57,10 @@ noremap <C-e> <End>
 " Make Y yank to end of line
 nnoremap Y y$
 
+" Insert blank lines
+nnoremap <C-k> O<Esc>j
+nnoremap <C-j> o<Esc>k
+
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
 

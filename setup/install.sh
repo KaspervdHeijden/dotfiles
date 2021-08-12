@@ -35,13 +35,19 @@ if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
     fi
 fi
 
-cat "${DF_ROOT_DIR}/setup/plugins.txt" | while read -r shell name remote source; do
+while read -r shell type name remote source; do
     echo "${shell}" | grep -q '^#' && continue;
     [ -d "${DF_ROOT_DIR}/plugins/${name}" ] && continue;
 
-    git clone "${remote}" "${DF_ROOT_DIR}/plugins/${name}";
+    if [ "${type}" != 'git' ]; then
+        echo "plugin type not supported: '${type}'" >&2;
+        continue;
+    fi
+
+    echo "installing '${name}' into plugins/${name}...";
+    git clone -q "${remote}" "${DF_ROOT_DIR}/plugins/${name}";
     echo ". '${DF_ROOT_DIR}/plugins/${name}/${source}';" >> "${DF_ROOT_DIR}/plugins/${shell}.sh";
-done
+done < "${DF_ROOT_DIR}/setup/plugins.txt";
 
 cur_shell="$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')";
 if [ -f "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh" ]; then
