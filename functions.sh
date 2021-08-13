@@ -1,4 +1,3 @@
-
 #
 # Navigates to a directory and show it's content.
 #
@@ -440,7 +439,7 @@ dfs()
         ;;
 
         reload)
-            . "${DF_ROOT_DIR}/shells/$(ps l -p $$ | tail -n1 | awk '{print $13}' | sed 's/^-//')/rc.sh";
+            . "${DF_ROOT_DIR}/shells/$(ps -p $$ -o args=)/rc.sh";
         ;;
 
         update)
@@ -450,8 +449,10 @@ dfs()
                 local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
                 local last_hash="$(git rev-parse --verify HEAD)";
 
-                echo "Updating from ${remote:-origin}/${branch:-master}";
+                echo "updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
+
+                "${DF_ROOT_DIR}/setup/plugins.sh" update;
 
                 [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
             ) || dfs install;
