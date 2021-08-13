@@ -7,6 +7,7 @@ esac
 [ -z "${PS1}" ] && return;
 
 export DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE}")/../..")";
+
 HISTCONTROL=ignoreboth;
 HISTFILESIZE=20000;
 HISTSIZE=20000;
@@ -32,18 +33,7 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
-complete -W 'env install nav reload update' dfs;
-complete -F _cds cds;
-
-_cds()
-{
-    if [ "${DF_CDS_COMPLETE_FULL_PATHS:-0}" -eq 0 ]; then
-        COMPREPLY=($(compgen -W "$(cds | xargs -I{} basename {} | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}"));
-    else
-        COMPREPLY=($(compgen -W "$(cds | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}"));
-    fi
-}
-
+. "${DF_ROOT_DIR}/shells/bash/completions.sh";
 . "${DF_ROOT_DIR}/shells/bash/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";
 
