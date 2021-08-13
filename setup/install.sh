@@ -2,9 +2,7 @@ DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../")";
 
 echo "including dotfiles from ${DF_ROOT_DIR}...";
 for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
-    if [ ! -f "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" ]; then
-        continue;
-    fi
+    [ ! -f "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" ] && continue;
 
     file="${HOME}/.${shell_name}rc";
     if grep -q "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" "${file}" 2>/dev/null; then
@@ -26,14 +24,8 @@ echo 'configuring dotfiles...';
     git config --local dotfiles.checkFork 0;
 );
 
-if [ ! -f "${HOME}/.config/dotfiles/config.sh" ]; then
-    mkdir -p "${HOME}/.config/dotfiles";
-
-    cp "${DF_ROOT_DIR}/setup/config.sh" "${HOME}/.config/dotfiles/config.sh";
-    if [ -f "${HOME}/.dotfiles" ]; then
-        cat "${HOME}/.dotfiles" >> "${HOME}/.config/dotfiles/config.sh" && rm "${HOME}/.dotfiles";
-    fi
-fi
+mkdir -p "${HOME}/.config/dotfiles";
+[ ! -f "${HOME}/.config/dotfiles/config.sh" ] && cp "${DF_ROOT_DIR}/setup/config.sh" "${HOME}/.config/dotfiles/config.sh";
 
 "${DF_ROOT_DIR}/setup/plugins.sh" install;
 

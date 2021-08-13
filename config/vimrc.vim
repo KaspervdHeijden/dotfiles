@@ -43,6 +43,7 @@ set showcmd
 set showmode
 set showmatch
 set smarttab expandtab tabstop=4 softtabstop=4
+set suffixes=.bak,~,.swp,.o,.info,.tmp,.cb
 set textwidth=0
 set title
 set ttyfast
@@ -50,16 +51,16 @@ set wildmenu
 
 hi Normal guibg=NONE ctermbg=NONE
 
-" Remap Ctrl+A/E to Home/End
-noremap <C-a> <Home>
-noremap <C-e> <End>
-
-" Make Y yank to end of line
+" make Y yank to end of line
 nnoremap Y y$
 
-" Insert blank lines
+" insert blank lines
 nnoremap <C-k> O<Esc>j
 nnoremap <C-j> o<Esc>k
+
+" remap Ctrl+A/E to Home/End
+noremap <C-a> <Home>
+noremap <C-e> <End>
 
 inoremap <C-a> <Home>
 inoremap <C-e> <End>

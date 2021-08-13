@@ -12,7 +12,7 @@ if command -v composer >/dev/null; then
 fi
 
 if command -v git >/dev/null; then
-    alias masin='git checkout master && { git pull upstream master 2>/dev/null || git pull origin master } && git checkout - && git rebase master';
+    alias masin='git checkout master && { git pull upstream master 2>/dev/null || git pull origin master; } && git checkout - && git rebase master';
     alias gcm='git checkout master';
     alias gca='git commit --amend';
     alias grm='git rebase master';
