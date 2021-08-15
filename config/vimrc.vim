@@ -51,6 +51,9 @@ set wildmenu
 
 hi Normal guibg=NONE ctermbg=NONE
 
+nnoremap <C-b> :b 
+nnoremap <C-w> :e 
+
 " make Y yank to end of line
 nnoremap Y y$
 

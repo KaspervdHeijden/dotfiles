@@ -1,4 +1,6 @@
 complete -W 'env install nav reload update' dfs;
+complete -W '-c' repo_root;
+complete -W '-c' gitb;
 complete -F _cds cds;
 
 _cds()
@@ -8,4 +10,10 @@ _cds()
     else
         COMPREPLY=($(compgen -W "$(cds | xargs)" -- "${COMP_WORDS[$COMP_CWORD]}"));
     fi
+}
+
+complete -F _gitl gitl;
+_gitl()
+{
+    COMPRELY=($(compgen -W "$(git remote 2>/dev/null)" -- "${COMP_WORDS[$COMP_CWORD]}"));
 }

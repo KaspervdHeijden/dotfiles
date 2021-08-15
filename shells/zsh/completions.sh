@@ -23,12 +23,11 @@ _cds()
 compdef _gitl gitl;
 _gitl()
 {
-    _arguments "1: :($(git remote))";
+    _arguments "1: :($(git remote 2>/dev/null))";
 }
 
 compdef _gitb gitb;
 _gitb()
 {
-    local current_branch=$(git symbolic-ref --short HEAD 2>/dev/null);
-    _arguments "-c[Branch from current '${current_branch}' instead]";
+    _arguments '-c[Branch from current branch instead]';
 }
