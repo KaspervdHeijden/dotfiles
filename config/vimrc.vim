@@ -47,7 +47,11 @@ set suffixes=.bak,~,.swp,.o,.info,.tmp,.cb
 set textwidth=0
 set title
 set ttyfast
+set viminfo=""
+set viminfofile=NONE
 set wildmenu
+
+let skip_defaults_vim=1
 
 hi Normal guibg=NONE ctermbg=NONE
 
