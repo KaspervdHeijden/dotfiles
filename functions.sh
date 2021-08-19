@@ -5,7 +5,7 @@
 #
 ccd()
 {
-    cd $1 && pwd && ls -laFH;
+    cd "${1}" && pwd && ls -laFH;
 }
 
 #
@@ -474,8 +474,8 @@ choose()
 {
     local input="$(cat)";
     [ "${input}" = '' ] && return 11;
-    local lines="$(echo "${input}" | wc -l)";
 
+    local lines="$(echo "${input}" | wc -l)";
     if  [ "${lines}" -lt 2 ]; then
         echo "${input}";
         return 0;

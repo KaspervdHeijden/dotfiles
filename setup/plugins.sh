@@ -1,10 +1,10 @@
 action="${1}";
 
-while read -r shell type name remote source; do
+while read -r shell plugin_type name remote source; do
     echo "${shell}" | grep -q '^ *#' && continue;
 
-    if [ "${type}" != 'git' ]; then
-        echo "plugin type not supported: '${type}'" >&2;
+    if [ "${plugin_type}" != 'git' ]; then
+        echo "plugin type not supported: '${plugin_type}'" >&2;
         continue;
     fi
 
