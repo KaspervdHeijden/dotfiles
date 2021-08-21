@@ -43,7 +43,7 @@ mkdir -p "${HOME}/.config/dotfiles";
 
 "${DF_ROOT_DIR}/setup/plugins.sh" install;
 
-cur_shell="$(ps -p $$ -o args=)";
+cur_shell="$(ps -p $$ -o args= | sed 's/^-//')";
 if [ -f "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh" ]; then
     echo "sourcing '${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh'...";
     . "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh";

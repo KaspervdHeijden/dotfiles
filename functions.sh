@@ -406,9 +406,9 @@ slug()
 dfs()
 {
     case "${1:-nav}" in
-        nav)     cd "${DF_ROOT_DIR}" && pwd                           ;;
-        install) . "${DF_ROOT_DIR}/setup/install.sh"                  ;;
-        reload)  . "${DF_ROOT_DIR}/shells/$(ps -p $$ -o args=)/rc.sh" ;;
+        nav)     cd "${DF_ROOT_DIR}" && pwd                                          ;;
+        install) . "${DF_ROOT_DIR}/setup/install.sh"                                 ;;
+        reload)  . "${DF_ROOT_DIR}/shells/$(ps -p $$ -o args= | sed 's/^-//')/rc.sh" ;;
         env)     (
             all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
             used_vars="$(env | grep '^DF_')";
