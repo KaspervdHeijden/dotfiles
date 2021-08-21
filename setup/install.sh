@@ -1,23 +1,37 @@
-DF_ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE:-$0}")/../")";
+DF_ROOT_DIR="$(
+    script_dir="$(lsof -p $$ | awk '/install.sh$/ { print $NF; }' | sed 's#/install.sh##')";
 
-echo "including dotfiles from ${DF_ROOT_DIR}...";
+    if [ -n "${script_dir}" ]; then
+        echo "$(dirname "${script_dir}")";
+    elif [ -n "${BASH_SOURCE}" ]; then
+        echo "$(dirname "$(dirname "${BASH_SOURCE}")")";
+    elif [ -d "${0}" ]; then
+        echo "$(dirname "${0}")";
+    fi
+)";
+
+if [ ! -d "${DF_ROOT_DIR}" ]; then
+    echo 'could not determine root directory' >&2;
+    return 3;
+fi
+
+echo "configuring dotfiles from ${DF_ROOT_DIR}...";
 for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
     [ ! -f "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" ] && continue;
 
     file="${HOME}/.${shell_name}rc";
     if grep -q "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" "${file}" 2>/dev/null; then
-        echo " -> config for ${shell_name} already present in ${file}";
+        echo "  -> config for ${shell_name} already present in ${file}";
         continue;
     fi
 
-    echo " -> adding config for ${shell_name} to ${file}";
+    echo "  -> adding config for ${shell_name} to ${file}";
 
     [ -s "${file}" ] && echo '' >> "${file}";
-    echo '# Include dotfiles' >> "${file}";
+    echo '# include dotfiles' >> "${file}";
     echo ". '${DF_ROOT_DIR}/shells/${shell_name}/rc.sh';" >> "${file}";
 done;
 
-echo 'configuring dotfiles...';
 (
     cd "${DF_ROOT_DIR}" || return 1;
     git config --local dotfiles.checkDefaultBranch 0;

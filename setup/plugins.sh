@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 action="${1}";
 
 while read -r shell plugin_type name remote source; do

@@ -21,9 +21,10 @@ cds()
         cd "${search}" && return 0 || return 11;
     fi
 
-    [ "${#DF_CDS_REPO_DIRS[@]}" -eq 0 ] && DF_CDS_REPO_DIRS=("${HOME}");
+    local search_path="$(echo "${DF_CDS_REPO_DIRS}" | sed 's/:/ /g')";
+    [ "${search_path}" = '' ] && search_path="${HOME}";
 
-    local repo_list="$(find ${DF_CDS_REPO_DIRS[@]} -maxdepth ${DF_CDS_MAX_DEPTH:-2} -type d -name '.git' 2>/dev/null | sed 's/\/.git//' | sort | uniq)";
+    local repo_list="$(find $(echo "${search_path}") -maxdepth "${DF_CDS_MAX_DEPTH:-2}" -type d -name '.git' | sed 's/\/.git//' | sort | uniq)";
     if [ -z "${search}" ]; then
         echo "${repo_list}";
         return 0;
