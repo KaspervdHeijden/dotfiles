@@ -49,7 +49,7 @@ cds()
 
 #
 # Prints the root of the current repository.
-# Pass -c to navigate to the root dir instead.
+# Pass -c to also navigate to the directory.
 #
 # repo_root [-c]
 #
@@ -60,18 +60,14 @@ repo_root()
         return 10;
     fi
 
-    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
-    if [ -z "${repo_root}" ]; then
-        echo 'not a git repository' >&2;
-        return 9;
-    fi
-
-    if [ ! -d "${repo_root}" ]; then
+    local repo_root_dir="$(git rev-parse --show-toplevel 2>/dev/null)";
+    if [ ! -d "${repo_root_dir}" ]; then
         echo 'root is not a directory' >&2;
         return 11;
     fi
 
-    [ "${1}" = '-c' ] && cd "${repo_root}" || echo "${repo_root}";
+    echo "${repo_root_dir}";
+    [ "${1}" != '-c' ] || cd "${repo_root}";
 }
 
 #
@@ -86,7 +82,7 @@ repo_root()
 # gitc [-dfm]
 #
 gitc()
-{
+(
     if [ ! -x "$(command -v git)" ]; then
         echo 'git not installed' >&2;
         return 10;
@@ -97,9 +93,9 @@ gitc()
         return 9;
     fi
 
-    local check_default_branch="$(git config --local --no-includes --get dotfiles.checkDefaultBranch || echo "${DF_CHECK_DEFAULT_BRANCH:-1}")";
-    local check_line_endings="$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}")";
-    local check_fork="$(git config --local --no-includes --get dotfiles.checkFork || echo "${DF_CHECK_FORK:-1}")";
+    check_default_branch="$(git config --local --no-includes --get dotfiles.checkDefaultBranch || echo "${DF_CHECK_DEFAULT_BRANCH:-1}")";
+    check_line_endings="$(git config --local --no-includes --get dotfiles.checkLineEndings || echo "${DF_CHECK_LINE_ENDINGS:-1}")";
+    check_fork="$(git config --local --no-includes --get dotfiles.checkFork || echo "${DF_CHECK_FORK:-1}")";
 
     while getopts 'ndf' arg; do
         case "${arg}" in
@@ -110,17 +106,17 @@ gitc()
     done
 
     shift "$(expr $OPTIND - 1)";
-    local commit_message="${1}";
+    commit_message="${1}";
 
-    if [ "${#commit_message}" -lt "5" ]; then
+    if [ "${#commit_message}" -lt '5' ]; then
         echo 'commit message requires at least 5 characters' >&2;
         return 11;
     fi
 
-    if [ "${check_default_branch}" = "1" ]; then
-        local current_branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
-        local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
-        local default_branch="${current_branch}";
+    if [ "${check_default_branch}" = '1' ]; then
+        current_branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
+        repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+        default_branch="${current_branch}";
 
         for candidate in master default main trunk development; do
             [ -f "${repo_root}/.git/refs/heads/${candidate}" ] && default_branch="${candidate}";
@@ -137,7 +133,7 @@ gitc()
         return 13;
     fi
 
-    local git_status="$(git status --porcelain 2>/dev/null)";
+    git_status="$(git status --porcelain 2>/dev/null)";
     if ! echo "${git_status}" | grep -qE '^M|A|R|D'; then
         echo 'no staged changes' >&2;
         return 14;
@@ -152,7 +148,7 @@ gitc()
 
     git commit -m "${commit_message}" || return 7;
 
-    local git_status_after="$(git status --porcelain 2>/dev/null)";
+    git_status_after="$(git status --porcelain 2>/dev/null)";
     if [ -n "${git_status_after}" ]; then
         echo '----------------------------';
         echo "${git_status_after}";
@@ -160,7 +156,7 @@ gitc()
     fi
 
     return 0;
-}
+)
 
 #
 # Pulls the current branch from origin.
@@ -168,20 +164,20 @@ gitc()
 # gitl [<remote=origin>]
 #
 gitl()
-{
+(
     if [ ! -x "$(command -v git)" ]; then
         echo 'git not installed' >&2;
         return 10;
     fi
 
-    local remotes="$(git remote 2>/dev/null)";
+    remotes="$(git remote 2>/dev/null)";
     if [ -z "${remotes}" ]; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
-    local remote='';
+    branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
+    remote='';
 
     if [ -n "${1}" ]; then
         remote="${1}";
@@ -198,7 +194,7 @@ gitl()
 
     echo "pulling ${remote} ${branch}";
     git pull "${remote}" "${branch}" || return 12;
-}
+)
 
 #
 # Pushes the current branch to a remote.
@@ -207,21 +203,21 @@ gitl()
 # gith [-f] [-ff] [<remote=origin>]
 #
 gith()
-{
+(
     if [ ! -x "$(command -v git)" ]; then
         echo 'git not installed' >&2;
         return 10;
     fi
 
-    local remotes="$(git remote 2>/dev/null)";
+    remotes="$(git remote 2>/dev/null)";
     if [ -z "${remotes}" ]; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
-    local remote='origin';
-    local flags='';
+    branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
+    remote='origin';
+    flags='';
 
     for arg in "$@"; do
         if [ "${arg}" = '-f' ]; then
@@ -239,7 +235,7 @@ gith()
     fi
 
     git push $flags "${remote}" "${branch}" || return 11;
-}
+)
 
 #
 # Creates a new branch branched from a fresh default branch.
@@ -248,23 +244,23 @@ gith()
 # gitb [-c] new-feature-branch
 #
 gitb()
-{
+(
     if [ ! -x "$(command -v git)" ]; then
         echo 'git not installed' >&2;
         return 10;
     fi
 
-    local remotes="$(git remote 2>/dev/null)";
+    remotes="$(git remote 2>/dev/null)";
     if [ -z "${remotes}" ]; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local current_branch_name="$(git symbolic-ref --short HEAD 2>/dev/null)";
-    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
-    local default_branch='master';
-    local source_branch='master';
-    local new_branch_name='';
+    current_branch_name="$(git symbolic-ref --short HEAD 2>/dev/null)";
+    repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+    default_branch='master';
+    source_branch='master';
+    new_branch_name='';
 
     for candidate in main default; do
         if [ -f "${repo_root}/.git/refs/heads/${candidate}" ]; then
@@ -291,7 +287,7 @@ gitb()
         return 12;
     fi
 
-    local remote_name='origin';
+    remote_name='origin';
     if echo "${remotes}" | grep -q 'upstream'; then
         remote_name='upstream';
     fi
@@ -307,70 +303,70 @@ gitb()
     fi
 
     git checkout -b "${new_branch_name}" || return 15;
-}
+)
 
 #
 # Executes phpunit in the current repository.
 #
 phpu()
-{
+(
     if ! git remote >/dev/null 2>&1; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+    repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! -x "${repo_root}/vendor/bin/phpunit" ]; then
         echo 'cannot locate phpunit' >&2;
         return 11;
     fi
 
-    (cd "${repo_root}" && sh -c './vendor/bin/phpunit');
-}
+    cd "${repo_root}" && sh -c './vendor/bin/phpunit';
+)
 
 #
 # Executes phpstan from any directory within a repository.
 #
 phps()
-{
+(
     if ! git remote >/dev/null 2>&1; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+    repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
     if [ ! -x "${repo_root}/vendor/bin/phpstan" ]; then
         echo "could not execute phpstan from '${repo_root}/vendor/bin/phpstan'" >&2;
         return 11;
     fi
 
-    (cd "${repo_root}" && sh -c "./vendor/bin/phpstan analyse -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstan.neon')");
-}
+    cd "${repo_root}" && sh -c "./vendor/bin/phpstan analyse -vvv$([ -f ./phpstan.neon ] && echo ' -c phpstan.neon')";
+)
 
 #
 # Executes phpcs from any directory within a repository.
 #
 phpcs()
-{
+(
     if ! git remote >/dev/null 2>&1; then
         echo 'not a git repository' >&2;
         return 9;
     fi
 
-    local repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
-    if [ ! x "${repo_root}/vendor/bin/phpcs" ]; then
+    repo_root="$(git rev-parse --show-toplevel 2>/dev/null)";
+    if [ ! -x "${repo_root}/vendor/bin/phpcs" ]; then
         echo 'cannot locate phpcs' >&2;
         return 11;
     fi
 
-    (cd "${repo_root}" &&  sh -c './vendor/bin/phpcs');
-}
+    cd "${repo_root}" &&  sh -c './vendor/bin/phpcs';
+)
 
 #
 # Starts a SSH agent.
 #
 sha()
-{
+(
     if [ ! -x "$(command -v ssh-add)" ]; then
         echo 'dependency not found: ssh-add' >&2;
         return 2;
@@ -383,7 +379,7 @@ sha()
 
     ssh-add >/dev/null || return 4;
     [ -n "${SSH_AGENT_PID}" ] && echo "SSH agent running under pid ${SSH_AGENT_PID}" || echo 'SSH agent running';
-}
+)
 
 #
 # Slugifies all parameters in a single slugged string.
@@ -391,10 +387,10 @@ sha()
 # slug <param1> [<params2>] [...]
 #
 slug()
-{
-    local slugged="$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's/[ _]/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g')";
+(
+    slugged="$(echo "$@" | xargs | tr '[A-Z]' '[a-z]' | sed 's/[ _]/-/g; s/[^0-9a-z-]//g; s/\-\{2,\}/-/g')";
     [ -n "${slugged}" ] && echo "${slugged}";
-}
+)
 
 #
 # Manages dotfiles.
@@ -410,9 +406,12 @@ slug()
 dfs()
 {
     case "${1:-nav}" in
-        env)
-            local all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
-            local used_vars="$(env | grep '^DF_')";
+        nav)     cd "${DF_ROOT_DIR}" && pwd                           ;;
+        install) . "${DF_ROOT_DIR}/setup/install.sh"                  ;;
+        reload)  . "${DF_ROOT_DIR}/shells/$(ps -p $$ -o args=)/rc.sh" ;;
+        env)     (
+            all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
+            used_vars="$(env | grep '^DF_')";
 
             echo 'defined vars:';
             echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
@@ -423,42 +422,25 @@ dfs()
                 echo "${all_vars}" | sed 's/export //';
             fi
 
-            local git_vars="$(git config --local --list 2>/dev/null | grep '^dotfiles.')";
+            git_vars="$(git config --local --list 2>/dev/null | grep '^dotfiles.')";
             if [ -n "${git_vars}" ]; then
                 echo '';
                 echo 'Local repository git vars:';
                 echo "${git_vars}";
-            fi
-        ;;
-
-        install)
-            . "${DF_ROOT_DIR}/setup/install.sh";
-        ;;
-
-        nav)
-            cd "${DF_ROOT_DIR}" && pwd;
-        ;;
-
-        reload)
-            . "${DF_ROOT_DIR}/shells/$(ps -p $$ -o args=)/rc.sh";
-        ;;
-
-        update)
-            (
+            fi) ;;
+        update)  (
                 cd "${DF_ROOT_DIR}" || return 1;
-                local remote="$(git remote -v | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
-                local branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
-                local last_hash="$(git rev-parse --verify HEAD)";
+                remote="$(git remote -v | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
+                branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
+                last_hash="$(git rev-parse --verify HEAD)";
 
                 echo "updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff "${remote:-origin}" "${branch:-master}";
 
                 "${DF_ROOT_DIR}/setup/plugins.sh" update;
 
-                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ];
-            ) || dfs install;
-        ;;
-
+                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ]
+            ) || dfs install ;;
         *)
             echo "command not recognized: '${1}', expecting one of 'env', 'install', 'nav', 'reload' or 'update'" >&2;
             return 2;
@@ -472,17 +454,17 @@ dfs()
 # choose [<line-number>]
 #
 choose()
-{
-    local input="$(cat)";
+(
+    input="$(cat)";
     [ "${input}" = '' ] && return 11;
 
-    local lines="$(echo "${input}" | wc -l)";
+    lines="$(echo "${input}" | wc -l)";
     if  [ "${lines}" -lt 2 ]; then
         echo "${input}";
         return 0;
     fi
 
-    local line_number="${1}";
+    line_number="${1}";
     if [ -z  "${line_number}" ]; then
         echo "${input}" | awk '{print NR ": " $0}';
         return 0;
@@ -492,4 +474,4 @@ choose()
         echo "index not numeric '${line_number}'" >&2;
         return 11;
     fi
-}
+)
