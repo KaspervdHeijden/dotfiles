@@ -67,7 +67,7 @@ repo_root()
     fi
 
     echo "${repo_root_dir}";
-    [ "${1}" != '-c' ] || cd "${repo_root}";
+    [ "${1}" != '-c' ] || cd "${repo_root_dir}";
 }
 
 #
