@@ -434,7 +434,7 @@ dfs()
                 last_hash="$(git rev-parse --verify HEAD)";
 
                 echo "updating from ${remote:-origin}/${branch:-master}";
-                git pull --ff "${remote:-origin}" "${branch:-master}";
+                git pull --ff-only "${remote:-origin}" "${branch:-master}";
 
                 "${DF_ROOT_DIR}/setup/plugins.sh" update;
 
