@@ -33,6 +33,14 @@ if [ -x "$(command -v shopt)" ]; then
     fi
 fi
 
+if [ -d "${OSH}" ] && [ -r "${OSH}/oh-my-bash.sh" ]; then
+    export completions=(git composer ssh);
+    export plugins=(sudo pass);
+    export UPDATE_OSH_DAYS=7;
+
+    . "${OSH}/oh-my-bash.sh";
+fi
+
 . "${DF_ROOT_DIR}/shells/bash/completions.sh";
 . "${DF_ROOT_DIR}/shells/bash/prompt.sh";
 . "${DF_ROOT_DIR}/dotfiles.sh";

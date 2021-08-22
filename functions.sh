@@ -49,12 +49,9 @@ cds()
 
 #
 # Prints the root of the current repository.
-# Pass -c to also navigate to the directory.
-#
-# repo_root [-c]
 #
 repo_root()
-{
+(
     if [ ! -x "$(command -v git)" ]; then
         echo 'git not installed' >&2;
         return 10;
@@ -67,8 +64,7 @@ repo_root()
     fi
 
     echo "${repo_root_dir}";
-    [ "${1}" != '-c' ] || cd "${repo_root_dir}";
-}
+)
 
 #
 # Wrapper around git commit, adding in a few checks.

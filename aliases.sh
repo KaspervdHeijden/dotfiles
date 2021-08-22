@@ -28,5 +28,5 @@ alias g='git';
 alias ci='composer install';
 alias cu='composer update';
 
-alias rr='repo_root -c';
+alias rr='cd "$(repo_root)"';
 alias lsa='ls -lAFhH';
