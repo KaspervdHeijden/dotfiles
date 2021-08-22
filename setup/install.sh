@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 DF_ROOT_DIR="$(
     script_dir="$(lsof -p $$ | awk '/install.sh$/ { print $NF; }' | sed 's#/install.sh##')";
 

@@ -1,2 +1,10 @@
+#
+# This file contains a list of plugins to install. To override, add entries in ~/.config/dotfiles/plugins.txt.
+# This file will be ignored if that file exists. But the structure must be the same:
+#
+# intended_shell plugin_type plugin_name remote_uri file_to_source
+#
+# Currently only 'git' is supported as a value for plugin_type.
+#
 zsh git zsh-autosuggestions     https://github.com/zsh-users/zsh-autosuggestions.git     zsh-autosuggestions.zsh
 zsh git zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git zsh-syntax-highlighting.zsh

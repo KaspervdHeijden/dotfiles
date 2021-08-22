@@ -1,8 +1,27 @@
 #!/usr/bin/env sh
-action="${1}";
 
-while read -r shell plugin_type name remote source; do
-    echo "${shell}" | grep -q '^ *#' && continue;
+action="${1}";
+case "${action}" in
+    install) ;;
+    update)  ;;
+    *)
+        echo "unrecognized action '${action}'" >&2;
+        exit 3;
+    ;;
+esac
+
+filename="${HOME}/.config/dotfiles/plugins.txt";
+if [ ! -f "${filename}" ]; then
+    filename="${DF_ROOT_DIR}/setup/plugins.txt";
+fi
+
+if [ ! -f "${filename}" ]; then
+    echo 'could not load plugin files' >&2;
+    exit 4;
+fi
+
+while read -r intended_shell plugin_type plugin_name remote_uri file_to_source; do
+    echo "${intended_shell}" | grep -q '^ *#' && continue;
 
     if [ "${plugin_type}" != 'git' ]; then
         echo "plugin type not supported: '${plugin_type}'" >&2;
@@ -11,26 +30,25 @@ while read -r shell plugin_type name remote source; do
 
     case "${action}" in
         install)
-            [ -d "${DF_ROOT_DIR}/plugins/${name}" ] && continue;
+            [ -d "${DF_ROOT_DIR}/plugins/${plugin_name}" ] && continue;
 
-            echo "installing '${name}' into plugins/${name}...";
-            git clone -q "${remote}" "${DF_ROOT_DIR}/plugins/${name}";
-            echo ". '${DF_ROOT_DIR}/plugins/${name}/${source}';" >> "${DF_ROOT_DIR}/plugins/${shell}.sh";
+            echo "installing '${plugin_name}' into plugins/${plugin_name}...";
+            git clone -q "${remote_uri}" "${DF_ROOT_DIR}/plugins/${plugin_name}";
+
+            line=". '${DF_ROOT_DIR}/plugins/${plugin_name}/${file_to_source}';";
+            if ! grep -q "${line}" "${DF_ROOT_DIR}/plugins/${intended_shell}.sh" 2>/dev/null; then
+                echo "${line}" >> "${DF_ROOT_DIR}/plugins/${intended_shell}.sh";
+            fi
         ;;
 
         update)
-            if [ ! -d "${DF_ROOT_DIR}/plugins/${name}" ]; then
-                echo "plugin not installed: '${name}'" >&2;
+            if [ ! -d "${DF_ROOT_DIR}/plugins/${plugin_name}" ]; then
+                echo "plugin not installed: '${plugin_name}'" >&2;
                 continue;
             fi
 
-            echo "updating '${name}'...";
-            (cd "${DF_ROOT_DIR}/plugins/${name}" && git pull -q -ff);
-        ;;
-
-        *)
-            echo "unrecognized action '${action}'" >&2;
-            exit 3;
+            echo "updating '${plugin_name}'...";
+            (cd "${DF_ROOT_DIR}/plugins/${plugin_name}" && git pull -q -ff);
         ;;
     esac
-done < "${DF_ROOT_DIR}/setup/plugins.txt";
+done < "${filename}";

@@ -79,7 +79,7 @@ repo_root()
 # 4. Are there staged changes?
 # 5. Are there DOS line endings? (override with -n)
 #
-# gitc [-dfm]
+# gitc [-dfn]
 #
 gitc()
 (
@@ -128,7 +128,7 @@ gitc()
         fi
     fi
 
-    if [ "${check_fork}" = "1" ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
+    if [ "${check_fork}" = '1' ] && ! git remote | grep -q 'upstream' 2>/dev/null; then
         echo 'not in your fork (use -f to override)' >&2;
         return 13;
     fi
@@ -154,8 +154,6 @@ gitc()
         echo "${git_status_after}";
         echo '----------------------------';
     fi
-
-    return 0;
 )
 
 #
@@ -372,9 +370,14 @@ sha()
         return 2;
     fi
 
+    if [ ! -x "$(command -v ssh-agent)" ]; then
+        echo 'dependency not found: ssh-agent' >&2;
+        return 2;
+    fi
+
     case "$(ssh-add -l >/dev/null 2>&1; echo $?)" in
         0) echo 'SSH agent already running' >&2; return 3 ;;
-        2) eval "$(ssh-agent -s)" >/dev/null 2>&1           ;;
+        2) eval "$(ssh-agent -s)" >/dev/null 2>&1         ;;
     esac
 
     ssh-add >/dev/null || return 4;
