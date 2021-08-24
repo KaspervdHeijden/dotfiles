@@ -431,15 +431,16 @@ dfs()
                 cd "${DF_ROOT_DIR}" || return 1;
                 remote="$(git remote -v | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
                 branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
-                last_hash="$(git rev-parse --verify HEAD)";
+                commit="$(git rev-parse --verify HEAD)";
 
                 echo "updating from ${remote:-origin}/${branch:-master}";
                 git pull --ff-only "${remote:-origin}" "${branch:-master}";
 
-                "${DF_ROOT_DIR}/setup/plugins.sh" update;
+                "${DF_ROOT_DIR}/setup/plugins.sh" update || return 2;
+                [ "${commit}" = "$(git rev-parse --verify HEAD)" ] && return 3;
 
-                [ "${last_hash}" = "$(git rev-parse --verify HEAD)" ]
-            ) || dfs install ;;
+                git log --format="- %s" --no-merges "${commit}"..HEAD || true;
+            ) && dfs install ;;
         *)
             echo "command not recognized: '${1}', expecting one of 'env', 'install', 'nav', 'reload' or 'update'" >&2;
             return 2;
