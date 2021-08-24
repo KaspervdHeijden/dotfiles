@@ -7,7 +7,7 @@ DF_ROOT_DIR="$(
         echo "$(dirname "${script_dir}")";
     elif [ -n "${BASH_SOURCE}" ]; then
         echo "$(dirname "$(dirname "${BASH_SOURCE}")")";
-    elif [ -d "${0}" ]; then
+    elif [ -f "${0}" ]; then
         echo "$(dirname "${0}")";
     fi
 )";
