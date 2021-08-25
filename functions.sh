@@ -440,7 +440,7 @@ dfs()
                 [ "${commit}" = "$(git rev-parse --verify HEAD)" ] && return 3;
 
                 git log --format="- %s" --no-merges "${commit}"..HEAD || true;
-            ) && dfs install ;;
+            ) && dfs install || true ;;
         *)
             echo "command not recognized: '${1}', expecting one of 'env', 'install', 'nav', 'reload' or 'update'" >&2;
             return 2;
