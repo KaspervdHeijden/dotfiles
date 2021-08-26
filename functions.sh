@@ -434,11 +434,12 @@ dfs()
                 commit="$(git rev-parse --verify HEAD)";
 
                 echo "updating from ${remote:-origin}/${branch:-master}";
-                git pull --ff-only "${remote:-origin}" "${branch:-master}";
+                git pull -q --ff-only "${remote:-origin}" "${branch:-master}";
 
                 "${DF_ROOT_DIR}/setup/plugins.sh" update || return 2;
                 [ "${commit}" = "$(git rev-parse --verify HEAD)" ] && return 3;
 
+                git diff --stat HEAD^..HEAD;
                 git log --format="- %s" --no-merges "${commit}"..HEAD || true;
             ) && dfs install || true ;;
         *)
