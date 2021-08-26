@@ -429,17 +429,26 @@ dfs()
             fi) ;;
         update)  (
                 cd "${DF_ROOT_DIR}" || return 1;
-                remote="$(git remote -v | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
+                g_remote="$(git remote -v)";
+                hostname="$(echo "${g_remote}" | grep -o '[a-zA-Z0-9]\+\.[a-z]\+/' | sort | uniq | sed 's#/$##')";
+                remote="$(echo "${g_remote}" | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
                 branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
                 commit="$(git rev-parse --verify HEAD)";
 
-                echo "updating from ${remote:-origin}/${branch:-master}";
-                git pull -q --ff-only "${remote:-origin}" "${branch:-master}";
-
                 "${DF_ROOT_DIR}/setup/plugins.sh" update || return 2;
-                [ "${commit}" = "$(git rev-parse --verify HEAD)" ] && return 3;
+
+                echo "updating dotfiles for ${remote:-origin}/${branch:-master} from ${hostname}...";
+                git pull -q --ff-only "${remote:-origin}" "${branch:-master}" || return 3;
+
+                if [ "${commit}" = "$(git rev-parse --verify HEAD)" ] ; then
+                    echo ' -> dotfiles already up to date';
+                    return 4;
+                fi
 
                 git diff --stat HEAD^..HEAD;
+
+                echo '';
+                echo 'Changelogs:';
                 git log --format="- %s" --no-merges "${commit}"..HEAD || true;
             ) && dfs install || true ;;
         *)
