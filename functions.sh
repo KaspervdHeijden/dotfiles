@@ -41,6 +41,12 @@ cds()
         cd "${matches}" && return 0 || return 13;
     fi
 
+    matches="$(echo "${repo_list}" | grep -ie "/[^/]*${search}$")";
+    if  [ -d "${matches}" ]; then
+        echo "${matches}";
+        cd "${matches}" && return 0 || return 13;
+    fi
+
     echo 'multiple matches found' >&2;
     echo "${matches}";
 
