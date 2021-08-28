@@ -9,9 +9,10 @@ autoload -U colors && colors;
 
 bindkey -e;
 
-bindkey -M emacs '^[[1;5D' backward-word;
-bindkey -M emacs '^[[1;5C' forward-word;
-bindkey -M emacs '^[[3;5~' kill-word;
+bindkey -M emacs '^H' backward-delete-word; # Ctrl-Backspace
+bindkey -M emacs '^[[1;5D' backward-word;   # Ctrl-Left
+bindkey -M emacs '^[[1;5C' forward-word;    # Ctrl-Right
+bindkey -M emacs '^[[3;5~' kill-word;       # Ctrl-Del
 
 unsetopt menu_complete;
 unsetopt flowcontrol;
