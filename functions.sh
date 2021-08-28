@@ -36,12 +36,7 @@ cds()
         return 12;
     fi
 
-    if [ -d "${matches}" ]; then
-        echo "${matches}";
-        cd "${matches}" && return 0 || return 13;
-    fi
-
-    matches="$(echo "${repo_list}" | grep -ie "/[^/]*${search}$")";
+    [ ! -d "${matches}" ] && matches="$(echo "${repo_list}" | grep -ie "/[^/]*${search}$")";
     if  [ -d "${matches}" ]; then
         echo "${matches}";
         cd "${matches}" && return 0 || return 13;

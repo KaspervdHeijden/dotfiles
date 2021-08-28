@@ -1,5 +1,4 @@
 command -v apt >/dev/null && alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { command -v snap >/dev/null && snap refresh || true; }"';
-command -v psysh >/dev/null && { command -v pe >/dev/null || alias pe='psysh'; }
 command -v ssh-agent >/dev/null && alias shq='killall ssh-agent 2>/dev/null';
 
 alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DF_ROOT_DIR}/config/tmux.rc' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
