@@ -12,7 +12,7 @@ fi
 
 plugin_dir="${DF_PLUGIN_DIR:-${DF_ROOT_DIR}/plugins}";
 
-rm "${DF_ROOT_DIR}/plugins/*.sh" >/dev/null 2>/dev/null;
+rm "${DF_ROOT_DIR}"/plugins/*.sh >/dev/null 2>/dev/null;
 echo 'updating plugins...';
 
 while read -r intended_shell plugin_type plugin_name remote_uri file_to_source; do
