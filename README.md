@@ -60,3 +60,8 @@ show status information in the prompt, but may significantly slow down the promp
 
 You can define the `$DF_DOTFILES_HOST_PROMPT_COLOR_BASH` or `$DF_DOTFILES_HOST_PROMPT_COLOR_ZSH`
 variables to control the color for the host part in the prompt. It defaults to green.
+
+### Plugins
+Dotfiles supports custom plugins. These are git repositories from which a shell script will be sourced.
+By default, plugins will be installed in the `./plugins` directory, but this can be overriden
+by the `$DF_PLUGIN_DIR` variable.

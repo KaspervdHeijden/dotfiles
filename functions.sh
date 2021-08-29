@@ -409,52 +409,67 @@ dfs()
         nav)     cd "${DF_ROOT_DIR}" && pwd                                          ;;
         install) . "${DF_ROOT_DIR}/setup/install.sh"                                 ;;
         reload)  . "${DF_ROOT_DIR}/shells/$(ps -p $$ -o args= | sed 's/^-//')/rc.sh" ;;
-        env)     (
-            all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
-            used_vars="$(env | grep '^DF_')";
+        env)
+            (
+                all_vars="$(grep '# export ' "${DF_ROOT_DIR}/setup/config.sh")";
+                used_vars="$(env | grep '^DF_')";
 
-            echo 'defined vars:';
-            echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
-            [ -n "${used_vars}" ] && echo "${used_vars}";
-            if [ -n "${all_vars}" ]; then
-                echo '';
-                echo 'supported vars:';
-                echo "${all_vars}" | sed 's/export //';
-            fi
+                echo 'defined vars:';
+                echo "${used_vars}" | cut -d'=' -f1 | while read -r var_name; do all_vars="$(echo "${all_vars}" | grep -v "${var_name}=")"; done;
+                [ -n "${used_vars}" ] && echo "${used_vars}";
+                if [ -n "${all_vars}" ]; then
+                    echo '';
+                    echo 'supported vars:';
+                    echo "${all_vars}" | sed 's/export //';
+                fi
 
-            git_vars="$(git config --local --list 2>/dev/null | grep '^dotfiles.')";
-            if [ -n "${git_vars}" ]; then
-                echo '';
-                echo 'Local repository git vars:';
-                echo "${git_vars}";
-            fi) ;;
-        update)  (
+                git_vars="$(git config --local --list 2>/dev/null | grep '^dotfiles.')";
+                if [ -n "${git_vars}" ]; then
+                    echo '';
+                    echo 'Local repository git vars:';
+                    echo "${git_vars}";
+                fi
+            )
+
+            ;;
+        update)
+            (
                 cd "${DF_ROOT_DIR}" || return 1;
                 g_remote="$(git remote -v)";
                 hostname="$(echo "${g_remote}" | grep -o '[a-zA-Z0-9]\+\.[a-z]\+/' | sort | uniq | sed 's#/$##')";
                 remote="$(echo "${g_remote}" | grep '(fetch)' | grep -E 'git(hu|la)b.com' | cut -f1)";
                 branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
-                commit="$(git rev-parse --verify HEAD)";
-
-                "${DF_ROOT_DIR}/setup/plugins.sh" update || return 2;
+                old_commit="$(git rev-parse --verify HEAD)";
 
                 echo "updating dotfiles for ${remote:-origin}/${branch:-master} from ${hostname}...";
                 git pull -q --ff-only "${remote:-origin}" "${branch:-master}" || return 3;
+                new_commit="$(git rev-parse --verify HEAD)";
 
-                if [ "${commit}" = "$(git rev-parse --verify HEAD)" ] ; then
-                    echo ' -> dotfiles already up to date';
-                    return 4;
+                if [ "${old_commit}" = "${new_commit}" ]; then
+                    echo '  -> dotfiles already up to date';
+                    "${DF_ROOT_DIR}/setup/plugins.sh";
+
+                    return "${?}";
                 fi
 
+                echo "  -> updated to ${new_commit}";
+                echo && echo 'diffstat:';
                 git diff --stat HEAD^..HEAD;
 
-                echo '';
-                echo 'Changelogs:';
-                git log --format="- %s" --no-merges "${commit}"..HEAD || true;
-            ) && dfs install || true ;;
+                echo && echo 'changelog:';
+                git log --format="  -> %s" --no-merges "${commit}"..HEAD;
+
+                return 4;
+            );
+
+            exit_code="${?}";
+            [ "${exit_code}" -eq 4 ] && dfs install && return 0;
+
+            return "${exit_code}" ;;
+
         *)
             echo "command not recognized: '${1}', expecting one of 'env', 'install', 'nav', 'reload' or 'update'" >&2;
-            return 2;
+            return 8;
         ;;
     esac
 }

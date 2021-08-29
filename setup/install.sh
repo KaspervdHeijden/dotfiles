@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-DF_ROOT_DIR="$(
-    script_dir="$(lsof -p $$ | awk '/install.sh$/ { print $NF; }' | sed 's#/install.sh##')";
+root_dir="$(
+    script_dir="$(lsof -p $$ | awk '/install.sh$/ {print $NF}' | sed 's#/install.sh##')";
 
     if [ -n "${script_dir}" ]; then
         echo "$(dirname "${script_dir}")";
@@ -12,17 +12,17 @@ DF_ROOT_DIR="$(
     fi
 )";
 
-if [ ! -d "${DF_ROOT_DIR}" ]; then
+if [ ! -d "${root_dir}" ]; then
     echo 'could not determine root directory' >&2;
     return 3;
 fi
 
-echo "configuring dotfiles from ${DF_ROOT_DIR}...";
-for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
-    [ ! -f "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" ] && continue;
+echo "configuring dotfiles from ${root_dir}...";
+for shell_name in $(cd "${root_dir}/shells"; ls -d *); do
+    [ ! -f "${root_dir}/shells/${shell_name}/rc.sh" ] && continue;
 
     file="${HOME}/.${shell_name}rc";
-    if grep -q "${DF_ROOT_DIR}/shells/${shell_name}/rc.sh" "${file}" 2>/dev/null; then
+    if grep -q "${root_dir}/shells/${shell_name}/rc.sh" "${file}" 2>/dev/null; then
         echo "  -> config for ${shell_name} already present in ${file}";
         continue;
     fi
@@ -31,22 +31,22 @@ for shell_name in $(cd "${DF_ROOT_DIR}/shells"; ls -d *); do
 
     [ -s "${file}" ] && echo '' >> "${file}";
     echo '# include dotfiles' >> "${file}";
-    echo ". '${DF_ROOT_DIR}/shells/${shell_name}/rc.sh';" >> "${file}";
+    echo ". '${root_dir}/shells/${shell_name}/rc.sh';" >> "${file}";
 done;
 
 (
-    cd "${DF_ROOT_DIR}" || return 1;
+    cd "${root_dir}" || return 1;
     git config --local dotfiles.checkDefaultBranch 0;
     git config --local dotfiles.checkFork 0;
 );
 
 mkdir -p "${HOME}/.config/dotfiles";
-[ ! -f "${HOME}/.config/dotfiles/config.sh" ] && cp "${DF_ROOT_DIR}/setup/config.sh" "${HOME}/.config/dotfiles/config.sh";
+[ ! -f "${HOME}/.config/dotfiles/config.sh" ] && cp "${root_dir}/setup/config.sh" "${HOME}/.config/dotfiles/config.sh";
 
-"${DF_ROOT_DIR}/setup/plugins.sh" install;
+"${root_dir}/setup/plugins.sh";
 
 cur_shell="$(ps -p $$ -o args= | sed 's/^-//')";
-if [ -f "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh" ]; then
-    echo "sourcing '${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh'...";
-    . "${DF_ROOT_DIR}/shells/${cur_shell}/rc.sh";
+if [ -f "${root_dir}/shells/${cur_shell}/rc.sh" ]; then
+    echo "sourcing '${root_dir}/shells/${cur_shell}/rc.sh'...";
+    . "${root_dir}/shells/${cur_shell}/rc.sh";
 fi
