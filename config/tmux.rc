@@ -35,7 +35,7 @@ set -g visual-activity on
 set -g status-left-length 85
 
 # Show hostname, load averages, and an prefix key indicator
-set -g status-left "#[fg=blue] #h : #(uptime | rev | cut -d ' ' -f 1-3 | rev) #{?client_prefix,#[fg=colour2]^A,}"
+set -g status-left "#[fg=blue] #h : #(uptime | awk -F': ' '{print $2}') #{?client_prefix,#[fg=colour2]^A,}"
 
 # show session name, window & pane number, date and time on right side of status bar
 set -g status-right-length 80
