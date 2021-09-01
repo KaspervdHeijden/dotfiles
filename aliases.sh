@@ -4,6 +4,7 @@ command -v ssh-agent >/dev/null && alias shq='killall ssh-agent 2>/dev/null';
 alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DF_ROOT_DIR}/config/tmux.rc' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
 alias ack='ack -is --ignore-dir=vendor --ignore-dir=.git --ignore-dir=.composer --flush --follow --noenv --ackrc=/dev/null';
 alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --nowrap --wordbounds --const --linenumbers';
+alias grep='grep --color=auto --exclude-dir=vendor --exclude-dir=.git --exclude-dir=.composer';
 alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc.vim'";
 
 alias masin='git checkout master && { git pull upstream master 2>/dev/null || git pull origin master; } && git checkout - && git rebase master';
