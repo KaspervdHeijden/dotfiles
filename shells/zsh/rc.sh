@@ -9,10 +9,11 @@ autoload -U colors && colors;
 
 bindkey -e;
 
-bindkey -M emacs '^H' backward-delete-word; # Ctrl-Backspace
-bindkey -M emacs '^[[1;5D' backward-word;   # Ctrl-Left
-bindkey -M emacs '^[[1;5C' forward-word;    # Ctrl-Right
-bindkey -M emacs '^[[3;5~' kill-word;       # Ctrl-Del
+bindkey -M emacs "${terminfo[kcbt]}" reverse-menu-complete  # Shift+Tab: move through completion menyu backwards
+bindkey -M emacs '^H' backward-delete-word;                 # Ctrl+Backspace: delete word backwards
+bindkey -M emacs '^[[1;5D' backward-word;                   # Ctrl+Left: move word backwards
+bindkey -M emacs '^[[1;5C' forward-word;                    # Ctrl+Right: move word forwards
+bindkey -M emacs '^[[3;5~' kill-word;                       # Ctrl+Del: delete word forwards
 
 unsetopt menu_complete;
 unsetopt flowcontrol;
@@ -27,15 +28,15 @@ setopt always_to_end;
 
 export DF_ROOT_DIR="$(realpath "$(dirname $0)/../../")";
 export HISTFILE="${HOME}/.zsh_history";
-export HISTSIZE=20000;
-export SAVEHIST=20000;
+export HISTSIZE=50000;
+export SAVEHIST=50000;
 
 command -v dircolors >/dev/null && eval "$(dircolors -b)";
 
 if [ -d "${ZSH}" ] && [ -r "${ZSH}/oh-my-zsh.sh" ]; then
     export DISABLE_UPDATE_PROMPT=true;
     export UPDATE_ZSH_DAYS=7;
-    export plugins=(sudo pass);
+    export plugins=(sudo);
 
     . "${ZSH}/oh-my-zsh.sh";
 fi
