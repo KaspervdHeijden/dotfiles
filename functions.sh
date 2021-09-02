@@ -457,7 +457,7 @@ dfs()
                 git diff --stat HEAD^..HEAD;
 
                 echo && echo 'changelog:';
-                git log --format="  -> %s" --no-merges "${new_commit}"..HEAD;
+                git log --format="  -> %s" --no-merges "${old_commit}"..HEAD;
 
                 return 4;
             );
