@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 
 root_dir="$(
-    script_dir="$(lsof -p $$ | awk '/install.sh$/ {print $NF}' | sed 's#/install.sh##')";
+    script_dir="$(lsof -p $$ 2>/dev/null | awk '/install.sh$/ {print $NF}' | sed 's#/install.sh##')";
 
     if [ -n "${script_dir}" ]; then
         echo "$(dirname "${script_dir}")";
-    elif [ -n "${BASH_SOURCE}" ]; then
+    elif [ -n "${BASH_SOURCE:-}" ]; then
         echo "$(dirname "$(dirname "${BASH_SOURCE}")")";
     elif [ -f "${0}" ]; then
         echo "$(dirname "${0}")";
