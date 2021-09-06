@@ -3,18 +3,28 @@
 This repository enables me to quickly setup a shell environment to my liking. It currently only supports Debian based distro's.
 Dotfiles uses the following binaries:
 
-1. git
+1. git (*required*)
 2. tmux
 3. vim
-4. zsh (oh-my-zsh is supported, but not required)
 
 Personally, I also want:
 1. ack
 2. tree
 
-Install them all by doing:
+Dotfiles supports these shells:
+1. bash (oh-my-bash is supported)
+2. zsh (oh-my-zsh is supported, not required)
+
+Install them all
+
+_Debian_:
 ```sh
 sudo apt -y update && sudo apt -y install git tmux ack tree vim zsh;
+```
+
+_Arch_:
+```sh
+sudo pacman -S git tmux ack tree vim zsh;
 ```
 
 ### Installation
