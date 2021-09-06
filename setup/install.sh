@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+if [ "$(id -u)" -eq 0 ]; then
+    echo 'do not run as root' >&2;
+    return 3;
+fi
+
 root_dir="$(
     script_dir="$(lsof -p $$ 2>/dev/null | awk '/install.sh$/ {print $NF}' | sed 's#/install.sh##')";
 
@@ -14,7 +19,7 @@ root_dir="$(
 
 if [ ! -d "${root_dir}" ]; then
     echo 'could not determine root directory' >&2;
-    return 3;
+    return 4;
 fi
 
 echo "configuring dotfiles from ${root_dir}...";
