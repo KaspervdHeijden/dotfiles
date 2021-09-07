@@ -8,7 +8,6 @@ alias nano='nano --smarthome --tabstospaces --tabsize=4 --autoindent --cut --now
 alias grep='grep --color=auto --exclude-dir=vendor --exclude-dir=.git --exclude-dir=.composer';
 alias vim="vim -u '${DF_ROOT_DIR}/config/vimrc.vim'";
 
-alias masin='git checkout master && { git pull upstream master 2>/dev/null || git pull origin master; } && git checkout - && git rebase master';
 alias gcm='git checkout master';
 alias gca='git commit --amend';
 alias grm='git rebase master';

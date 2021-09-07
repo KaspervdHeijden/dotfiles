@@ -15,16 +15,10 @@ Dotfiles supports these shells:
 1. bash (oh-my-bash is supported)
 2. zsh (oh-my-zsh is supported, not required)
 
-Install them all
-
-_Debian_:
+Install them all:
 ```sh
-sudo apt -y update && sudo apt -y install git tmux ack tree vim zsh;
-```
-
-_Arch_:
-```sh
-sudo pacman -S git tmux ack tree vim zsh;
+sudo apt -y update && sudo apt -y install git tmux ack tree vim zsh; # debian
+sudo pacman -S git tmux ack tree vim zsh;  # arch
 ```
 
 ### Installation

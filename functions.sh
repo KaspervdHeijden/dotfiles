@@ -1,14 +1,4 @@
 #
-# Navigates to a directory and show it's content.
-#
-# ccd <path>
-#
-ccd()
-{
-    cd "${1}" && pwd && ls -laFH;
-}
-
-#
 # Navigates to a repository with a given partial directory name.
 # If multiple matches are found use the second argument to select one.
 #
@@ -226,7 +216,7 @@ gith()
 
     if ! echo "${remotes}" | grep -q "${remote}" 2>/dev/null; then
         echo "unknown remote '${remote}'" >&2;
-        return 2;
+        return 3;
     fi
 
     git push $flags "${remote}" "${branch}" || return 11;
@@ -298,6 +288,34 @@ gitb()
     fi
 
     git checkout -b "${new_branch_name}" || return 15;
+)
+
+masin()
+(
+    if [ ! -x "$(command -v git)" ]; then
+        echo 'git not installed' >&2;
+        return 10;
+    fi
+
+    source_branch="${1:-master}";
+    target_branch="$(git symbolic-ref --short HEAD 2>/dev/null)";
+
+    if [ "${source_branch}" = "${target_branch}" ]; then
+        echo "already on ${source_branch}" >&2;
+        return 3;
+    fi
+
+    remotes="$(git remote 2>/dev/null)";
+    if echo "${remotes}" | grep -q 'upstream' 2>/dev/null; then
+        remote='upstream';
+    else
+        remote='origin';
+    fi
+
+    git checkout "${source_branch}" && \
+        git pull "${remote}" "${source_branch}" && \
+        git checkout "${target_branch}" && \
+        git rebase "${source_branch}";
 )
 
 #
