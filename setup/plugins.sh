@@ -30,14 +30,14 @@ grep -v '^#' "${filename}" | while read -r intended_shell plugin_type plugin_nam
         echo "  -> updating ${plugin_name}";
 
         if ! (cd "${plugin_dir}/${plugin_name}" && git pull -q --ff-only); then
-            echo "could not update ${plugin_name} from ${remote_uri}i" >&2;
+            echo "could not update ${plugin_name} from ${remote_uri}" >&2;
             continue;
         fi
     else
         echo "  -> installing ${plugin_name}";
 
         if ! git clone -q "${remote_uri}" "${plugin_dir}/${plugin_name}"; then
-            echo "could not clone ${plugin_name} from ${remote_uri}i" >&2;
+            echo "could not clone ${plugin_name} from ${remote_uri}" >&2;
             continue;
         fi
     fi
