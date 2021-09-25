@@ -42,5 +42,9 @@ grep -v '^#' "${filename}" | while read -r intended_shell plugin_type plugin_nam
         fi
     fi
 
+    [ ! -f  "${DF_ROOT_DIR}/plugins/${intended_shell}.sh" ] && {
+        echo '#!/usr/bin/env false'; echo '';
+    } > "${DF_ROOT_DIR}/plugins/${intended_shell}.sh";
+
     echo ". '${plugin_dir}/${plugin_name}/${file_to_source}';" >> "${DF_ROOT_DIR}/plugins/${intended_shell}.sh";
 done;
