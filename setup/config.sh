@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 # Config .dotfiles example file
 
 # Should we be forced to commit a private fork check?

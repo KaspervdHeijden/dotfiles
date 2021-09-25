@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*';
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s;
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s;

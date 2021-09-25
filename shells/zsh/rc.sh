@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -9,11 +11,12 @@ autoload -U colors && colors;
 
 bindkey -e;
 
-bindkey -M emacs "${terminfo[kcbt]}" reverse-menu-complete  # Shift+Tab: move through completion menyu backwards
+bindkey -M emacs "${terminfo[kcbt]}" reverse-menu-complete  # Shift+Tab: move through completion menu backwards
 bindkey -M emacs '^H' backward-delete-word;                 # Ctrl+Backspace: delete word backwards
 bindkey -M emacs '^[[1;5D' backward-word;                   # Ctrl+Left: move word backwards
 bindkey -M emacs '^[[1;5C' forward-word;                    # Ctrl+Right: move word forwards
 bindkey -M emacs '^[[3;5~' kill-word;                       # Ctrl+Del: delete word forwards
+bindkey  "^[[3~"  delete-char;                              # Delete key deletes char
 
 unsetopt menu_complete;
 unsetopt flowcontrol;

@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 command -v apt >/dev/null && alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { command -v snap >/dev/null && snap refresh || true; }"';
 command -v pacman >/dev/null && alias update='sudo sh -c "pacman -Syu && { command -v snap >/dev/null && snap refresh || true; }"';
 command -v ssh-agent >/dev/null && alias shq='killall ssh-agent 2>/dev/null';

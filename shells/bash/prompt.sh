@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 __df_prompt_last_exitcode()
 {
     local latest_exitcode="${?}";

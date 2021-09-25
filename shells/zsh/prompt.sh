@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 __df_prompt_git_status()
 {
     [ "$(git config --get oh-my-zsh.hide-status >/dev/null)" = "1" ] && return 0;

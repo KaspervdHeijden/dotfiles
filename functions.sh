@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 #
 # Navigates to a repository with a given partial directory name.
 # If multiple matches are found use the second argument to select one.

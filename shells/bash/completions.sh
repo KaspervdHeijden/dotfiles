@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 complete -W 'env install nav reload update' dfs;
 complete -W '-c' repo_root;
 complete -W '-c' gitb;

@@ -1,3 +1,5 @@
+#!/usr/bin/env false
+
 if command -v vim >/dev/null; then
     export GIT_EDITOR=vim;
     export EDITOR=vim;
