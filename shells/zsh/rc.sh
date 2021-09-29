@@ -11,15 +11,14 @@ autoload -U colors && colors;
 
 bindkey -e;
 
-bindkey -M emacs "${terminfo[kcbt]}" reverse-menu-complete  # Shift+Tab: move through completion menu backwards
-bindkey -M emacs '^H' backward-delete-word;                 # Ctrl+Backspace: delete word backwards
-bindkey -M emacs '^[[1;5D' backward-word;                   # Ctrl+Left: move word backwards
-bindkey -M emacs '^[[1;5C' forward-word;                    # Ctrl+Right: move word forwards
-bindkey -M emacs '^[[3;5~' kill-word;                       # Ctrl+Del: delete word forwards
-bindkey  "^[[3~"  delete-char;                              # Delete key deletes char
-
-bindkey -M emacs '^[[H' beginning-of-line;
-bindkey -M emacs '^[[F' end-of-line;
+bindkey -M emacs '^[[Z' reverse-menu-complete # Shift+Tab: move through completion menu backwards
+bindkey -M emacs '^H' backward-delete-word;   # Ctrl+Backspace: delete word backwards
+bindkey -M emacs '^[[1;5D' backward-word;     # Ctrl+Left: move word backwards
+bindkey -M emacs '^[[1;5C' forward-word;      # Ctrl+Right: move word forwards
+bindkey -M emacs '^[[3;5~' kill-word;         # Ctrl+Del: delete word forwards
+bindkey -M emacs '^[[3~'  delete-char;        # DELETE key: delete char
+bindkey -M emacs '^[[H' beginning-of-line;    # HOME key: to beginning of line
+bindkey -M emacs '^[[F' end-of-line;          # END key: to end of line
 
 unsetopt menu_complete;
 unsetopt flowcontrol;

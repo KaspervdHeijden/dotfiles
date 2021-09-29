@@ -32,7 +32,7 @@ set noswapfile
 set noundofile
 set nowrap
 set nowritebackup
-set number relativenumber
+set number
 set pastetoggle=<F12>
 set path+=**
 set ruler

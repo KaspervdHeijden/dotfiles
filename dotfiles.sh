@@ -9,6 +9,7 @@ else
 fi
 
 export LESS="-FXR ${LESS}";
+export TERM=xterm-256color;
 export GIT_PAGER=less;
 export PAGER=less;
 
