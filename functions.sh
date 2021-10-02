@@ -521,3 +521,13 @@ choose()
         return 11;
     fi
 )
+
+#
+# Creates a directory and enter it
+#
+# take <dirname>
+#
+take()
+{
+    [ -n "${1}" ] && { mkdir -p "${1}" && cd "${1}"; } || echo 'no argument given' >&2;
+}
