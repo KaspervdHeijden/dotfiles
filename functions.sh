@@ -34,10 +34,16 @@ cds()
         cd "${matches}" && return 0 || return 13;
     fi
 
+    local match="$(echo "${repo_list}" | grep -ie "/${search}$")";
+    if  [ -d "${match}" ]; then
+        echo "${match}";
+        cd "${match}" && return 0 || return 14;
+    fi
+
     echo 'multiple matches found' >&2;
     echo "${matches}";
 
-    return 14;
+    return 15;
 }
 
 #
