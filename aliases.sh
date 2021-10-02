@@ -1,7 +1,7 @@
 #!/usr/bin/env false
 
-command -v apt >/dev/null && alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { command -v snap >/dev/null && snap refresh || true; }"';
-command -v pacman >/dev/null && alias update='sudo sh -c "pacman -Syu && { command -v snap >/dev/null && snap refresh || true; }"';
+command -v apt >/dev/null && alias update='sudo sh -c "apt -y update && apt -y upgrade && apt -y autoclean && apt -y autoremove && { command -v snap >/dev/null && snap refresh || true; } && { command -v flatpack >/dev/null && flatpack update || true; }"';
+command -v pacman >/dev/null && alias update='sudo sh -c "pacman -Syu && { command -v snap >/dev/null && snap refresh || true; } && { command -v flatpack >/dev/null && flatpack update || true; }"';
 command -v ssh-agent >/dev/null && alias shq='killall ssh-agent 2>/dev/null';
 
 alias tm="tmux attach 2>/dev/null || tmux -2u -f '${DF_ROOT_DIR}/config/tmux.rc' new -s '$(whoami)-tmux-session' >/dev/null 2>&1";
